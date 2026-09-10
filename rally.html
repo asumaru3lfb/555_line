@@ -1,0 +1,546 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<title>あいさつラリー動作確認</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --bg: #ECEDEF;
+    --panel: #FFFFFF;
+    --sunken: #F3F4F6;
+    --chatbg: #8CABD8;
+    --bubble-them: #FFFFFF;
+    --bubble-me: #8EE050;
+    --ink: #17181A;
+    --muted: #6B7280;
+    --hair: #DBDFE3;
+    --accent: #06C755;
+    --btn: #4A5568;
+    --btn-ink: #FFFFFF;
+    --mark: #C23A2E;
+    --mark-soft: #FBE4E1;
+    --f-body: "Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;
+    --f-mono: "JetBrains Mono",ui-monospace,Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#121417; --panel:#1B1F24; --sunken:#20252B; --chatbg:#334965; --bubble-them:#2A3138;
+      --ink:#EAEDEF; --muted:#98A2AC; --hair:#2E353C; --mark:#E08A7C; --mark-soft:#3A2320;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#121417; --panel:#1B1F24; --sunken:#20252B; --chatbg:#334965; --bubble-them:#2A3138;
+    --ink:#EAEDEF; --muted:#98A2AC; --hair:#2E353C; --mark:#E08A7C; --mark-soft:#3A2320;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:var(--f-body); }
+
+  .shell {
+    max-width: 1040px; margin: 0 auto; padding: 24px 16px 80px;
+    display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; justify-content: center;
+  }
+
+  .banner {
+    flex: 1 1 100%;
+    background: var(--panel); border: 1px solid var(--hair); border-radius: 10px;
+    padding: 13px 16px; font-size: 13px; color: var(--muted); line-height: 1.75;
+    box-sizing: border-box;
+  }
+  .banner b { color: var(--ink); }
+  .banner .tag {
+    display:inline-block; font-family: var(--f-mono); font-size: 10.5px; letter-spacing:.06em;
+    background: #FEF0E3; color: #A8621A; border-radius: 4px; padding: 2px 8px; margin-right: 8px;
+  }
+  @media (prefers-color-scheme: dark) { .banner .tag { background:#332619; color:#E0A15F; } }
+
+  /* ---- phone（固定ピクセル幅・アスペクト比に頼らず高さも固定） ---- */
+  .phonewrap {
+    flex: 0 0 340px !important;
+    width: 340px !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .phone {
+    background: var(--panel);
+    border: 1px solid var(--hair);
+    border-radius: 26px;
+    overflow: hidden;
+    box-shadow: 0 10px 34px rgba(0,0,0,.10);
+    width: 340px !important;
+    max-width: 100% !important;
+    height: 660px !important;
+    box-sizing: border-box !important;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+  }
+  .topbar {
+    background: #17191C; color: #fff; padding: 10px 14px; display:flex; align-items:center; gap:9px; font-size:13.5px; flex:none;
+  }
+  .topbar .dot { width:26px; height:26px; border-radius:50%; background:#06C755; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex:none; }
+  .topbar .name { font-weight:700; }
+  .topbar .sub { font-size:10.5px; opacity:.65; }
+
+  .chat {
+    background: var(--chatbg);
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 14px 11px;
+    display:flex; flex-direction:column; gap: 10px;
+    overflow-y: auto;
+  }
+  .msg { display:flex; flex-direction:column; gap:5px; max-width: 84%; }
+  .msg.them { align-self:flex-start; }
+  .msg.me { align-self:flex-end; align-items:flex-end; }
+  .bubble {
+    padding: 10px 13px; border-radius: 15px; font-size: 13.5px; line-height:1.65; white-space:pre-wrap;
+  }
+  .msg.them .bubble { background: var(--bubble-them); color: var(--ink); border-top-left-radius:4px; }
+  .msg.me .bubble { background: var(--bubble-me); color:#17181A; border-top-right-radius:4px; }
+  .quick { display:flex; flex-wrap:wrap; gap:6px; padding: 2px 2px; }
+  .qbtn {
+    font-family: var(--f-body); font-size: 12.5px; background: var(--btn); color: var(--btn-ink);
+    border:none; border-radius: 8px; padding: 8px 12px; cursor:pointer; line-height:1.4;
+  }
+  .qbtn:hover { filter: brightness(1.12); }
+  .qbtn:active { transform: translateY(1px); }
+  .qbtn.skip { background: transparent; border: 1px solid rgba(255,255,255,.55); color:#fff; }
+
+  .textrow { display:flex; gap:6px; padding: 2px 2px; }
+  .textrow input {
+    flex:1; border-radius:20px; border:none; padding: 9px 14px; font-size:13.5px; font-family:var(--f-body); min-width:0;
+  }
+  .textrow button {
+    background: var(--accent); color:#fff; border:none; border-radius:20px; padding: 9px 15px; font-size:13px; cursor:pointer; flex:none;
+  }
+
+  .inputbar {
+    background: var(--panel); padding: 9px 12px; display:flex; align-items:center; gap:10px; border-top: 1px solid var(--hair);
+    font-size: 12.5px; color: var(--muted); flex: none; min-height: 46px;
+  }
+
+  .simnote { font-size: 11.5px; color: var(--muted); text-align:center; margin: 8px 0 0; }
+
+  /* ---- records panel（テキスト表示） ---- */
+  .records { background: var(--panel); border:1px solid var(--hair); border-radius: 12px; overflow:hidden; flex: 1 1 320px; min-width: 280px; max-width: 460px; box-sizing: border-box; }
+  .records .head { padding: 16px 18px 0; }
+  .records h2 { font-size: 14.5px; margin: 0 0 4px; }
+  .records .desc { font-size: 12px; color: var(--muted); margin: 0 0 14px; }
+
+  .statelist { padding: 2px 18px 14px; display:flex; flex-direction:column; gap: 3px; }
+  .stateline {
+    font-size: 13.5px; line-height: 1.9; padding: 3px 0;
+    display:flex; gap: 8px;
+  }
+  .stateline .lbl { font-family: var(--f-mono); font-size: 11px; color: var(--muted); min-width: 108px; flex:none; padding-top:2px; }
+  .stateline .v { color: var(--ink); }
+  .stateline .v.empty { color: var(--muted); }
+  .stateline .v.hit { color: var(--mark); font-weight: 700; background: var(--mark-soft); border-radius:4px; padding: 1px 7px; }
+  .stateempty { padding: 4px 18px 14px; font-size: 13px; color: var(--muted); }
+
+  .reset { padding: 4px 18px 18px; display:flex; flex-direction:column; gap:8px; }
+  .reset button {
+    font-family: var(--f-mono); font-size:12px; background: transparent; border:1px solid var(--hair); color: var(--muted);
+    border-radius:6px; padding:9px 14px; cursor:pointer; width:100%;
+  }
+  .reset button:disabled { opacity:.4; cursor:default; }
+  .reset button:not(:disabled):hover { background: var(--sunken); }
+  .reset .steplabel { font-family: var(--f-mono); font-size: 10.5px; color: var(--muted); text-align:center; }
+</style>
+
+<div class="shell">
+
+  <div class="banner">
+    <span class="tag">模型・テスト用</span>
+    <b>これは動作確認用のシミュレーターです。</b>本番のLINEアカウント・Cloudflareには一切接続していません。回答はどこにも保存されず、このページを閉じると消えます。
+  </div>
+
+  <div class="phonewrap">
+    <div class="phone">
+      <div class="topbar">
+        <div class="dot">大</div>
+        <div>
+          <div class="name">大洲カンパニー</div>
+          <div class="sub">あいさつラリー v4（改訂案）</div>
+        </div>
+      </div>
+      <div class="chat" id="chat"></div>
+      <div class="inputbar" id="inputbar">友だち追加すると、ここから会話が始まります</div>
+    </div>
+    <p class="simnote">↑ 本番のLINE画面の再現です（この枠の中だけ）</p>
+  </div>
+
+  <div class="records">
+    <div class="head">
+      <h2>裏側で記録される内容</h2>
+      <p class="desc">ボタンを押した瞬間に、ここが更新されます（表示のみ・実際には保存されません）。直近に入った項目は赤く強調されます。</p>
+    </div>
+    <div id="stateArea"></div>
+    <div class="reset">
+      <button onclick="restart()">最初からやり直す</button>
+      <button id="backBtn" onclick="goBack()" disabled>← 一つ戻る（テスト用・本番には実装されません）</button>
+      <span class="steplabel" id="stepLabel"></span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const chat = document.getElementById('chat');
+const inputbar = document.getElementById('inputbar');
+const backBtn = document.getElementById('backBtn');
+const stepLabel = document.getElementById('stepLabel');
+const stateArea = document.getElementById('stateArea');
+const answers = {};
+let history = [];
+let lastHitKey = null;
+
+/* ---------- 記録される項目（表示ラベルの定義のみ・テーブル分けはしない） ---------- */
+const FIELD_LABELS = {
+  oshi: '推し',
+  region_relation: '大洲との関係',
+  residence_bucket: 'お住まい区分',
+  residence_area: '県内エリア/地方',
+  residence_detail: '市町/都道府県',
+  age_bucket: '年代',
+  interest: '関わり方の希望',
+  ref_kind: '紹介元',
+  referrer_note: '紹介者のお名前',
+};
+const FIELD_ORDER = ['oshi','region_relation','residence_bucket','residence_area','residence_detail','age_bucket','interest','ref_kind','referrer_note'];
+
+function mark(key) { lastHitKey = key; }
+
+function setAnswer(key, value) {
+  answers[key] = value;
+  mark(key);
+}
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function renderRecords() {
+  const keys = FIELD_ORDER.filter(k => answers[k] !== undefined);
+  if (!keys.length) {
+    stateArea.innerHTML = '<div class="stateempty">まだ何も回答していません</div>';
+    return;
+  }
+  let html = '<div class="statelist">';
+  keys.forEach(k => {
+    const v = answers[k];
+    const isHit = lastHitKey === k;
+    html += `<div class="stateline"><span class="lbl">${esc(FIELD_LABELS[k])}</span><span class="v${isHit ? ' hit' : ''}">${esc(String(v))}</span></div>`;
+  });
+  html += '</div>';
+  stateArea.innerHTML = html;
+}
+
+/* ---------- チャットUI ---------- */
+function addThem(text) {
+  const m = document.createElement('div');
+  m.className = 'msg them';
+  const b = document.createElement('div');
+  b.className = 'bubble';
+  b.textContent = text;
+  m.appendChild(b);
+  chat.appendChild(m);
+  chat.scrollTop = chat.scrollHeight;
+}
+function addMe(text) {
+  const m = document.createElement('div');
+  m.className = 'msg me';
+  const b = document.createElement('div');
+  b.className = 'bubble';
+  b.textContent = text;
+  m.appendChild(b);
+  chat.appendChild(m);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function setQuick(options, onPick, opts = {}) {
+  inputbar.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.className = 'quick';
+  options.forEach(([label, value]) => {
+    const b = document.createElement('button');
+    b.className = 'qbtn';
+    b.textContent = label;
+    b.onclick = () => onPick(label, value);
+    wrap.appendChild(b);
+  });
+  if (opts.skip) {
+    const s = document.createElement('button');
+    s.className = 'qbtn skip';
+    s.textContent = 'スキップする';
+    s.onclick = () => onPick('（スキップ）', null);
+    wrap.appendChild(s);
+  }
+  inputbar.appendChild(wrap);
+}
+
+function setTextInput(placeholder, onSubmit, opts = {}) {
+  inputbar.innerHTML = '';
+  const row = document.createElement('div');
+  row.className = 'textrow';
+  const input = document.createElement('input');
+  input.placeholder = placeholder;
+  const btn = document.createElement('button');
+  btn.textContent = '送信';
+  const submit = () => { const v = input.value.trim(); if (v) onSubmit(v); };
+  btn.onclick = submit;
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+  row.appendChild(input);
+  row.appendChild(btn);
+  inputbar.appendChild(row);
+  if (opts.skip) {
+    const skipRow = document.createElement('div');
+    skipRow.className = 'quick';
+    const s = document.createElement('button');
+    s.className = 'qbtn skip';
+    s.textContent = 'スキップする';
+    s.onclick = () => onSubmit(null);
+    skipRow.appendChild(s);
+    inputbar.appendChild(skipRow);
+  }
+}
+
+function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+/* ---------- 履歴（戻る機能） ---------- */
+function snapshot() {
+  return {
+    chatLen: chat.children.length,
+    answers: { ...answers },
+    lastHitKey,
+  };
+}
+function pushHistory(label, fn, preSnap) {
+  history.push({ snap: preSnap, fn, label });
+  backBtn.disabled = false;
+}
+function goBack() {
+  if (!history.length) return;
+  const last = history.pop();
+  while (chat.children.length > last.snap.chatLen) chat.removeChild(chat.lastChild);
+  for (const k in answers) delete answers[k];
+  Object.assign(answers, last.snap.answers);
+  lastHitKey = last.snap.lastHitKey;
+  renderRecords();
+  backBtn.disabled = history.length === 0;
+  stepLabel.textContent = last.label ? ('戻り先：' + last.label) : '';
+  last.fn();
+}
+
+/* ---------- 選択肢データ ---------- */
+const OSHI = [['お城・歴史','shiro'],['人に会いたい','hito'],['たべもの・商品','tabemono'],['川・自然','shizen'],['まちづくり','project'],['まだわからない','mada']];
+const REGION_REL = [['大洲に住んでいる','live'],['大洲の出身（いまは市外）','origin'],['何度か行った','several'],['一度行った','once'],['まだ行っていない','none']];
+const RESIDENCE = [['大洲市内','city'],['愛媛県内（大洲市以外）','pref'],['愛媛県外','out']];
+
+// 愛媛県20市町（大洲市を除く19）を東予・中予・南予で正しく区分
+const EHIME_AREA = [['東予','toyo'],['中予','chuyo'],['南予','nanyo']];
+const EHIME_TOWN = {
+  toyo:  [['今治市','imabari'],['新居浜市','niihama'],['西条市','saijo'],['四国中央市','shikokuchuo'],['上島町','kamijima']],
+  chuyo: [['松山市','matsuyama'],['伊予市','iyo'],['東温市','toon'],['久万高原町','kumakogen'],['松前町','masaki'],['砥部町','tobe']],
+  nanyo: [['宇和島市','uwajima'],['八幡浜市','yawatahama'],['西予市','seiyo'],['内子町','uchiko'],['伊方町','ikata'],['松野町','matsuno'],['鬼北町','kihoku'],['愛南町','ainan']],
+};
+
+// 8地方すべて・都道府県を網羅（北海道は1都道府県のみのため単独確定）
+const REGIONS = [['北海道','hokkaido'],['東北','tohoku'],['関東','kanto'],['中部','chubu'],['近畿','kinki'],['中国','chugoku'],['四国','shikoku'],['九州・沖縄','kyushu']];
+const PREFS = {
+  tohoku:  [['青森県','aomori'],['岩手県','iwate'],['宮城県','miyagi'],['秋田県','akita'],['山形県','yamagata'],['福島県','fukushima']],
+  kanto:   [['茨城県','ibaraki'],['栃木県','tochigi'],['群馬県','gunma'],['埼玉県','saitama'],['千葉県','chiba'],['東京都','tokyo'],['神奈川県','kanagawa']],
+  chubu:   [['新潟県','niigata'],['富山県','toyama'],['石川県','ishikawa'],['福井県','fukui'],['山梨県','yamanashi'],['長野県','nagano'],['岐阜県','gifu'],['静岡県','shizuoka'],['愛知県','aichi']],
+  kinki:   [['三重県','mie'],['滋賀県','shiga'],['京都府','kyoto'],['大阪府','osaka'],['兵庫県','hyogo'],['奈良県','nara'],['和歌山県','wakayama']],
+  chugoku: [['鳥取県','tottori'],['島根県','shimane'],['岡山県','okayama'],['広島県','hiroshima'],['山口県','yamaguchi']],
+  shikoku: [['徳島県','tokushima'],['香川県','kagawa'],['高知県','kochi']], // 愛媛県外の分岐なので愛媛県は除く
+  kyushu:  [['福岡県','fukuoka'],['佐賀県','saga'],['長崎県','nagasaki'],['熊本県','kumamoto'],['大分県','oita'],['宮崎県','miyazaki'],['鹿児島県','kagoshima'],['沖縄県','okinawa']],
+};
+
+const AGE = [['10代以下','10s'],['20代','20s'],['30代','30s'],['40代','40s'],['50代','50s'],['60代','60s'],['70代以上','70s'],['答えない','na']];
+const INTEREST = [['手伝う','help'],['学ぶ','learn'],['あそぶ・会う','play'],['応援する','support'],['住む・もどる','live'],['まだ決めていない','na']];
+const REF_KIND = [['紹介ではない','none'],['家族・友人','family'],['大洲のお店・事業者','shop'],['スタッフ・関係者','staff'],['記事・テレビ・SNS','media'],['イベントで知った','event']];
+
+/* ---------- ラリー本体 ---------- */
+async function start() {
+  chat.innerHTML = '';
+  for (const k in answers) delete answers[k];
+  lastHitKey = null; history = [];
+  backBtn.disabled = true; stepLabel.textContent = '';
+  renderRecords();
+
+  await wait(250);
+  qOshi();
+}
+
+/* 各ステップは「開始直前の状態」を pre として保持し、回答が確定した瞬間に
+   pushHistory(label, このステップ自身, pre) を積む。
+   「戻る」は直前の pre を復元し、このステップ自身を再実行＝直前の質問に戻る。 */
+
+function qOshi() {
+  const pre = snapshot();
+  addThem('はじめまして！ 1分だけ、教えてください。\n\n大洲の「気になる」は、どれに近いですか？\n（下のボタンから選ぶだけです。あとで変えられます）');
+  setQuick(OSHI, async (label, value) => {
+    addMe(label);
+    setAnswer('oshi', label);
+    renderRecords();
+    pushHistory('Q1 推し', qOshi, pre);
+    await wait(300);
+    qRegionRelation();
+  });
+}
+
+function qRegionRelation() {
+  const pre = snapshot();
+  addThem('大洲とは、いまどんな関係ですか？');
+  setQuick(REGION_REL, async (label) => {
+    addMe(label);
+    setAnswer('region_relation', label);
+    renderRecords();
+    pushHistory('Q2 大洲との関係', qRegionRelation, pre);
+    await wait(300);
+    qResidence();
+  });
+}
+
+function qResidence() {
+  const pre = snapshot();
+  addThem('いま、どちらにお住まいですか？');
+  setQuick(RESIDENCE, async (label, value) => {
+    addMe(label);
+    setAnswer('residence_bucket', label);
+    renderRecords();
+    pushHistory('Q3 お住まい', qResidence, pre);
+    await wait(300);
+    if (value === 'city') { qAge(); return; }
+    if (value === 'pref') { qEhimeArea(); return; }
+    qOutRegion();
+  });
+}
+
+function qEhimeArea() {
+  const pre = snapshot();
+  addThem('県内のどのエリアですか？（大洲市を除く19市町）');
+  setQuick(EHIME_AREA, async (label, value) => {
+    addMe(label);
+    setAnswer('residence_area', label);
+    renderRecords();
+    pushHistory('Q3-2a 県内エリア', qEhimeArea, pre);
+    await wait(300);
+    qEhimeTown(value);
+  });
+}
+
+function qEhimeTown(areaValue) {
+  const pre = snapshot();
+  addThem('どちらの市町ですか？');
+  setQuick(EHIME_TOWN[areaValue], async (label) => {
+    addMe(label);
+    setAnswer('residence_detail', label);
+    renderRecords();
+    pushHistory('Q3-2b 市町', () => qEhimeTown(areaValue), pre);
+    await wait(300);
+    qAge();
+  });
+}
+
+function qOutRegion() {
+  const pre = snapshot();
+  addThem('どちらの地方からですか？');
+  setQuick(REGIONS, async (label, value) => {
+    addMe(label);
+    setAnswer('residence_area', label);
+    if (value === 'hokkaido') {
+      setAnswer('residence_detail', '北海道');
+      renderRecords();
+      pushHistory('Q3-2a 地方', qOutRegion, pre);
+      await wait(300);
+      qAge();
+      return;
+    }
+    renderRecords();
+    pushHistory('Q3-2a 地方', qOutRegion, pre);
+    await wait(300);
+    qOutPref(value);
+  });
+}
+
+function qOutPref(regionValue) {
+  const pre = snapshot();
+  addThem('どちらの都道府県ですか？');
+  setQuick(PREFS[regionValue], async (label) => {
+    addMe(label);
+    setAnswer('residence_detail', label);
+    renderRecords();
+    pushHistory('Q3-2b 都道府県', () => qOutPref(regionValue), pre);
+    await wait(300);
+    qAge();
+  });
+}
+
+function qAge() {
+  const pre = snapshot();
+  addThem('さしつかえなければ、年代を教えてください。');
+  setQuick(AGE, async (label) => {
+    addMe(label);
+    setAnswer('age_bucket', label);
+    renderRecords();
+    pushHistory('Q4 年代', qAge, pre);
+    await wait(300);
+    qInterest();
+  });
+}
+
+function qInterest() {
+  const pre = snapshot();
+  addThem('これから、どんな関わり方に興味がありますか？\n（いくつでも選べます。1つ選んだら続けます）');
+  setQuick(INTEREST, async (label) => {
+    addMe(label);
+    setAnswer('interest', label);
+    renderRecords();
+    pushHistory('Q5 関わり方の希望', qInterest, pre);
+    await wait(300);
+    qRefKind();
+  });
+}
+
+function qRefKind() {
+  const pre = snapshot();
+  addThem('最後にもうひとつだけ。\nこのアカウント、どなたかのご紹介ですか？');
+  setQuick(REF_KIND, async (label, value) => {
+    addMe(label);
+    setAnswer('ref_kind', label); // 表示用（DBはmembers.referrer_kind。この模型では②扱いせず割愛）
+    renderRecords();
+    pushHistory('Q6 紹介元', qRefKind, pre);
+    await wait(300);
+    if (value === 'none' || value === 'media') { finish(); return; }
+    qReferrerNote();
+  });
+}
+
+function qReferrerNote() {
+  const pre = snapshot();
+  addThem('よろしければ、どなたのご紹介か教えてください。お礼をお伝えします。\n（お店の名前でも、下のお名前だけでもかまいません）');
+  setTextInput('例：ぼうしさん', async (text) => {
+    if (text) {
+      addMe(text);
+      setAnswer('referrer_note', text);
+    } else {
+      addMe('（スキップ）');
+    }
+    renderRecords();
+    pushHistory('Q6-2 紹介者名', qReferrerNote, pre);
+    await wait(300);
+    finish();
+  }, { skip: true });
+}
+
+function finish() {
+  addThem('ありがとうございます！ ご縁に感謝です。\n\nこれからは、大洲の「人」と「動き」を週1回だけ、そっとお届けします。');
+  renderRecords();
+  inputbar.innerHTML = '<span style="opacity:.7">— ラリー終了 —</span>';
+}
+
+function restart() { start(); }
+start();
+</script>
+
+</body></html>

@@ -1,435 +1,429 @@
-<title>大洲カンパニーLINE基盤</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>大洲カンパニーLINE ― 設計資料</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
 <style>
   :root {
-    --bg: #F7F2E7;
-    --surface: #FCF9F1;
-    --ink: #2B2621;
-    --ink-soft: #71675A;
-    --accent: #2E4A66;
-    --accent-soft: #DEE6EC;
-    --line-brand: #06C755;
-    --good: #3E6B52;
-    --good-soft: #E1EBE4;
-    --warn: #A85A2A;
-    --warn-soft: #F3E4D6;
-    --hair: rgba(43,38,33,0.15);
+    --paper:      #F6F1E6;
+    --surface:    #FFFFFF;
+    --sunken:     #ECE5D6;
+    --ink:        #262019;
+    --ink-soft:   #6F6252;
+    --hair:       rgba(38,32,25,.15);
 
-    --font-display: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
-    --font-body: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
-    --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    --indigo:      #2B4A63;
+    --indigo-soft: #DEE6EC;
+    --clay:        #A85A2A;
+    --clay-soft:   #F3E2D2;
+    --moss:        #4C6B52;
+    --moss-soft:   #E3EAE0;
+    --red:         #B23A2E;
+    --red-soft:    #F3DEDA;
+
+    --f-display: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --f-body:    "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    --f-mono:    "JetBrains Mono", ui-monospace, Menlo, monospace;
   }
-
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #1B1815;
-      --surface: #242019;
-      --ink: #EEE7DA;
-      --ink-soft: #AFA593;
-      --accent: #8FB4CF;
-      --accent-soft: #2B3A44;
-      --line-brand: #06C755;
-      --good: #7FB89A;
-      --good-soft: #2A362E;
-      --warn: #D68A52;
-      --warn-soft: #3A2C21;
-      --hair: rgba(238,231,218,0.18);
+      --paper:#17140F; --surface:#211C15; --sunken:#2A241B; --ink:#ECE4D3; --ink-soft:#B0A490;
+      --hair:rgba(236,228,211,.16);
+      --indigo:#8FB4CF; --indigo-soft:#233240; --clay:#D9986A; --clay-soft:#332419; --moss:#8FBB9C; --moss-soft:#233128;
+      --red:#E08A7C; --red-soft:#3A2320;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #1B1815;
-    --surface: #242019;
-    --ink: #EEE7DA;
-    --ink-soft: #AFA593;
-    --accent: #8FB4CF;
-    --accent-soft: #2B3A44;
-    --line-brand: #06C755;
-    --good: #7FB89A;
-    --good-soft: #2A362E;
-    --warn: #D68A52;
-    --warn-soft: #3A2C21;
-    --hair: rgba(238,231,218,0.18);
+    --paper:#17140F; --surface:#211C15; --sunken:#2A241B; --ink:#ECE4D3; --ink-soft:#B0A490;
+    --hair:rgba(236,228,211,.16);
+    --indigo:#8FB4CF; --indigo-soft:#233240; --clay:#D9986A; --clay-soft:#332419; --moss:#8FBB9C; --moss-soft:#233128;
+    --red:#E08A7C; --red-soft:#3A2320;
   }
 
   * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--font-body);
-    font-size: 16px;
-    line-height: 1.85;
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: var(--f-body); font-size: 15.5px; line-height: 1.85;
     -webkit-font-smoothing: antialiased;
   }
-  .page {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 56px 24px 96px;
-  }
+  a { color: var(--indigo); }
+  code { font-family: var(--f-mono); font-size: .92em; background: var(--sunken); border-radius: 3px; padding: 1px 5px; }
+  strong { font-weight: 700; }
 
+  /* ---- masthead ---- */
   header.top {
-    margin-bottom: 48px;
+    position: sticky; top: 0; z-index: 20; background: var(--paper);
+    border-bottom: 1px solid var(--hair); backdrop-filter: blur(6px);
   }
+  .mast { max-width: 1100px; margin: 0 auto; padding: 16px 22px 0; }
+  .kicker {
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .13em; color: var(--indigo);
+    display:flex; align-items:center; gap:10px; margin-bottom: 6px;
+  }
+  .kicker .line { flex:1; height:1px; background:var(--hair); }
+  h1.title {
+    font-family: var(--f-display); font-weight: 700; font-size: clamp(22px,3.4vw,30px);
+    line-height: 1.3; margin: 0 0 12px; text-wrap: balance;
+  }
+
+  /* ---- tabs ---- */
+  nav.tabs { display:flex; gap: 2px; overflow-x: auto; max-width: 1100px; margin: 0 auto; padding: 0 22px; }
+  nav.tabs button {
+    font-family: var(--f-body); font-size: 13.5px; font-weight: 700; white-space: nowrap;
+    background: none; border: none; color: var(--ink-soft); cursor: pointer;
+    padding: 11px 15px; border-bottom: 3px solid transparent; margin-bottom: -1px;
+  }
+  nav.tabs button:hover { color: var(--ink); }
+  nav.tabs button.active { color: var(--indigo); border-bottom-color: var(--indigo); }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 30px 22px 90px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  section { margin-top: 44px; }
+  section:first-child { margin-top: 0; }
   .eyebrow {
-    font-size: 12.5px;
-    color: var(--accent);
-    letter-spacing: 0.14em;
-    font-weight: 500;
-    margin-bottom: 14px;
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .13em; color: var(--ink-soft);
+    display:flex; align-items:center; gap:10px; margin-bottom: 10px;
   }
-  h1 {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: clamp(28px, 4.4vw, 38px);
-    line-height: 1.4;
-    text-wrap: balance;
-    margin: 0 0 18px;
-  }
-  .lede {
-    color: var(--ink-soft);
-    font-size: 16px;
-    max-width: 62ch;
-    margin: 0;
-  }
+  .eyebrow .line { flex:1; height:1px; background:var(--hair); }
+  h2 { font-family: var(--f-display); font-weight: 700; font-size: 21px; margin: 0 0 12px; text-wrap: balance; }
+  h3 { font-family: var(--f-body); font-weight: 700; font-size: 15px; margin: 22px 0 8px; }
+  p { margin: 0 0 13px; max-width: 68ch; }
+  p:last-child { margin-bottom: 0; }
+  .note { color: var(--ink-soft); font-size: 13.5px; }
+  .lede { color: var(--ink-soft); font-size: 15px; max-width: 62ch; margin: 0 0 20px; }
 
-  section { margin-top: 56px; }
-  h2 {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 21px;
-    margin: 0 0 8px;
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-  }
-  h2 .num {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--ink-soft);
-    font-weight: 400;
-  }
-  .section-lede {
-    color: var(--ink-soft);
-    font-size: 15px;
-    margin: 0 0 22px;
-    max-width: 64ch;
-  }
+  /* ---- 3枠 ---- */
+  .triad { display:grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin: 16px 0; }
+  @media (max-width: 700px) { .triad { grid-template-columns: 1fr; } }
+  .triad .box { background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; padding: 16px; }
+  .triad .box .ic { font-size: 20px; margin-bottom: 6px; }
+  .triad .box h4 { font-size: 14px; margin: 0 0 5px; }
+  .triad .box p { font-size: 12.5px; color: var(--ink-soft); margin: 0; }
 
-  /* diagram */
-  figure.diagram {
-    margin: 0;
-    padding: 22px 20px 18px;
-    background: var(--surface);
-    border: 1px solid var(--hair);
-    border-radius: 8px;
-  }
-  figure.diagram svg { display: block; width: 100%; height: auto; color: var(--ink); }
-  figcaption {
-    margin-top: 14px;
-    font-size: 13.5px;
-    color: var(--ink-soft);
-    border-top: 1px solid var(--hair);
-    padding-top: 12px;
-  }
+  /* ---- iframe 画面 ---- */
+  .screenwrap { background: var(--surface); border: 1px solid var(--hair); border-radius: 14px; overflow: hidden; }
+  .screenwrap iframe { width: 100%; border: none; display: block; background: var(--paper); }
+  .screenhead { padding: 14px 18px; border-bottom: 1px solid var(--hair); display:flex; align-items:center; justify-content:space-between; gap: 12px; flex-wrap: wrap; }
+  .screenhead b { font-size: 14px; }
+  .screenhead a.openlink { font-size: 12px; font-family: var(--f-mono); color: var(--indigo); text-decoration: none; white-space: nowrap; }
+  .screenhead a.openlink:hover { text-decoration: underline; }
 
-  /* component cards */
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-  }
-  @media (max-width: 560px) { .cards { grid-template-columns: 1fr; } }
-  .card {
-    border: 1px solid var(--hair);
-    border-radius: 8px;
-    padding: 18px 18px 16px;
-    background: var(--surface);
-  }
-  .card .tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11.5px;
-    color: var(--accent);
-    letter-spacing: 0.06em;
-    margin-bottom: 10px;
-  }
-  .card .tag .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--accent);
-    flex: none;
-  }
-  .card h3 {
-    font-family: var(--font-body);
-    font-weight: 700;
-    font-size: 15.5px;
-    margin: 0 0 8px;
-  }
-  .card p {
-    font-size: 14px;
-    color: var(--ink-soft);
-    margin: 0 0 10px;
-  }
-  .card .kv {
-    font-family: var(--font-mono);
-    font-size: 12.5px;
-    color: var(--ink);
-    background: var(--accent-soft);
-    border-radius: 5px;
-    padding: 6px 9px;
-    display: inline-block;
-    font-variant-numeric: tabular-nums;
-  }
+  /* ---- ステータス ---- */
+  .statuslist { display:flex; flex-direction:column; border-top:1px solid var(--hair); margin-top:6px; }
+  .statusrow { display:grid; grid-template-columns: 20px 1fr auto; gap: 12px; align-items:start; padding: 12px 0; border-bottom: 1px solid var(--hair); }
+  .statusrow .dot { width:9px; height:9px; border-radius:50%; margin-top:6px; }
+  .statusrow .dot.done { background: var(--moss); }
+  .statusrow .dot.doing { background: var(--clay); }
+  .statusrow .dot.wait { background: var(--ink-soft); opacity:.5; }
+  .statusrow .txt b { display:block; font-size: 14px; }
+  .statusrow .txt span { font-size: 12.5px; color: var(--ink-soft); }
+  .badge { font-size: 10.5px; font-family: var(--f-mono); padding: 3px 9px; border-radius: 100px; white-space:nowrap; height: fit-content; }
+  .badge.done { background: var(--moss-soft); color: var(--moss); }
+  .badge.doing { background: var(--clay-soft); color: var(--clay); }
+  .badge.wait { background: var(--sunken); color: var(--ink-soft); }
 
-  /* status table */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14.5px;
-  }
-  th, td {
-    text-align: left;
-    padding: 11px 10px;
-    border-bottom: 1px solid var(--hair);
-    vertical-align: top;
-  }
-  th {
-    font-weight: 500;
-    color: var(--ink-soft);
-    font-size: 12.5px;
-    letter-spacing: 0.04em;
-  }
-  td.mono, .record-table td:nth-child(2) {
-    font-family: var(--font-mono);
-    font-variant-numeric: tabular-nums;
-    font-size: 13.5px;
-  }
-  .table-wrap { overflow-x: auto; }
+  /* ---- MECE quad ---- */
+  .quad { display:grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin: 16px 0 8px; }
+  @media (max-width: 900px) { .quad { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .quad { grid-template-columns: 1fr; } }
+  .qbox { border-radius:10px; padding: 14px 15px; border:1.5px solid var(--hair); background: var(--surface); }
+  .qbox .qhead { display:flex; align-items:center; justify-content:space-between; margin-bottom:7px; gap:6px; }
+  .qbox .qhead b { font-size:13px; }
+  .qbox .qstat { font-family:var(--f-mono); font-size:9.5px; border-radius:100px; padding:2px 8px; white-space:nowrap; }
+  .qbox.ok { border-color: rgba(76,107,82,.4); } .qbox.ok .qstat { background: var(--moss-soft); color: var(--moss); }
+  .qbox.partial { border-color: var(--clay); } .qbox.partial .qstat { background: var(--clay-soft); color: var(--clay); }
+  .qbox.gap { border-color: rgba(178,58,46,.5); } .qbox.gap .qstat { background: var(--red-soft); color: var(--red); }
+  .qbox p { font-size:12px; color:var(--ink-soft); margin:0 0 5px; }
+  .qbox .items { font-size:11px; line-height:1.75; }
+  .qbox .items .miss { color: var(--red); font-weight:700; }
 
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 3px 10px;
-    border-radius: 100px;
-    font-size: 12.5px;
-    font-weight: 500;
-    white-space: nowrap;
-  }
-  .badge.done { background: var(--good-soft); color: var(--good); }
-  .badge.pending { background: var(--warn-soft); color: var(--warn); }
+  /* ---- DB layer cards ---- */
+  .layerlist { display:flex; flex-direction:column; gap: 10px; margin: 16px 0; }
+  .layer { display:grid; grid-template-columns: 34px 200px 1fr; gap: 14px; align-items:start; background: var(--surface); border:1px solid var(--hair); border-radius: 10px; padding: 14px 16px; }
+  @media (max-width: 720px) { .layer { grid-template-columns: 1fr; } }
+  .layer .lnum { font-family: var(--f-mono); font-size: 14px; font-weight:700; color: var(--indigo); }
+  .layer .lname { font-family: var(--f-mono); font-size: 13px; font-weight:700; }
+  .layer .lname small { display:block; font-family: var(--f-body); font-weight:400; color: var(--ink-soft); font-size: 11.5px; margin-top:3px; }
+  .layer .ldesc { font-size: 13px; color: var(--ink-soft); }
+  .layer.core { border-color: var(--indigo); }
+  .layer.pii { border-color: var(--red); }
 
-  .record-table td:first-child { color: var(--ink-soft); width: 34%; }
+  /* ---- 決定ログ ---- */
+  .declist { display:flex; flex-direction:column; gap: 10px; }
+  .decitem { background: var(--surface); border:1px solid var(--hair); border-left: 4px solid var(--moss); border-radius: 8px; padding: 13px 16px; }
+  .decitem.open { border-left-color: var(--clay); }
+  .decitem b { display:block; font-size: 13.5px; margin-bottom: 3px; }
+  .decitem span { font-size: 12.5px; color: var(--ink-soft); }
+  .decitem .tag { display:inline-block; font-family: var(--f-mono); font-size: 9.5px; border-radius: 100px; padding: 2px 8px; margin-left: 6px; vertical-align: 1px; }
+  .decitem:not(.open) .tag { background: var(--moss-soft); color: var(--moss); }
+  .decitem.open .tag { background: var(--clay-soft); color: var(--clay); }
 
-  .note {
-    margin-top: 40px;
-    padding: 16px 18px;
-    background: var(--warn-soft);
-    border-radius: 8px;
-    font-size: 14px;
-    color: var(--ink);
-  }
-  .note strong { color: var(--warn); }
+  /* ---- 用語 ---- */
+  .glossary { display:flex; flex-direction:column; border-top:1px solid var(--hair); }
+  .gterm { display:grid; grid-template-columns: 190px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--hair); }
+  @media (max-width: 620px) { .gterm { grid-template-columns: 1fr; gap: 3px; } }
+  .gterm dt { font-weight: 700; font-size: 13.5px; font-family: var(--f-mono); }
+  .gterm dd { margin: 0; font-size: 13px; color: var(--ink-soft); }
 
-  footer.bottom {
-    margin-top: 64px;
-    padding-top: 20px;
-    border-top: 1px solid var(--hair);
-    font-size: 12.5px;
-    color: var(--ink-soft);
-  }
+  .peoplegrid { display:grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+  @media (max-width: 600px) { .peoplegrid { grid-template-columns: 1fr; } }
+  .person { background: var(--surface); border:1px solid var(--hair); border-radius: 10px; padding: 12px 14px; }
+  .person b { display:block; font-size: 13.5px; } .person span { font-size: 12px; color: var(--ink-soft); }
+
+  .callout { background: var(--indigo-soft); border-radius: 10px; padding: 15px 17px; font-size: 13.5px; margin-top: 14px; }
+  .callout b { color: var(--indigo); }
+  .callout.warn { background: var(--red-soft); }
+  .callout.warn b { color: var(--red); }
+
+  footer.bottom { max-width: 1100px; margin: 60px auto 0; padding: 18px 22px; border-top: 1px solid var(--hair); font-size: 12px; color: var(--ink-soft); }
 </style>
+</head>
+<body>
 
-<div class="page">
+<header class="top">
+  <div class="mast">
+    <div class="kicker"><span>OZU555 大洲市 関係人口づくり</span><span class="line"></span><span>設計資料・2026年9月10日更新</span></div>
+    <h1 class="title">大洲カンパニーLINE ― 設計資料</h1>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button data-tab="overview" class="active">概要</button>
+    <button data-tab="rally">あいさつラリー</button>
+    <button data-tab="richmenu">リッチメニュー</button>
+    <button data-tab="db">データベース設計</button>
+    <button data-tab="decisions">意思決定ログ</button>
+    <button data-tab="glossary">用語集</button>
+  </nav>
+</header>
 
-  <header class="top">
-    <div class="eyebrow">OZU555 関係人口づくり ・ 2026年8月30日</div>
-    <h1>大洲カンパニー本番LINE、器のしくみ</h1>
-    <p class="lede">今日つくったのは、会員証システムをつなぐ前の「器」。プロバイダーという親フォルダの中に、ボット用とログイン用、2つの入口をつくりました。この2つが同じ親フォルダに入っていることが、あとで会員IDを一本にまとめられるかどうかを決めます。</p>
-  </header>
+<main>
 
-  <section id="structure">
-    <h2><span class="num">01</span>全体のかたち</h2>
-    <p class="section-lede">「プロバイダー」は、複数のチャネル（入口）をまとめる親フォルダです。会員一人ひとりに振られるIDは、このプロバイダーという単位でひとつに決まります。だからこそ、ボットの入口とログインの入口を、同じプロバイダーの中に作ることが絶対条件でした。</p>
+  <!-- ============ 概要 ============ -->
+  <div class="panel active" id="panel-overview">
 
-    <figure class="diagram">
-      <svg viewBox="0 0 760 300" role="img" aria-label="正しい構成では同じプロバイダーの中にBotチャネルとLINEログインチャネルが入り会員IDが一本化される。NG構成では別々のプロバイダーに分かれてしまい会員IDが分裂し統合できなくなる。">
-        <defs>
-          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"></path>
-          </marker>
-        </defs>
+    <section>
+      <div class="eyebrow">はじめに<span class="line"></span></div>
+      <h2>なぜLINEを作っているのか</h2>
+      <p class="lede">大洲のまちに関わりたい人が集まる場所として、LINEの公式アカウント「大洲カンパニー」を作っています。このページは、ここまでに決めた内容をすべて一箇所にまとめ、実際にユーザーが触る画面をそのまま動かして確認できるようにしたものです。</p>
+      <p>「OZU555」は、大洲市の外にいる人も含めて、大洲のまちに関わってくれる人（関係人口）を増やしていくプロジェクトです。まちに興味を持った人が、旅行者から一歩進んで、大洲を応援したり、実際に手伝ったり、いずれ移住したりする——そのきっかけになる場所として、このLINEアカウントを用意しています。多くの人がすでに使い慣れているLINEを選ぶことで、新しいアプリを入れてもらう必要がなく、友だち追加ひとつで大洲とつながれます。</p>
+      <p class="note">アカウント・チャネル作成そのものの記録（2026年8月30日時点）は <a href="provisioning.html">こちらの記録ページ</a> にまとめています。</p>
+    </section>
 
-        <text x="165" y="22" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">正しい構成（今日つくった方法）</text>
-        <text x="580" y="22" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">NG構成（絶対に避ける）</text>
+    <section>
+      <div class="eyebrow">全体のつくり<span class="line"></span></div>
+      <h2>3つの部品でできています</h2>
+      <div class="triad">
+        <div class="box"><div class="ic">💬</div><h4>LINEのアカウント</h4><p>お客さまとの接点。友だち追加、メッセージのやり取り、画面下のメニューが表示される場所。</p></div>
+        <div class="box"><div class="ic">🗂️</div><h4>会員の台帳（D1データベース）</h4><p>誰が友だち追加したか、何に興味があるかを記録する場所。個人情報の扱い方をここで細かく設計。</p></div>
+        <div class="box"><div class="ic">📦</div><h4>資料の置き場（R2ストレージ）</h4><p>555プロジェクトの写真や議事録の置き場。将来AIが読んで自動応答する構想あり。</p></div>
+      </div>
+      <p class="note">この3つは、Cloudflare（Workers／D1／R2）という外部の仕組みの上で、一般社団法人キタ・マネジメント（KM）の名義で動かしています。裏側のプログラムはバリューマネジメント（VM）の丸岡さんが設計・実装しています。</p>
+    </section>
 
-        <!-- LEFT: correct -->
-        <rect x="20" y="42" width="290" height="228" rx="10" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 4"></rect>
-        <text x="34" y="62" font-size="11.5" fill="currentColor" opacity="0.75">プロバイダー：キタ・マネジメント</text>
+    <section>
+      <div class="eyebrow">現在地<span class="line"></span></div>
+      <h2>今どこまで進んでいるか</h2>
+      <div class="statuslist">
+        <div class="statusrow"><div class="dot done"></div><div class="txt"><b>LINEアカウント本体の作成</b><span>公式アカウント・会員証用の仕組みまで作成済み</span></div><span class="badge done">完了</span></div>
+        <div class="statusrow"><div class="dot done"></div><div class="txt"><b>会員の台帳（DB）の5層設計・動作確認</b><span>ローカルSQLiteでマイグレーション適用まで検証済み（下記「データベース設計」参照）</span></div><span class="badge done">完了</span></div>
+        <div class="statusrow"><div class="dot doing"></div><div class="txt"><b>あいさつラリー（登録アンケート）の内容確認</b><span>9問への改訂案は固まったが、実装（自由記述の受け止め方）は未着手</span></div><span class="badge doing">確認中</span></div>
+        <div class="statusrow"><div class="dot doing"></div><div class="txt"><b>リッチメニューの構成確認</b><span>「仕事で関わる」「会員情報について」「困ったときは」を追加提案中</span></div><span class="badge doing">確認中</span></div>
+        <div class="statusrow"><div class="dot wait"></div><div class="txt"><b>本番環境への反映（デプロイ・マイグレーション適用）</b><span>丸岡さん同席の上で実施。後戻りできない操作のため、単独では実施しない</span></div><span class="badge wait">未着手</span></div>
+        <div class="statusrow"><div class="dot wait"></div><div class="txt"><b>一般公開（QRコードの配布）</b><span>アカウント名の正式決定・上記の反映が終わってから</span></div><span class="badge wait">未着手</span></div>
+      </div>
+      <div class="callout warn"><b>大事な注意点：</b>QRコードを配って一般の方に使っていただく段階には、まだ入っていません。今はまだ社内でのテストと調整の段階です。</div>
+    </section>
 
-        <rect x="40" y="76" width="250" height="54" rx="6" fill="none" stroke="currentColor"></rect>
-        <text x="165" y="98" text-anchor="middle" font-size="12" fill="currentColor">Messaging APIチャネル</text>
-        <text x="165" y="115" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.7">大洲カンパニー</text>
+    <section>
+      <div class="eyebrow">体制<span class="line"></span></div>
+      <h2>かかわっている人</h2>
+      <div class="peoplegrid">
+        <div class="person"><b>三好飛鳥</b><span>一般社団法人キタ・マネジメント（KM）／実務・運用担当</span></div>
+        <div class="person"><b>丸岡直樹</b><span>バリューマネジメント（VM）／裏側のプログラム設計担当</span></div>
+        <div class="person"><b>久世さん</b><span>行政側／地域団体・企業との連携窓口</span></div>
+        <div class="person"><b>フクヤマさん</b><span>ブランディング／名称・デザインの確定を担当</span></div>
+      </div>
+    </section>
 
-        <rect x="40" y="146" width="250" height="54" rx="6" fill="none" stroke="currentColor"></rect>
-        <text x="165" y="168" text-anchor="middle" font-size="12" fill="currentColor">LINEログインチャネル</text>
-        <text x="165" y="185" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.7">大洲カンパニー会員証</text>
+  </div>
 
-        <line x1="150" y1="130" x2="163" y2="228" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#arrow)"></line>
-        <line x1="185" y1="200" x2="169" y2="228" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#arrow)"></line>
-        <circle cx="165" cy="240" r="13" fill="var(--accent)"></circle>
-        <text x="165" y="263" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--accent)">同じ会員ID</text>
+  <!-- ============ あいさつラリー ============ -->
+  <div class="panel" id="panel-rally">
+    <section>
+      <div class="eyebrow">実際に触れる画面<span class="line"></span></div>
+      <h2>あいさつラリー（友だち追加直後の会話）</h2>
+      <p>友だち追加した直後に始まる、9問のあいさつラリーをそのまま動かせます。ボタンで実際に選んで進めてください。右側に「裏側でどの項目として記録されるか」がリアルタイムで表示されます。回答はどこにも保存されず、ページを離れると消えます。</p>
+      <div class="screenwrap">
+        <div class="screenhead">
+          <b>あいさつラリー動作確認</b>
+          <a class="openlink" href="rally.html" target="_blank" rel="noopener">別タブで開く ↗</a>
+        </div>
+        <iframe src="rally.html" height="900" loading="lazy" title="あいさつラリー動作確認"></iframe>
+      </div>
+    </section>
+  </div>
 
-        <!-- RIGHT: wrong -->
-        <rect x="400" y="42" width="140" height="100" rx="10" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 4"></rect>
-        <text x="410" y="60" font-size="11" fill="currentColor" opacity="0.75">プロバイダーA</text>
-        <rect x="412" y="70" width="116" height="54" rx="6" fill="none" stroke="currentColor"></rect>
-        <text x="470" y="93" text-anchor="middle" font-size="10.5" fill="currentColor">Messaging API</text>
-        <text x="470" y="108" text-anchor="middle" font-size="10.5" fill="currentColor">チャネル</text>
+  <!-- ============ リッチメニュー ============ -->
+  <div class="panel" id="panel-richmenu">
+    <section>
+      <div class="eyebrow">実際に触れる画面<span class="line"></span></div>
+      <h2>リッチメニュー（トーク画面下部のボタン）</h2>
+      <p>友だち追加後、常に画面下に固定表示されるボタンメニューです。「街を知る」「街に関わる」は実際には外部ページへ遷移する設計のため案内のみ表示されますが、「仕事で関わる」「会員情報について」「困ったときは」はボットが会話で応答する新設項目のため、実際に押して流れを確認できます。ページ内にはMECE点検（モレなくダブりなく行った抜け漏れチェック）の結果と、全画面の遷移図も含まれています。</p>
+      <div class="screenwrap">
+        <div class="screenhead">
+          <b>リッチメニュー動作確認</b>
+          <a class="openlink" href="richmenu.html" target="_blank" rel="noopener">別タブで開く ↗</a>
+        </div>
+        <iframe src="richmenu.html" height="2600" loading="lazy" title="リッチメニュー動作確認"></iframe>
+      </div>
+    </section>
+  </div>
 
-        <rect x="580" y="42" width="140" height="100" rx="10" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 4"></rect>
-        <text x="590" y="60" font-size="11" fill="currentColor" opacity="0.75">プロバイダーB</text>
-        <rect x="592" y="70" width="116" height="54" rx="6" fill="none" stroke="currentColor"></rect>
-        <text x="650" y="93" text-anchor="middle" font-size="10.5" fill="currentColor">LINEログイン</text>
-        <text x="650" y="108" text-anchor="middle" font-size="10.5" fill="currentColor">チャネル</text>
+  <!-- ============ データベース設計 ============ -->
+  <div class="panel" id="panel-db">
+    <section>
+      <div class="eyebrow">個人情報を安全に扱うための設計<span class="line"></span></div>
+      <h2>会員データベース：5層＋αに分ける設計</h2>
+      <p>「消してほしい」という依頼が来たときに、必要な部分だけを確実に消せるようにするため、集める情報の性質ごとにテーブルを分けています。特に<strong>本人を特定できる情報（氏名・第三者の名前など）</strong>と、<strong>統計的な属性情報</strong>を、はっきり別の場所に保管するのが設計の核です。</p>
 
-        <line x1="470" y1="124" x2="470" y2="158" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#arrow)"></line>
-        <line x1="650" y1="124" x2="650" y2="158" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#arrow)"></line>
-        <circle cx="470" cy="170" r="10" fill="var(--warn)"></circle>
-        <circle cx="650" cy="170" r="10" fill="var(--warn)"></circle>
-        <text x="470" y="196" text-anchor="middle" font-size="11" fill="var(--warn)">ID: X</text>
-        <text x="650" y="196" text-anchor="middle" font-size="11" fill="var(--warn)">ID: Y</text>
-
-        <line x1="483" y1="170" x2="637" y2="170" stroke="var(--warn)" stroke-opacity="0.5" stroke-dasharray="3 4"></line>
-        <text x="560" y="176" text-anchor="middle" font-size="16" fill="var(--warn)">✕</text>
-        <text x="560" y="222" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--warn)">IDが分裂・あとで統合不可</text>
-      </svg>
-      <figcaption>同じプロバイダーの中に2つのチャネルを作れば会員IDはひとつに決まる。別のプロバイダーに分けてしまうと、あとから同じ人だと判別できなくなる。</figcaption>
-    </figure>
-  </section>
-
-  <section id="parts">
-    <h2><span class="num">02</span>今日つくった部品</h2>
-    <p class="section-lede">それぞれが何のためにあるかを、もう一度整理しておきます。</p>
-
-    <div class="cards">
-      <div class="card">
-        <div class="tag"><span class="dot"></span>親フォルダ</div>
-        <h3>プロバイダー</h3>
-        <p>アカウント群を入れる箱。会員IDが発行される単位。名前もこの箱自体も、あとから変更・引っ越しができない。</p>
-        <span class="kv">一般社団法人キタ・マネジメント</span>
+      <div class="layerlist">
+        <div class="layer core">
+          <div class="lnum">core</div>
+          <div class="lname">members<small>会員マスタ</small></div>
+          <div class="ldesc">LINEの内部ID・友だち追加日・会員ステージ（見込み→登録済みなど）を持つ、すべての土台となるテーブル。氏名などのPIIはここには置かない。</div>
+        </div>
+        <div class="layer pii">
+          <div class="lnum">①</div>
+          <div class="lname">member_pii<small>個人特定情報</small></div>
+          <div class="ldesc">表示名（ニックネーム）・メールアドレスのみ。これだけで「その人だと分かってしまう」情報を最小限に絞り込んだテーブル。削除依頼が来たら最優先でここを消す。</div>
+        </div>
+        <div class="layer">
+          <div class="lnum">②</div>
+          <div class="lname">member_attributes<small>非PII属性</small></div>
+          <div class="ldesc">大洲との関係・お住まい区分/詳細・年代・出身・趣味・今後やりたいことなど。単体では個人を特定しにくい統計的な属性情報。</div>
+        </div>
+        <div class="layer pii">
+          <div class="lnum">③</div>
+          <div class="lname">member_referrals<small>第三者情報</small></div>
+          <div class="ldesc">紹介者のお名前・推しに関する自由記述メモなど、本人以外の名前が入り得る自由記述。member_piiとは別枠にして、削除範囲を明確に区切っている。</div>
+        </div>
+        <div class="layer">
+          <div class="lnum">④</div>
+          <div class="lname">member_tags<small>複数選択タグ</small></div>
+          <div class="ldesc">関わり方の希望など、複数選択されうる項目をタグとして持つテーブル。</div>
+        </div>
+        <div class="layer">
+          <div class="lnum">⑤</div>
+          <div class="lname">events<small>追記専用ログ</small></div>
+          <div class="ldesc">「いつ・何をしたか」を追記するだけのログ。冪等キー（idempotency_key）で二重記録を防止。</div>
+        </div>
       </div>
 
-      <div class="card">
-        <div class="tag"><span class="dot"></span>ボットの入口</div>
-        <h3>Messaging APIチャネル</h3>
-        <p>ユーザーが「友だち追加」してメッセージのやり取りをする窓口。表示名や配信はここから。</p>
-        <span class="kv">大洲カンパニー ／ @478jcakq</span>
+      <h3>この設計で担保していること</h3>
+      <div class="quad">
+        <div class="qbox ok"><div class="qhead"><b>集めすぎない</b><span class="qstat">徹底</span></div><p>本名・住所・電話番号は聞かない。ニックネームのみで参加可能。</p></div>
+        <div class="qbox ok"><div class="qhead"><b>混ぜない</b><span class="qstat">テーブル分離</span></div><p>特定情報（①③）と統計情報（②④）を物理的に別テーブルに保管。</p></div>
+        <div class="qbox ok"><div class="qhead"><b>消せる</b><span class="qstat">削除範囲を限定</span></div><p>削除依頼時は①③を中心に消去。②④はサービス改善のための統計として匿名的に残せる設計。</p></div>
+        <div class="qbox partial"><div class="qhead"><b>テストデータ分離</b><span class="qstat">未決</span></div><p>本番DBでの社内テスト時、後で消し忘れないための仕組み（is_testフラグ等）は未決定。下記「意思決定ログ」参照。</p></div>
       </div>
 
-      <div class="card">
-        <div class="tag"><span class="dot"></span>会員証の入口</div>
-        <h3>LINEログインチャネル</h3>
-        <p>将来つくる会員証画面が、ユーザー本人を確認するための窓口。今日はチャネルを作るところまで。</p>
-        <span class="kv">大洲カンパニー会員証</span>
+      <h3>実装の検証（2026年9月10日）</h3>
+      <p class="note">この5層への再編は、既存の13カラムを持つ単一の<code>member_pii</code>テーブルを分割するマイグレーション（<code>0005_p1c_layered_pii.sql</code>）として設計。ローカルのSQLite 3.50.4で0001〜0005を通しで適用し、成功することを確認済み。適用中に「<code>ALTER TABLE ... RENAME TO</code>がスキーマ内の関連トリガー／ビューをすべて再検証する」という非公開の仕様上の落とし穴（一時的にテーブルが存在しない瞬間にトリガー再コンパイルが失敗する）を実機テストで発見し、回避策をマイグレーションファイル自体にコメントで明記済み。D1側の最終確認は丸岡さんに依頼。</p>
+    </section>
+  </div>
+
+  <!-- ============ 意思決定ログ ============ -->
+  <div class="panel" id="panel-decisions">
+    <section>
+      <div class="eyebrow">MECE：決定領域ごとに整理<span class="line"></span></div>
+      <h2>ここまでの意思決定を、5つの領域で網羅する</h2>
+      <p class="lede">「①データ設計 ②運用体制 ③コンテンツ・UX ④公開判断 ⑤未決事項」の5つに、モレなくダブりなく分けています。①〜④は「決定済み」、⑤は「まだ決まっていない」ことを意図的に集めた領域です。</p>
+
+      <h3>① データ設計に関する決定</h3>
+      <div class="declist">
+        <div class="decitem"><b>会員DBを5層＋αに分離する<span class="tag">決定</span></b><span>本人特定情報（氏名・第三者の名前）と統計的属性を別テーブルに分け、削除依頼時に必要な範囲だけを確実に消せるようにする。詳細は「データベース設計」タブ参照。</span></div>
+        <div class="decitem"><b>退会・削除時は member_pii／member_referrals を優先的に削除<span class="tag">決定</span></b><span>本人特定情報を含むテーブルから消す。member_attributes 等は統計目的のため残す方針（要：丸岡さんとの最終合意）。</span></div>
       </div>
 
-      <div class="card">
-        <div class="tag"><span class="dot"></span>合言葉</div>
-        <h3>鍵2本（Channel secret／長期アクセストークン）</h3>
-        <p>丸岡さん側のシステムが、このアカウントとして自動でやり取りするための合言葉。値そのものはKMのパスワード管理に保管済み。</p>
-        <span class="kv">保管場所：KMパスワード管理</span>
+      <h3>② 運用体制に関する決定</h3>
+      <div class="declist">
+        <div class="decitem"><b>管理者トークンの保持者を明確化<span class="tag">決定</span></b><span>README_HANDOVER.md に記載。運用開始前に丸岡さんと最終確認。</span></div>
+        <div class="decitem"><b>削除依頼の受付フロー<span class="tag">決定</span></b><span>「消してほしい」とトークに送ってもらい、事務局（KM）が確認のうえ削除する運用とする。通知だけ止めたい場合はブロックのみで足りる旨も案内する。</span></div>
+        <div class="decitem"><b>異常通知の送信先を Discord からメールへ変更<span class="tag">決定</span></b><span>Cloudflare Email Service（Resend）経由に切り替え。kernel.js の notify() を改修済み。</span></div>
       </div>
-    </div>
-  </section>
 
-  <section id="status">
-    <h2><span class="num">03</span>今の設定状態</h2>
-    <p class="section-lede">応答設定（manager.line.biz）の現在地です。</p>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>設定項目</th><th>状態</th><th>補足</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>あいさつメッセージ</td>
-            <td><span class="badge done">オン</span></td>
-            <td>文面は仮。丸岡さんOKの文面へ後日差し替え予定</td>
-          </tr>
-          <tr>
-            <td>応答メッセージ</td>
-            <td><span class="badge done">オフ</span></td>
-            <td>LINE標準の定型文とシステム返信の二重送信を防ぐため</td>
-          </tr>
-          <tr>
-            <td>Webhook</td>
-            <td><span class="badge pending">未設定</span></td>
-            <td>URLを入れるまではオンにできない仕様。受け口確定後に設定</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+      <h3>③ コンテンツ・UXに関する決定</h3>
+      <div class="declist">
+        <div class="decitem"><b>あいさつラリーを2問から9問構成に改訂<span class="tag">決定</span></b><span>推し・大洲との関係・お住まい（都道府県・市町まで完全選択式）・年代・関わり方の希望・紹介元・紹介者名（自由記述）の順。文言の細部は「あいさつラリー」タブで実際に確認可能。</span></div>
+        <div class="decitem"><b>住所入力を自由記述からボタン選択方式へ変更<span class="tag">決定</span></b><span>愛媛県内19市町・県外8地方47都道府県をすべて網羅した選択式に統一。</span></div>
+        <div class="decitem"><b>リッチメニューに「仕事で関わる」を新設<span class="tag">決定</span></b><span>8/30-31議事録の「知らない相手からの営業リスク」懸念を踏まえ、あえて間口を絞った文言（顔の見える関係を優先する案内）を採用。</span></div>
+        <div class="decitem"><b>リッチメニューに「会員情報について」を新設<span class="tag">決定</span></b><span>登録内容の確認・更新・退会案内をこのバーに集約。</span></div>
+        <div class="decitem"><b>FAQの重複ボタン・行き止まり画面を修正<span class="tag">決定</span></b><span>「数字でみる大洲」の自己参照バグを解消。個人情報・お問い合わせ画面に共通クイックリプライを追加し、行き止まりを解消。</span></div>
+      </div>
 
-  <section id="todo">
-    <h2><span class="num">04</span>このあとの宿題</h2>
-    <div class="table-wrap">
-      <table>
-        <tbody>
-          <tr>
-            <td>Webhook URLの設定</td>
-            <td><span class="badge pending">保留</span></td>
-            <td>丸岡さんと受け口を決めてから</td>
-          </tr>
-          <tr>
-            <td>あいさつメッセージの文面差し替え</td>
-            <td><span class="badge pending">保留</span></td>
-            <td>丸岡さんOKの文面が決まり次第</td>
-          </tr>
-          <tr>
-            <td>管理者2人目の追加</td>
-            <td><span class="badge pending">未対応</span></td>
-            <td>manager.line.biz と developers.line.biz の両方に同じ人を追加</td>
-          </tr>
-          <tr>
-            <td>LIFFアプリの追加（会員証画面）</td>
-            <td><span class="badge pending">未対応</span></td>
-            <td>LINEログインチャネルの中に、後日追加</td>
-          </tr>
-          <tr>
-            <td>認証申請（緑バッジ）</td>
-            <td><span class="badge pending">保留</span></td>
-            <td>アカウント名の正式決定を待ってから提出</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+      <h3>④ 公開判断に関する決定</h3>
+      <div class="declist">
+        <div class="decitem"><b>「後戻りできない操作」の手前まで単独で進めてよい<span class="tag">決定</span></b><span>2026年9月10日の丸岡さんとのミーティングで承認。デプロイ・シークレット投入・Webhook接続・本番マイグレーション適用は、必ず丸岡さん同席で実施する。</span></div>
+      </div>
 
-  <section id="record">
-    <h2><span class="num">05</span>記録データ</h2>
-    <div class="table-wrap">
-      <table class="record-table">
-        <tbody>
-          <tr><td>共有メール</td><td>kita-management@kita-m.com</td></tr>
-          <tr><td>OA名</td><td>大洲カンパニー（未認証）</td></tr>
-          <tr><td>ベーシックID</td><td>@478jcakq</td></tr>
-          <tr><td>ビジネスマネージャー組織名</td><td>一般社団法人キタ・マネジメント</td></tr>
-          <tr><td>プロバイダー名</td><td>一般社団法人キタ・マネジメント</td></tr>
-          <tr><td>Messaging APIチャネルID</td><td>2011331444</td></tr>
-          <tr><td>LINEログインチャネルID</td><td>2011331543</td></tr>
-          <tr><td>施設住所・電話</td><td>〒795-0012 愛媛県大洲市大洲649番地1 大洲まちの駅あさもや２F ／ 0893-24-7060</td></tr>
-          <tr><td>申込者</td><td>三好飛鳥 ／ kita-management@kita-m.com</td></tr>
-          <tr><td>Webサイト</td><td>https://kita-m.com/</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+      <h3>⑤ まだ決まっていないこと（未決事項）</h3>
+      <div class="declist">
+        <div class="decitem open"><b>「困ったときは」を横長バーのままにするか、3つ目のタブに分けるか<span class="tag">未決</span></b><span>MECE点検で発見した「サポート系の入口ゼロ」問題への対応案。画像デザイン（フクヤマさん）と会話ロジック（丸岡さん）の両方に関わるため未決定。</span></div>
+        <div class="decitem open"><b>本番DBでの社内テスト時のデータ分離方法<span class="tag">未決</span></b><span>専用ステージング環境を作らない前提のため、テスト用の会員データが本番DBに混ざる。手動での事後削除か、is_testフラグの追加かを検討中。</span></div>
+        <div class="decitem open"><b>「会員情報について」フィールド更新・紹介者名の自由記述の実装方式<span class="tag">未決</span></b><span>「入力待ち」状態をボット側でどう管理するか（新しい状態管理の仕組みが必要）。丸岡さんとの設計セッションで決定予定。プロトタイプ（あいさつラリー・リッチメニューの各タブ）が仕様書代わり。</span></div>
+        <div class="decitem open"><b>推し語彙・dormant_at判定ロジック・route_sourceの将来利用<span class="tag">未決</span></b><span>細部の文言・休眠判定の閾値・友だち追加経路データの活用要否は未検討。</span></div>
+      </div>
+    </section>
+  </div>
 
-  <div class="note"><strong>値そのものはここに載せていません。</strong> Channel secret・長期アクセストークンは、このページを含むどこにも書かず、KMのパスワード管理だけで保管してください。</div>
+  <!-- ============ 用語集 ============ -->
+  <div class="panel" id="panel-glossary">
+    <section>
+      <div class="eyebrow">用語集<span class="line"></span></div>
+      <h2>出てきた言葉の説明</h2>
+      <dl class="glossary">
+        <div class="gterm"><dt>OZU555</dt><dd>大洲市が2030年に向けて進めている、まちづくりの大きなプロジェクトの名前</dd></div>
+        <div class="gterm"><dt>関係人口</dt><dd>そのまちに住んでいなくても、いろいろな形で関わり続けてくれる人たちのこと</dd></div>
+        <div class="gterm"><dt>公式アカウント</dt><dd>企業や団体がLINEで運用する、お知らせ配信や問い合わせ対応ができる専用アカウント</dd></div>
+        <div class="gterm"><dt>リッチメニュー</dt><dd>LINEのトーク画面下部に固定で表示される、ボタン形式のメニュー</dd></div>
+        <div class="gterm"><dt>クイックリプライ</dt><dd>会話の直後に一時的に表示される、選択肢ボタン（最大13個、次のやり取りで消える）</dd></div>
+        <div class="gterm"><dt>LIFF（会員証）</dt><dd>ニックネームなどを登録すると使えるようになる、LINE上で完結する簡単な会員登録の仕組み</dd></div>
+        <div class="gterm"><dt>Cloudflare Workers</dt><dd>LINEの裏側でプログラム（会話の分岐処理など）を動かしている外部サービス</dd></div>
+        <div class="gterm"><dt>D1</dt><dd>Cloudflareが提供する、会員台帳（データベース）の保存先</dd></div>
+        <div class="gterm"><dt>R2</dt><dd>Cloudflareが提供する、写真や議事録などのファイル置き場</dd></div>
+        <div class="gterm"><dt>マイグレーション</dt><dd>データベースの構造（テーブルの列など）を変更するための、順番に適用する設計変更の手順書</dd></div>
+        <div class="gterm"><dt>PII（個人識別情報）</dt><dd>氏名・連絡先など、それ単体で本人を特定できる情報のこと</dd></div>
+        <div class="gterm"><dt>MECE（ミーシー）</dt><dd>「モレなく、ダブりなく」物事を整理する考え方。このページの構成や意思決定ログの整理に使用</dd></div>
+        <div class="gterm"><dt>キタ・マネジメント（KM）</dt><dd>本プロジェクトを運営する一般社団法人。三好さんが所属</dd></div>
+        <div class="gterm"><dt>バリューマネジメント（VM）</dt><dd>裏側のプログラム開発を担当する、丸岡さんが所属する会社</dd></div>
+      </dl>
+    </section>
+  </div>
 
-  <footer class="bottom">
-    一般社団法人キタ・マネジメント ／ OZU555 関係人口づくり ／ 2026年8月30日時点の記録
-  </footer>
+</main>
 
-</div>
+<footer class="bottom">
+  本資料は2026年9月10日時点の内容です。今後の進捗にあわせて更新します。／お問い合わせ：三好飛鳥（一般社団法人キタ・マネジメント）
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('#tabs button');
+  const panels = document.querySelectorAll('.panel');
+  function activate(name) {
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    panels.forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
+    history.replaceState(null, '', '#' + name);
+  }
+  tabs.forEach(t => t.addEventListener('click', () => activate(t.dataset.tab)));
+  const initial = location.hash.replace('#', '');
+  if (initial && document.getElementById('panel-' + initial)) activate(initial);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,436 @@
+<title>大洲カンパニーLINE基盤</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #F7F2E7;
+    --surface: #FCF9F1;
+    --ink: #2B2621;
+    --ink-soft: #71675A;
+    --accent: #2E4A66;
+    --accent-soft: #DEE6EC;
+    --line-brand: #06C755;
+    --good: #3E6B52;
+    --good-soft: #E1EBE4;
+    --warn: #A85A2A;
+    --warn-soft: #F3E4D6;
+    --hair: rgba(43,38,33,0.15);
+
+    --font-display: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --font-body: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1B1815;
+      --surface: #242019;
+      --ink: #EEE7DA;
+      --ink-soft: #AFA593;
+      --accent: #8FB4CF;
+      --accent-soft: #2B3A44;
+      --line-brand: #06C755;
+      --good: #7FB89A;
+      --good-soft: #2A362E;
+      --warn: #D68A52;
+      --warn-soft: #3A2C21;
+      --hair: rgba(238,231,218,0.18);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1B1815;
+    --surface: #242019;
+    --ink: #EEE7DA;
+    --ink-soft: #AFA593;
+    --accent: #8FB4CF;
+    --accent-soft: #2B3A44;
+    --line-brand: #06C755;
+    --good: #7FB89A;
+    --good-soft: #2A362E;
+    --warn: #D68A52;
+    --warn-soft: #3A2C21;
+    --hair: rgba(238,231,218,0.18);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.85;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 24px 96px;
+  }
+
+  header.top {
+    margin-bottom: 48px;
+  }
+  .eyebrow {
+    font-size: 12.5px;
+    color: var(--accent);
+    letter-spacing: 0.14em;
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(28px, 4.4vw, 38px);
+    line-height: 1.4;
+    text-wrap: balance;
+    margin: 0 0 18px;
+  }
+  .lede {
+    color: var(--ink-soft);
+    font-size: 16px;
+    max-width: 62ch;
+    margin: 0;
+  }
+
+  section { margin-top: 56px; }
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 21px;
+    margin: 0 0 8px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  h2 .num {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-weight: 400;
+  }
+  .section-lede {
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0 0 22px;
+    max-width: 64ch;
+  }
+
+  /* diagram */
+  figure.diagram {
+    margin: 0;
+    padding: 22px 20px 18px;
+    background: var(--surface);
+    border: 1px solid var(--hair);
+    border-radius: 8px;
+  }
+  figure.diagram svg { display: block; width: 100%; height: auto; color: var(--ink); }
+  figcaption {
+    margin-top: 14px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--hair);
+    padding-top: 12px;
+  }
+
+  /* component cards */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 560px) { .cards { grid-template-columns: 1fr; } }
+  .card {
+    border: 1px solid var(--hair);
+    border-radius: 8px;
+    padding: 18px 18px 16px;
+    background: var(--surface);
+  }
+  .card .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+  }
+  .card .tag .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    flex: none;
+  }
+  .card h3 {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 15.5px;
+    margin: 0 0 8px;
+  }
+  .card p {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0 0 10px;
+  }
+  .card .kv {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--ink);
+    background: var(--accent-soft);
+    border-radius: 5px;
+    padding: 6px 9px;
+    display: inline-block;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* status table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14.5px;
+  }
+  th, td {
+    text-align: left;
+    padding: 11px 10px;
+    border-bottom: 1px solid var(--hair);
+    vertical-align: top;
+  }
+  th {
+    font-weight: 500;
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    letter-spacing: 0.04em;
+  }
+  td.mono, .record-table td:nth-child(2) {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 13.5px;
+  }
+  .table-wrap { overflow-x: auto; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 12.5px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .badge.done { background: var(--good-soft); color: var(--good); }
+  .badge.pending { background: var(--warn-soft); color: var(--warn); }
+
+  .record-table td:first-child { color: var(--ink-soft); width: 34%; }
+
+  .note {
+    margin-top: 40px;
+    padding: 16px 18px;
+    background: var(--warn-soft);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .note strong { color: var(--warn); }
+
+  footer.bottom {
+    margin-top: 64px;
+    padding-top: 20px;
+    border-top: 1px solid var(--hair);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+</style>
+
+<div class="page">
+
+  <header class="top">
+    <div class="eyebrow">OZU555 関係人口づくり ・ 2026年8月30日</div>
+    <h1>大洲カンパニー本番LINE、器のしくみ</h1>
+    <p class="lede">今日つくったのは、会員証システムをつなぐ前の「器」。プロバイダーという親フォルダの中に、ボット用とログイン用、2つの入口をつくりました。この2つが同じ親フォルダに入っていることが、あとで会員IDを一本にまとめられるかどうかを決めます。</p>
+    <p class="lede" style="margin-top:12px"><a href="index.html">← 最新の設計資料（全体まとめ）に戻る</a></p>
+  </header>
+
+  <section id="structure">
+    <h2><span class="num">01</span>全体のかたち</h2>
+    <p class="section-lede">「プロバイダー」は、複数のチャネル（入口）をまとめる親フォルダです。会員一人ひとりに振られるIDは、このプロバイダーという単位でひとつに決まります。だからこそ、ボットの入口とログインの入口を、同じプロバイダーの中に作ることが絶対条件でした。</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 760 300" role="img" aria-label="正しい構成では同じプロバイダーの中にBotチャネルとLINEログインチャネルが入り会員IDが一本化される。NG構成では別々のプロバイダーに分かれてしまい会員IDが分裂し統合できなくなる。">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <text x="165" y="22" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">正しい構成（今日つくった方法）</text>
+        <text x="580" y="22" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">NG構成（絶対に避ける）</text>
+
+        <!-- LEFT: correct -->
+        <rect x="20" y="42" width="290" height="228" rx="10" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 4"></rect>
+        <text x="34" y="62" font-size="11.5" fill="currentColor" opacity="0.75">プロバイダー：キタ・マネジメント</text>
+
+        <rect x="40" y="76" width="250" height="54" rx="6" fill="none" stroke="currentColor"></rect>
+        <text x="165" y="98" text-anchor="middle" font-size="12" fill="currentColor">Messaging APIチャネル</text>
+        <text x="165" y="115" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.7">大洲カンパニー</text>
+
+        <rect x="40" y="146" width="250" height="54" rx="6" fill="none" stroke="currentColor"></rect>
+        <text x="165" y="168" text-anchor="middle" font-size="12" fill="currentColor">LINEログインチャネル</text>
+        <text x="165" y="185" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.7">大洲カンパニー会員証</text>
+
+        <line x1="150" y1="130" x2="163" y2="228" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#arrow)"></line>
+        <line x1="185" y1="200" x2="169" y2="228" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#arrow)"></line>
+        <circle cx="165" cy="240" r="13" fill="var(--accent)"></circle>
+        <text x="165" y="263" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--accent)">同じ会員ID</text>
+
+        <!-- RIGHT: wrong -->
+        <rect x="400" y="42" width="140" height="100" rx="10" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 4"></rect>
+        <text x="410" y="60" font-size="11" fill="currentColor" opacity="0.75">プロバイダーA</text>
+        <rect x="412" y="70" width="116" height="54" rx="6" fill="none" stroke="currentColor"></rect>
+        <text x="470" y="93" text-anchor="middle" font-size="10.5" fill="currentColor">Messaging API</text>
+        <text x="470" y="108" text-anchor="middle" font-size="10.5" fill="currentColor">チャネル</text>
+
+        <rect x="580" y="42" width="140" height="100" rx="10" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 4"></rect>
+        <text x="590" y="60" font-size="11" fill="currentColor" opacity="0.75">プロバイダーB</text>
+        <rect x="592" y="70" width="116" height="54" rx="6" fill="none" stroke="currentColor"></rect>
+        <text x="650" y="93" text-anchor="middle" font-size="10.5" fill="currentColor">LINEログイン</text>
+        <text x="650" y="108" text-anchor="middle" font-size="10.5" fill="currentColor">チャネル</text>
+
+        <line x1="470" y1="124" x2="470" y2="158" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#arrow)"></line>
+        <line x1="650" y1="124" x2="650" y2="158" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#arrow)"></line>
+        <circle cx="470" cy="170" r="10" fill="var(--warn)"></circle>
+        <circle cx="650" cy="170" r="10" fill="var(--warn)"></circle>
+        <text x="470" y="196" text-anchor="middle" font-size="11" fill="var(--warn)">ID: X</text>
+        <text x="650" y="196" text-anchor="middle" font-size="11" fill="var(--warn)">ID: Y</text>
+
+        <line x1="483" y1="170" x2="637" y2="170" stroke="var(--warn)" stroke-opacity="0.5" stroke-dasharray="3 4"></line>
+        <text x="560" y="176" text-anchor="middle" font-size="16" fill="var(--warn)">✕</text>
+        <text x="560" y="222" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--warn)">IDが分裂・あとで統合不可</text>
+      </svg>
+      <figcaption>同じプロバイダーの中に2つのチャネルを作れば会員IDはひとつに決まる。別のプロバイダーに分けてしまうと、あとから同じ人だと判別できなくなる。</figcaption>
+    </figure>
+  </section>
+
+  <section id="parts">
+    <h2><span class="num">02</span>今日つくった部品</h2>
+    <p class="section-lede">それぞれが何のためにあるかを、もう一度整理しておきます。</p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="tag"><span class="dot"></span>親フォルダ</div>
+        <h3>プロバイダー</h3>
+        <p>アカウント群を入れる箱。会員IDが発行される単位。名前もこの箱自体も、あとから変更・引っ越しができない。</p>
+        <span class="kv">一般社団法人キタ・マネジメント</span>
+      </div>
+
+      <div class="card">
+        <div class="tag"><span class="dot"></span>ボットの入口</div>
+        <h3>Messaging APIチャネル</h3>
+        <p>ユーザーが「友だち追加」してメッセージのやり取りをする窓口。表示名や配信はここから。</p>
+        <span class="kv">大洲カンパニー ／ @478jcakq</span>
+      </div>
+
+      <div class="card">
+        <div class="tag"><span class="dot"></span>会員証の入口</div>
+        <h3>LINEログインチャネル</h3>
+        <p>将来つくる会員証画面が、ユーザー本人を確認するための窓口。今日はチャネルを作るところまで。</p>
+        <span class="kv">大洲カンパニー会員証</span>
+      </div>
+
+      <div class="card">
+        <div class="tag"><span class="dot"></span>合言葉</div>
+        <h3>鍵2本（Channel secret／長期アクセストークン）</h3>
+        <p>丸岡さん側のシステムが、このアカウントとして自動でやり取りするための合言葉。値そのものはKMのパスワード管理に保管済み。</p>
+        <span class="kv">保管場所：KMパスワード管理</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="status">
+    <h2><span class="num">03</span>今の設定状態</h2>
+    <p class="section-lede">応答設定（manager.line.biz）の現在地です。</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>設定項目</th><th>状態</th><th>補足</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>あいさつメッセージ</td>
+            <td><span class="badge done">オン</span></td>
+            <td>文面は仮。丸岡さんOKの文面へ後日差し替え予定</td>
+          </tr>
+          <tr>
+            <td>応答メッセージ</td>
+            <td><span class="badge done">オフ</span></td>
+            <td>LINE標準の定型文とシステム返信の二重送信を防ぐため</td>
+          </tr>
+          <tr>
+            <td>Webhook</td>
+            <td><span class="badge pending">未設定</span></td>
+            <td>URLを入れるまではオンにできない仕様。受け口確定後に設定</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="todo">
+    <h2><span class="num">04</span>このあとの宿題</h2>
+    <div class="table-wrap">
+      <table>
+        <tbody>
+          <tr>
+            <td>Webhook URLの設定</td>
+            <td><span class="badge pending">保留</span></td>
+            <td>丸岡さんと受け口を決めてから</td>
+          </tr>
+          <tr>
+            <td>あいさつメッセージの文面差し替え</td>
+            <td><span class="badge pending">保留</span></td>
+            <td>丸岡さんOKの文面が決まり次第</td>
+          </tr>
+          <tr>
+            <td>管理者2人目の追加</td>
+            <td><span class="badge pending">未対応</span></td>
+            <td>manager.line.biz と developers.line.biz の両方に同じ人を追加</td>
+          </tr>
+          <tr>
+            <td>LIFFアプリの追加（会員証画面）</td>
+            <td><span class="badge pending">未対応</span></td>
+            <td>LINEログインチャネルの中に、後日追加</td>
+          </tr>
+          <tr>
+            <td>認証申請（緑バッジ）</td>
+            <td><span class="badge pending">保留</span></td>
+            <td>アカウント名の正式決定を待ってから提出</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="record">
+    <h2><span class="num">05</span>記録データ</h2>
+    <div class="table-wrap">
+      <table class="record-table">
+        <tbody>
+          <tr><td>共有メール</td><td>kita-management@kita-m.com</td></tr>
+          <tr><td>OA名</td><td>大洲カンパニー（未認証）</td></tr>
+          <tr><td>ベーシックID</td><td>@478jcakq</td></tr>
+          <tr><td>ビジネスマネージャー組織名</td><td>一般社団法人キタ・マネジメント</td></tr>
+          <tr><td>プロバイダー名</td><td>一般社団法人キタ・マネジメント</td></tr>
+          <tr><td>Messaging APIチャネルID</td><td>2011331444</td></tr>
+          <tr><td>LINEログインチャネルID</td><td>2011331543</td></tr>
+          <tr><td>施設住所・電話</td><td>〒795-0012 愛媛県大洲市大洲649番地1 大洲まちの駅あさもや２F ／ 0893-24-7060</td></tr>
+          <tr><td>申込者</td><td>三好飛鳥 ／ kita-management@kita-m.com</td></tr>
+          <tr><td>Webサイト</td><td>https://kita-m.com/</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="note"><strong>値そのものはここに載せていません。</strong> Channel secret・長期アクセストークンは、このページを含むどこにも書かず、KMのパスワード管理だけで保管してください。</div>
+
+  <footer class="bottom">
+    一般社団法人キタ・マネジメント ／ OZU555 関係人口づくり ／ 2026年8月30日時点の記録
+  </footer>
+
+</div>
