@@ -106,31 +106,18 @@
   .cell:hover { background: var(--sunken); }
   .cell .ic { font-size: 18px; line-height:1; }
   .cell .lb { font-size: 10.5px; font-weight:700; color: var(--ink); line-height:1.3; text-align:center; }
-  .cell.new { position:relative; }
-  .cell.new::after {
-    content:"新"; position:absolute; top:3px; right:6px; font-family:var(--f-mono); font-size:8px;
-    background:var(--new); color:#fff; border-radius:3px; padding:1px 3px; line-height:1.3;
-  }
 
-  .memberbar { padding: 8px 10px 4px; border-top:1px solid var(--hair); background: var(--sunken); display:flex; gap:6px; }
+  .memberbar { padding: 8px 10px; border-top:1px solid var(--hair); background: var(--sunken); display:flex; gap:6px; }
   .memberbar button {
     flex:1; min-width:0; font-size:11px; font-weight:700; color: var(--ink); background: var(--panel);
     border:1px solid var(--hair); border-radius:8px; padding:8px 4px; cursor:pointer; font-family: var(--f-body);
   }
-  .memberbar .newtag { display:block; margin:2px 0 0; }
-  .demorow { padding: 4px 10px 8px; background: var(--sunken); }
-  .demorow button {
-    width:100%; font-size:10.5px; font-weight:700; color: var(--tabgreen); background: transparent;
-    border:1px dashed var(--tabgreen); border-radius:8px; padding:7px; cursor:pointer; font-family: var(--f-body);
-  }
-  .demorow button:hover { background: rgba(0,63,152,.06); }
-  .demonote { flex: 1 1 100%; font-size: 11.5px; color: var(--muted); text-align:center; margin: -8px 0 0; }
+  .demonote { flex: 1 1 100%; font-size: 11.5px; color: var(--muted); text-align:center; margin: 8px 0 0; }
 
   .legend { flex: 1 1 320px; min-width: 280px; max-width: 460px; background: var(--panel); border:1px solid var(--hair); border-radius:12px; padding: 16px 18px; box-sizing: border-box; }
   .legend h2 { font-size: 14.5px; margin: 0 0 10px; }
   .legend ul { margin: 0; padding-left: 18px; font-size: 13px; line-height:1.9; color: var(--muted); }
   .legend li b { color: var(--ink); }
-  .legend .newtag { display:inline-block; font-family:var(--f-mono); font-size:10px; background:var(--new-soft); color:var(--new); border-radius:4px; padding:1px 6px; margin-left:4px; }
 
   .flowsection { flex: 1 1 100%; background: var(--panel); border:1px solid var(--hair); border-radius:12px; padding: 20px 22px 24px; box-sizing:border-box; }
   .flowsection h2 { font-size: 16px; margin: 0 0 8px; }
@@ -154,37 +141,6 @@
   .findings { margin-top: 20px; }
   .findings h3 { font-size:14px; margin:0 0 8px; }
   .findings ul { margin:0; padding-left:18px; font-size:13px; line-height:1.9; color: var(--ink); }
-
-  /* ---- MECE点検 ---- */
-  .mecesection { flex: 1 1 100%; background: var(--panel); border:1px solid var(--new); border-radius:12px; padding: 20px 22px 24px; box-sizing:border-box; }
-  .mecesection h2 { font-size: 16px; margin: 0 0 8px; color: var(--new); }
-  .mecesection .flowlede { font-size: 13px; color: var(--muted); margin: 0 0 18px; max-width: 78ch; }
-  .quad { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-  @media (max-width: 640px) { .quad { grid-template-columns: 1fr; } }
-  .qbox { border-radius:10px; padding: 14px 16px; border:1.5px solid var(--hair); }
-  .qbox .qhead { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
-  .qbox .qhead b { font-size:13.5px; }
-  .qbox .qstat { font-family:var(--f-mono); font-size:10px; border-radius:100px; padding:2px 9px; white-space:nowrap; }
-  .qbox.ok { background: rgba(6,199,85,.06); border-color: rgba(6,199,85,.35); }
-  .qbox.ok .qstat { background: rgba(6,199,85,.16); color:#0a7a3d; }
-  .qbox.partial { background: var(--new-soft); border-color: var(--new); }
-  .qbox.partial .qstat { background: rgba(168,98,26,.18); color: var(--new); }
-  .qbox.gap { background: rgba(194,58,46,.07); border-color: rgba(194,58,46,.5); }
-  .qbox.gap .qstat { background: rgba(194,58,46,.16); color:#C23A2E; }
-  .qbox p { font-size:12.5px; color:var(--muted); margin:0 0 6px; }
-  .qbox .items { font-size:11.5px; line-height:1.8; }
-  .qbox .items .miss { color:#C23A2E; font-weight:700; }
-
-  .gaplist { display:flex; flex-direction:column; gap:10px; margin: 0 0 20px; }
-  .gapitem { display:grid; grid-template-columns: 28px 1fr; gap:12px; padding:12px 14px; border-radius:9px; background: var(--sunken); border:1px solid var(--hair); }
-  .gapitem .sev { font-family:var(--f-mono); font-size:11px; font-weight:700; text-align:center; border-radius:6px; padding:4px 0; height:fit-content; }
-  .gapitem.high .sev { background:#C23A2E; color:#fff; }
-  .gapitem.mid .sev { background: var(--new); color:#fff; }
-  .gapitem b { display:block; font-size:13px; margin-bottom:3px; }
-  .gapitem span { font-size:12.5px; color:var(--muted); }
-
-  .fixplan { background: rgba(6,199,85,.06); border:1px dashed #0a7a3d; border-radius:10px; padding:14px 16px; font-size:13px; line-height:1.85; }
-  .fixplan b { color:#0a7a3d; }
 </style>
 
 
@@ -217,76 +173,24 @@
         </div>
         <div id="gridArea"></div>
         <div class="memberbar">
-          <button onclick="onMemberBar()">会員情報について<span class="newtag">新設</span></button>
-          <button onclick="onSupportBar()">困ったときは<span class="newtag">新設</span></button>
-        </div>
-        <div class="demorow">
-          <button onclick="onJoinFlow()">【デモ】入会（会員証登録）の流れを見る</button>
+          <button onclick="onMemberBar()">会員情報について</button>
+          <button onclick="onSupportBar()">困ったときは</button>
         </div>
       </div>
     </div>
-    <p class="demonote">↑ 「入会」はリッチメニューのボタンではなく、あいさつラリー終了後や「会員証」キーワードから始まる別の入口です。ここでは流れの確認のためだけに、専用のデモボタンを置いています。</p>
+    <p class="demonote">↑ 入会（会員証登録）の流れは、このリッチメニューとは別画面としてまとめています（「会員登録」タブ参照）。</p>
   </div>
 
   <div class="legend">
     <h2>このプロトタイプの前提</h2>
     <ul>
       <li><b>街を知る</b>（4マス）：大洲の人／まちの動き／きょうの大洲／数字でみる大洲。<code>worker.js</code>のREDIRECTS（hito/ugoki/kyou/kazu）にそのまま対応</li>
-      <li><b>街に関わる</b>（既存5＋新規1）：手伝う／学ぶ／あそぶ・会う／応援する／住む・もどる（既存）＋<b>仕事で関わる<span class="newtag">新設</span></b></li>
-      <li><b>仕事で関わる</b>は、返答表に既にある<code>st_shigoto</code>（キーワード反応「仕事/働く」）と同じ文面を、ボタンからも呼べるようにした想定です。8/30-31議事録の懸念（知らない相手からの営業リスク）を踏まえ、あえて<b>間口を絞った文言</b>のままにしています</li>
-      <li><b>会員情報について</b>の横長バーは、8/31検討の「退会案内」を含む新設項目です</li>
-      <li><b>困ったときは<span class="newtag">新設</span></b>：よくある質問・個人情報の取り扱い・お問い合わせへの入口が今までゼロだったため、今回のプロトタイプで新たに追加しました</li>
-      <li>実際の画像・配置は丸岡さんの実装待ちです。ここではボタンの<b>構成と文面の確認</b>を目的にしています</li>
+      <li><b>街に関わる</b>（既存5＋新規1）：手伝う／学ぶ／あそぶ・会う／応援する／住む・もどる（既存）＋仕事で関わる</li>
+      <li><b>仕事で関わる</b>は、返答表に既にある<code>st_shigoto</code>（キーワード反応「仕事/働く」）と同じ文面を、ボタンからも呼べるようにした想定です。8/30-31議事録の懸念（知らない相手からの営業リスク）を踏まえ、あえて間口を絞った文言のままにしています</li>
+      <li><b>会員情報について</b>：登録内容の確認・更新・退会案内をまとめたバー。8/31検討の「退会案内」を含む項目です</li>
+      <li><b>困ったときは</b>：よくある質問・個人情報の取り扱い・お問い合わせへの入口が今までゼロだったため、新たに追加しました</li>
+      <li>実際の画像・配置は丸岡さんの実装待ちです。ここではボタンの構成と文面の確認を目的にしています</li>
     </ul>
-  </div>
-
-  <div class="mecesection">
-    <h2>MECE点検：リッチメニューは「4つの目的」をすべて拾えているか</h2>
-    <p class="flowlede">ユーザーがメニューを開く理由を、モレなくダブりなく（MECE）4つに分けて整理すると、<b>「街を知る」「街に関わる」は網羅済み</b>な一方で、<b>「困ったとき」の入口がゼロ</b>、「自分について」も一部しか埋まっていないことが分かりました。</p>
-
-    <div class="quad">
-      <div class="qbox ok">
-        <div class="qhead"><b>①街を知る</b><span class="qstat">網羅 4/4</span></div>
-        <p>まちについて・知りたい</p>
-        <div class="items">大洲の人／まちの動き／きょうの大洲／数字でみる大洲</div>
-      </div>
-      <div class="qbox ok">
-        <div class="qhead"><b>②街に関わる</b><span class="qstat">網羅 6/6</span></div>
-        <p>まちに向けて・行動したい</p>
-        <div class="items">手伝う／学ぶ／あそぶ・会う／応援する／住む・もどる／仕事で関わる</div>
-      </div>
-      <div class="qbox partial">
-        <div class="qhead"><b>③自分について</b><span class="qstat">一部のみ</span></div>
-        <p>自分の登録内容を・確認/変更したい</p>
-        <div class="items">会員情報の更新／退会について<br><span class="miss">✕ 今の登録内容をまとめて見る（一覧確認）が無い</span></div>
-      </div>
-      <div class="qbox gap">
-        <div class="qhead"><b>④困ったとき</b><span class="qstat">0/3・穴</span></div>
-        <p>質問・不安・トラブルを・解決したい</p>
-        <div class="items"><span class="miss">✕ よくある質問への入口が無い<br>✕ 個人情報の取り扱いへの入口が無い<br>✕ お問い合わせへの入口が無い</span><br>（すべて文字入力でしか辿りつけない）</div>
-      </div>
-    </div>
-
-    <h3 class="tabletitle" style="margin-top:0">見つかった穴（優先度順）</h3>
-    <div class="gaplist">
-      <div class="gapitem high">
-        <div class="sev">大</div>
-        <div><b>④「困ったとき」がリッチメニューに丸ごと存在しない</b><span>個人情報の扱い・お問い合わせ・よくある質問は、対応するキーワードを本人が思いつかない限り、ボタンでは絶対に辿り着けません。新規の友だちほど、まさにこの3つを知りたいはずのタイミングで入口が無い状態です。</span></div>
-      </div>
-      <div class="gapitem mid">
-        <div class="sev">中</div>
-        <div><b>③「自分について」に一覧確認の手段が無い</b><span>「更新する」「退会する」はあるのに、「今どんな情報を登録しているか、まとめて見る」だけができません。何を消せるか分からないまま「消してほしい」と送るのは心理的ハードルが高く、透明性の観点でも一覧確認は先にあるべきです。</span></div>
-      </div>
-      <div class="gapitem mid">
-        <div class="sev">中</div>
-        <div><b>①②の下にある行き止まり画面（既出）</b><span>下の「全体フロー図」で指摘済みの、個人情報・お問い合わせ・fallbackの3画面が「戻る」導線を持たない問題は、実は④の穴と表裏一体です。リッチメニューに入口ができれば、そこからの導線として同時に解消できます。</span></div>
-      </div>
-    </div>
-
-    <div class="fixplan">
-      <b>このプロトタイプに反映した対応：</b>下の実機モックの「会員情報について」バーを2ボタンに分割し、新しく<b>「困ったときは」</b>を追加しました（よくある質問／個人情報の取り扱いについて／お問い合わせ、の3択）。また「会員情報について」の最初の選択肢に<b>「登録内容を確認する」</b>を追加しています。実際に押して確認できます。<br><br>
-      <b>丸岡さんとの確認が必要な点：</b>この2項目をリッチメニューの「横長バー」に収めるか、押しやすさを優先して<b>3つ目のタブ</b>に分けるかは、画像デザイン（フクヤマさん）と会話ロジック（丸岡さん）の両方に関わる決定のため、ここでは決めていません。まずは文面と構成の叩き台として扱ってください。
-    </div>
   </div>
 
   <div class="flowsection">
@@ -455,7 +359,10 @@
         <li><b>②3つの行き止まり</b>：個人情報・お問い合わせ・fallbackには、次に進むボタンが一切ありません。特に<code>fallback</code>（何を送っても該当しないとき）は、案内の文中に道筋はあってもボタンで押せないため、ユーザーが離脱しやすい設計です</li>
         <li><b>③会員証の後に戻り道がない</b>：LIFF（外部）に出た後、会話に戻るボタンが用意されていません</li>
         <li><b>④「関わり方を見る」「数字でみる大洲」の2つのハブに、ほぼ全画面が依存</b>：この2つの文言が完全一致しないと迷子になりやすい構造です（クイックリプライのボタンなら誤字の心配はありませんが、テキスト入力で辿り着く場合は要注意）</li>
+        <li><b>⑤困ったとき系の入口がリッチメニューに一つもなかった</b>：個人情報の扱い・お問い合わせ・よくある質問は、対応するキーワードを本人が思いつかない限り、ボタンでは辿り着けませんでした。新規の友だちほど知りたいはずのタイミングで入口が無い状態だったため、「困ったときは」を新設して解消しています</li>
+        <li><b>⑥自分の登録内容をまとめて確認する手段が無かった</b>：「更新する」「退会する」はあっても「今どんな情報を登録しているか、まとめて見る」だけができませんでした。何を消せるか分からないまま削除依頼を送る形になっていたため、「会員情報について」の最初の選択肢に「登録内容を確認する」を追加しています</li>
       </ul>
+      <p class="flowlede" style="margin-top:14px">上記⑤⑥への対応として、上の実機モックでは「会員情報について」バーを2ボタンに分割し「困ったときは」を追加、「会員情報について」の選択肢に「登録内容を確認する」を追加済みです。これをリッチメニューの横長バーのままにするか、押しやすさを優先して3つ目のタブに分けるかは、画像デザイン（フクヤマさん）と会話ロジック（丸岡さん）の両方に関わる決定のため未定です。まずは文面と構成の叩き台として扱ってください。</p>
     </div>
   </div>
 
@@ -484,7 +391,7 @@ const KAKAWARU = [
   { ic:'🏯', lb:'あそぶ・会う', page:'asobu.html', external:true },
   { ic:'📣', lb:'応援する', page:'ouen.html', external:true },
   { ic:'🏠', lb:'住む・もどる', page:'sumu.html', external:true },
-  { ic:'💼', lb:'仕事で関わる', isNew:true, external:false,
+  { ic:'💼', lb:'仕事で関わる', external:false,
     text: '仕事でのご相談\n\nお仕事での関わり（専門スキルでの共創・お取引のご提案など）は、このLINEでは受け付けず、一度お会いした方・ご紹介のある方から個別にお話しする形をとっています。\n\nまずは「手伝う」「あそぶ・会う」からまちに関わっていただき、顔の見える関係から始めさせてください。',
     sub:['手伝うから始める','関わり方を見る'] },
 ];
@@ -497,7 +404,7 @@ function renderGrid(tab) {
   // 街を知る＝2×2＝4マス／街に関わる＝3×2＝6マス、どちらもぴったり埋まるため空セルは不要
   items.forEach(item => {
     const b = document.createElement('button');
-    b.className = 'cell' + (item.isNew ? ' new' : '');
+    b.className = 'cell';
     b.innerHTML = `<span class="ic">${item.ic}</span><span class="lb">${esc(item.lb)}</span>`;
     b.onclick = () => onPress(item);
     gridInner.appendChild(b);
@@ -665,46 +572,6 @@ function onWithdrawInfo() {
     '【退会・情報の削除について】\n' +
     '通知だけ止めたい方は、このアカウントをブロックすればOKです。\n\n' +
     '登録した情報（お住まい・推し・紹介者名など）を完全に消してほしい方は、ブロックだけでは消えません。お手数ですが、このトークに「消してほしい」とメッセージを送ってください。確認のうえ、削除いたします。'
-  );
-}
-
-/* ---------- 入会（会員証登録）の流れ ----------
-   実際の入口はリッチメニューではなく、あいさつラリー終了後の案内や
-   「会員証」キーワードから始まる LIFF（外部のミニ画面）です。
-   ここでは member_pii（①）に何が記録されるかを確認するためのデモです。 */
-function onJoinFlow() {
-  chat.innerHTML = '';
-  addBubble(
-    '（LIFF・会員証作成画面が開いた想定）\n\n会員証をつくる（無料・1分）\n\nまず、表示名（ニックネーム）を教えてください。本名でなくてかまいません。'
-  );
-  addTextPrompt('例：ぼうしさん', (nickname) => {
-    addBubble(`表示名：${nickname}`);
-    addBubble(
-      '基本の同意について\n\n' +
-      '・LINEの内部識別子、友だち追加の経路\n' +
-      '・アンケートでお答えいただいた内容\n' +
-      'を、コミュニティの運営と集計に使用します。\n\n同意しますか？',
-      [
-        { label: '同意する', onClick: () => onJoinConsent(true, nickname) },
-        { label: 'やめる', onClick: () => onJoinConsent(false, nickname) },
-      ]
-    );
-  });
-}
-
-function onJoinConsent(agreed, nickname) {
-  if (!agreed) {
-    addBubble('会員証の作成を中止しました。気が向いたら、またいつでもどうぞ。');
-    return;
-  }
-  addBubble(
-    `会員証を作成しました！\n\n${nickname}さん、これからよろしくお願いします。\n参加の申し込みができるようになり、関わりの記録が会員証にたまっていきます。`
-  );
-  addBubble(
-    '（裏側の記録・デモ）\n' +
-    '① member_pii：表示名＝' + nickname + '／collected_via＝liff_register\n' +
-    '（consents）：scope=profile_basic × purpose=community_ops／route=liff_register\n\n' +
-    'これで「会員情報について」の対象になります。'
   );
 }
 

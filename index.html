@@ -129,7 +129,7 @@
   .badge.doing { background: var(--clay-soft); color: var(--clay); }
   .badge.wait { background: var(--sunken); color: var(--ink-soft); }
 
-  /* ---- MECE quad ---- */
+  /* ---- 構成チェック用グリッド ---- */
   .quad { display:grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin: 16px 0 8px; }
   @media (max-width: 900px) { .quad { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 560px) { .quad { grid-template-columns: 1fr; } }
@@ -195,6 +195,7 @@
   <nav class="tabs" id="tabs">
     <button data-tab="overview" class="active">概要</button>
     <button data-tab="rally">あいさつラリー</button>
+    <button data-tab="join">会員登録</button>
     <button data-tab="richmenu">リッチメニュー</button>
     <button data-tab="db">データベース設計</button>
     <button data-tab="decisions">意思決定ログ</button>
@@ -212,7 +213,6 @@
       <h2>なぜLINEを作っているのか</h2>
       <p class="lede">大洲のまちに関わりたい人が集まる場所として、LINEの公式アカウント「大洲カンパニー」を作っています。このページは、ここまでに決めた内容をすべて一箇所にまとめ、実際にユーザーが触る画面をそのまま動かして確認できるようにしたものです。</p>
       <p>「OZU555」は、大洲市の外にいる人も含めて、大洲のまちに関わってくれる人（関係人口）を増やしていくプロジェクトです。まちに興味を持った人が、旅行者から一歩進んで、大洲を応援したり、実際に手伝ったり、いずれ移住したりする——そのきっかけになる場所として、このLINEアカウントを用意しています。多くの人がすでに使い慣れているLINEを選ぶことで、新しいアプリを入れてもらう必要がなく、友だち追加ひとつで大洲とつながれます。</p>
-      <p class="note">アカウント・チャネル作成そのものの記録（2026年8月30日時点）は <a href="provisioning.html">こちらの記録ページ</a> にまとめています。</p>
     </section>
 
     <section>
@@ -269,18 +269,34 @@
     </section>
   </div>
 
+  <!-- ============ 会員登録 ============ -->
+  <div class="panel" id="panel-join">
+    <section>
+      <div class="eyebrow">実際に触れる画面<span class="line"></span></div>
+      <h2>会員登録（会員証をつくる）</h2>
+      <p>あいさつラリー終了後の案内や「会員証」というキーワードから始まる、会員証登録（LIFF）の流れです。表示名（ニックネーム）を入力して同意すると会員証が作成され、その裏側で <code>member_pii</code> にどう記録されるかも確認できます。リッチメニューには専用ボタンを置かず、この独立した入口から始まります。</p>
+      <div class="screenwrap">
+        <div class="screenhead">
+          <b>入会（会員証登録）動作確認</b>
+          <a class="openlink" href="join.html" target="_blank" rel="noopener">別タブで開く ↗</a>
+        </div>
+        <iframe src="join.html" height="820" loading="lazy" title="入会（会員証登録）動作確認"></iframe>
+      </div>
+    </section>
+  </div>
+
   <!-- ============ リッチメニュー ============ -->
   <div class="panel" id="panel-richmenu">
     <section>
       <div class="eyebrow">実際に触れる画面<span class="line"></span></div>
       <h2>リッチメニュー（トーク画面下部のボタン）</h2>
-      <p>友だち追加後、常に画面下に固定表示されるボタンメニューです。「街を知る」「街に関わる」は実際には外部ページへ遷移する設計のため案内のみ表示されますが、「仕事で関わる」「会員情報について」「困ったときは」はボットが会話で応答する新設項目のため、実際に押して流れを確認できます。ページ内にはMECE点検（モレなくダブりなく行った抜け漏れチェック）の結果と、全画面の遷移図も含まれています。</p>
+      <p>友だち追加後、常に画面下に固定表示されるボタンメニューです。「街を知る」「街に関わる」は実際には外部ページへ遷移する設計のため案内のみ表示されますが、「仕事で関わる」「会員情報について」「困ったときは」はボットが会話で応答する項目のため、実際に押して流れを確認できます。ページ内には構成チェックの結果と、全画面の遷移図も含まれています。</p>
       <div class="screenwrap">
         <div class="screenhead">
           <b>リッチメニュー動作確認</b>
           <a class="openlink" href="richmenu.html" target="_blank" rel="noopener">別タブで開く ↗</a>
         </div>
-        <iframe src="richmenu.html" height="2600" loading="lazy" title="リッチメニュー動作確認"></iframe>
+        <iframe src="richmenu.html" height="2300" loading="lazy" title="リッチメニュー動作確認"></iframe>
       </div>
     </section>
   </div>
@@ -341,9 +357,9 @@
   <!-- ============ 意思決定ログ ============ -->
   <div class="panel" id="panel-decisions">
     <section>
-      <div class="eyebrow">MECE：決定領域ごとに整理<span class="line"></span></div>
+      <div class="eyebrow">決定領域ごとに整理<span class="line"></span></div>
       <h2>ここまでの意思決定を、5つの領域で網羅する</h2>
-      <p class="lede">「①データ設計 ②運用体制 ③コンテンツ・UX ④公開判断 ⑤未決事項」の5つに、モレなくダブりなく分けています。①〜④は「決定済み」、⑤は「まだ決まっていない」ことを意図的に集めた領域です。</p>
+      <p class="lede">「①データ設計 ②運用体制 ③コンテンツ・UX ④公開判断 ⑤未決事項」の5つに分けています。①〜④は「決定済み」、⑤は「まだ決まっていない」ことを意図的に集めた領域です。</p>
 
       <h3>① データ設計に関する決定</h3>
       <div class="declist">
@@ -374,7 +390,7 @@
 
       <h3>⑤ まだ決まっていないこと（未決事項）</h3>
       <div class="declist">
-        <div class="decitem open"><b>「困ったときは」を横長バーのままにするか、3つ目のタブに分けるか<span class="tag">未決</span></b><span>MECE点検で発見した「サポート系の入口ゼロ」問題への対応案。画像デザイン（フクヤマさん）と会話ロジック（丸岡さん）の両方に関わるため未決定。</span></div>
+        <div class="decitem open"><b>「困ったときは」を横長バーのままにするか、3つ目のタブに分けるか<span class="tag">未決</span></b><span>リッチメニューの構成チェックで見つかった「サポート系の入口ゼロ」問題への対応案。画像デザイン（フクヤマさん）と会話ロジック（丸岡さん）の両方に関わるため未決定。</span></div>
         <div class="decitem open"><b>本番DBでの社内テスト時のデータ分離方法<span class="tag">未決</span></b><span>専用ステージング環境を作らない前提のため、テスト用の会員データが本番DBに混ざる。手動での事後削除か、is_testフラグの追加かを検討中。</span></div>
         <div class="decitem open"><b>「会員情報について」フィールド更新・紹介者名の自由記述の実装方式<span class="tag">未決</span></b><span>「入力待ち」状態をボット側でどう管理するか（新しい状態管理の仕組みが必要）。丸岡さんとの設計セッションで決定予定。プロトタイプ（あいさつラリー・リッチメニューの各タブ）が仕様書代わり。</span></div>
         <div class="decitem open"><b>推し語彙・dormant_at判定ロジック・route_sourceの将来利用<span class="tag">未決</span></b><span>細部の文言・休眠判定の閾値・友だち追加経路データの活用要否は未検討。</span></div>
@@ -399,7 +415,6 @@
         <div class="gterm"><dt>R2</dt><dd>Cloudflareが提供する、写真や議事録などのファイル置き場</dd></div>
         <div class="gterm"><dt>マイグレーション</dt><dd>データベースの構造（テーブルの列など）を変更するための、順番に適用する設計変更の手順書</dd></div>
         <div class="gterm"><dt>PII（個人識別情報）</dt><dd>氏名・連絡先など、それ単体で本人を特定できる情報のこと</dd></div>
-        <div class="gterm"><dt>MECE（ミーシー）</dt><dd>「モレなく、ダブりなく」物事を整理する考え方。このページの構成や意思決定ログの整理に使用</dd></div>
         <div class="gterm"><dt>キタ・マネジメント（KM）</dt><dd>本プロジェクトを運営する一般社団法人。三好さんが所属</dd></div>
         <div class="gterm"><dt>バリューマネジメント（VM）</dt><dd>裏側のプログラム開発を担当する、丸岡さんが所属する会社</dd></div>
       </dl>
