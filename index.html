@@ -195,7 +195,6 @@
   <nav class="tabs" id="tabs">
     <button data-tab="overview" class="active">概要</button>
     <button data-tab="rally">あいさつラリー</button>
-    <button data-tab="join">会員登録</button>
     <button data-tab="richmenu">リッチメニュー</button>
     <button data-tab="db">データベース設計</button>
     <button data-tab="decisions">意思決定ログ</button>
@@ -233,7 +232,7 @@
         <div class="statusrow"><div class="dot done"></div><div class="txt"><b>LINEアカウント本体の作成</b><span>公式アカウント・会員証用の仕組みまで作成済み</span></div><span class="badge done">完了</span></div>
         <div class="statusrow"><div class="dot done"></div><div class="txt"><b>会員の台帳（DB）の5層設計・動作確認</b><span>ローカルSQLiteでマイグレーション適用まで検証済み（下記「データベース設計」参照）</span></div><span class="badge done">完了</span></div>
         <div class="statusrow"><div class="dot doing"></div><div class="txt"><b>あいさつラリー（登録アンケート）の内容確認</b><span>9問への改訂案は固まったが、実装（自由記述の受け止め方）は未着手</span></div><span class="badge doing">確認中</span></div>
-        <div class="statusrow"><div class="dot doing"></div><div class="txt"><b>リッチメニューの構成確認</b><span>「仕事で関わる」「会員情報について」「困ったときは」を追加提案中</span></div><span class="badge doing">確認中</span></div>
+        <div class="statusrow"><div class="dot doing"></div><div class="txt"><b>リッチメニューの構成確認</b><span>「仕事で関わる」「会員情報について」を追加提案中</span></div><span class="badge doing">確認中</span></div>
         <div class="statusrow"><div class="dot wait"></div><div class="txt"><b>本番環境への反映（デプロイ・マイグレーション適用）</b><span>丸岡さん同席の上で実施。後戻りできない操作のため、単独では実施しない</span></div><span class="badge wait">未着手</span></div>
         <div class="statusrow"><div class="dot wait"></div><div class="txt"><b>一般公開（QRコードの配布）</b><span>アカウント名の正式決定・上記の反映が終わってから</span></div><span class="badge wait">未着手</span></div>
       </div>
@@ -269,34 +268,18 @@
     </section>
   </div>
 
-  <!-- ============ 会員登録 ============ -->
-  <div class="panel" id="panel-join">
-    <section>
-      <div class="eyebrow">実際に触れる画面<span class="line"></span></div>
-      <h2>会員登録（会員証をつくる）</h2>
-      <p>あいさつラリー終了後の案内や「会員証」というキーワードから始まる、会員証登録（LIFF）の流れです。表示名（ニックネーム）を入力して同意すると会員証が作成され、その裏側で <code>member_pii</code> にどう記録されるかも確認できます。リッチメニューには専用ボタンを置かず、この独立した入口から始まります。</p>
-      <div class="screenwrap">
-        <div class="screenhead">
-          <b>入会（会員証登録）動作確認</b>
-          <a class="openlink" href="join.html" target="_blank" rel="noopener">別タブで開く ↗</a>
-        </div>
-        <iframe src="join.html" height="820" loading="lazy" title="入会（会員証登録）動作確認"></iframe>
-      </div>
-    </section>
-  </div>
-
   <!-- ============ リッチメニュー ============ -->
   <div class="panel" id="panel-richmenu">
     <section>
       <div class="eyebrow">実際に触れる画面<span class="line"></span></div>
       <h2>リッチメニュー（トーク画面下部のボタン）</h2>
-      <p>友だち追加後、常に画面下に固定表示されるボタンメニューです。「街を知る」「街に関わる」は実際には外部ページへ遷移する設計のため案内のみ表示されますが、「仕事で関わる」「会員情報について」「困ったときは」はボットが会話で応答する項目のため、実際に押して流れを確認できます。ページ内には構成チェックの結果と、全画面の遷移図も含まれています。</p>
+      <p>友だち追加後、常に画面下に固定表示されるボタンメニューです。「街を知る」「街に関わる」は実際には外部ページへ遷移する設計のため案内のみ表示されますが、「仕事で関わる」「会員情報について」はボットが会話で応答する項目のため、実際に押して流れを確認できます。ページ内には構成チェックの結果と、全画面の遷移図も含まれています。</p>
       <div class="screenwrap">
         <div class="screenhead">
           <b>リッチメニュー動作確認</b>
           <a class="openlink" href="richmenu.html" target="_blank" rel="noopener">別タブで開く ↗</a>
         </div>
-        <iframe src="richmenu.html" height="2300" loading="lazy" title="リッチメニュー動作確認"></iframe>
+        <iframe src="richmenu.html" height="2150" loading="lazy" title="リッチメニュー動作確認"></iframe>
       </div>
     </section>
   </div>
@@ -390,7 +373,6 @@
 
       <h3>⑤ まだ決まっていないこと（未決事項）</h3>
       <div class="declist">
-        <div class="decitem open"><b>「困ったときは」を横長バーのままにするか、3つ目のタブに分けるか<span class="tag">未決</span></b><span>リッチメニューの構成チェックで見つかった「サポート系の入口ゼロ」問題への対応案。画像デザイン（フクヤマさん）と会話ロジック（丸岡さん）の両方に関わるため未決定。</span></div>
         <div class="decitem open"><b>本番DBでの社内テスト時のデータ分離方法<span class="tag">未決</span></b><span>専用ステージング環境を作らない前提のため、テスト用の会員データが本番DBに混ざる。手動での事後削除か、is_testフラグの追加かを検討中。</span></div>
         <div class="decitem open"><b>「会員情報について」フィールド更新・紹介者名の自由記述の実装方式<span class="tag">未決</span></b><span>「入力待ち」状態をボット側でどう管理するか（新しい状態管理の仕組みが必要）。丸岡さんとの設計セッションで決定予定。プロトタイプ（あいさつラリー・リッチメニューの各タブ）が仕様書代わり。</span></div>
         <div class="decitem open"><b>推し語彙・dormant_at判定ロジック・route_sourceの将来利用<span class="tag">未決</span></b><span>細部の文言・休眠判定の閾値・友だち追加経路データの活用要否は未検討。</span></div>
