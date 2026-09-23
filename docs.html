@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>設計ドキュメント一式</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --paper:#F6F1E6; --surface:#FFFFFF; --sunken:#ECE5D6; --ink:#262019; --ink-soft:#6F6252; --hair:rgba(38,32,25,.15);
+    --indigo:#2B4A63; --indigo-soft:#DEE6EC; --clay:#A85A2A; --clay-soft:#F3E2D2; --moss:#4C6B52; --moss-soft:#E3EAE0;
+    --red:#B23A2E; --red-soft:#F3DEDA;
+    --f-display:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+    --f-body:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+    --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#17140F; --surface:#211C15; --sunken:#2A241B; --ink:#ECE4D3; --ink-soft:#B0A490; --hair:rgba(236,228,211,.16);
+      --indigo:#8FB4CF; --indigo-soft:#233240; --clay:#D9986A; --clay-soft:#332419; --moss:#8FBB9C; --moss-soft:#233128;
+      --red:#E08A7C; --red-soft:#3A2320;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#17140F; --surface:#211C15; --sunken:#2A241B; --ink:#ECE4D3; --ink-soft:#B0A490; --hair:rgba(236,228,211,.16);
+    --indigo:#8FB4CF; --indigo-soft:#233240; --clay:#D9986A; --clay-soft:#332419; --moss:#8FBB9C; --moss-soft:#233128;
+    --red:#E08A7C; --red-soft:#3A2320;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.85; }
+  code { font-family:var(--f-mono); font-size:.9em; background:var(--sunken); border-radius:3px; padding:1px 5px; }
+  a { color:var(--indigo); }
+
+  header.top { position:sticky; top:0; z-index:20; background:var(--paper); border-bottom:1px solid var(--hair); }
+  .mast { max-width:1100px; margin:0 auto; padding:16px 22px 0; display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  h1.title { font-family:var(--f-display); font-weight:700; font-size:clamp(20px,3vw,26px); margin:0 0 12px; }
+  h1.title a { font-family:var(--f-mono); font-size:12px; color:var(--ink-soft); text-decoration:none; margin-left:12px; }
+  nav.tabs { display:flex; gap:2px; overflow-x:auto; max-width:1100px; margin:0 auto; padding:0 22px; }
+  nav.tabs button { font-family:var(--f-body); font-size:13px; font-weight:700; white-space:nowrap; background:none; border:none; color:var(--ink-soft); cursor:pointer; padding:11px 14px; border-bottom:3px solid transparent; margin-bottom:-1px; }
+  nav.tabs button.active { color:var(--indigo); border-bottom-color:var(--indigo); }
+
+  main { max-width:1100px; margin:0 auto; padding:30px 22px 90px; }
+  .panel { display:none; }
+  .panel.active { display:block; }
+  section { margin-top:40px; }
+  section:first-child { margin-top:0; }
+  .eyebrow { font-family:var(--f-mono); font-size:11px; letter-spacing:.13em; color:var(--ink-soft); display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .eyebrow .line { flex:1; height:1px; background:var(--hair); }
+  h2 { font-family:var(--f-display); font-weight:700; font-size:20px; margin:0 0 12px; }
+  h3 { font-size:14.5px; font-weight:700; margin:22px 0 8px; }
+  p { margin:0 0 12px; max-width:70ch; }
+  ul, ol { margin:0 0 12px; padding-left:22px; }
+  li { margin-bottom:5px; }
+  .note { color:var(--ink-soft); font-size:13px; }
+
+  table { border-collapse:collapse; width:100%; font-size:12.5px; margin:10px 0 18px; }
+  th, td { border:1px solid var(--hair); padding:7px 10px; text-align:left; vertical-align:top; }
+  th { background:var(--sunken); font-weight:700; }
+  .tablewrap { overflow-x:auto; }
+  td code, th code { white-space:nowrap; }
+
+  .layerlist { display:flex; flex-direction:column; gap:10px; margin:16px 0; }
+  .layer { display:grid; grid-template-columns:34px 200px 1fr; gap:14px; align-items:start; background:var(--surface); border:1px solid var(--hair); border-radius:10px; padding:14px 16px; }
+  @media (max-width:720px) { .layer { grid-template-columns:1fr; } }
+  .layer .lnum { font-family:var(--f-mono); font-weight:700; color:var(--indigo); }
+  .layer .lname { font-family:var(--f-mono); font-weight:700; font-size:13px; }
+  .layer .lname small { display:block; font-family:var(--f-body); font-weight:400; color:var(--ink-soft); font-size:11.5px; margin-top:3px; }
+  .layer .ldesc { font-size:12.5px; color:var(--ink-soft); }
+  .layer.pii { border-color:var(--red); }
+
+  .tasklist { display:flex; flex-direction:column; gap:9px; }
+  .task { display:grid; grid-template-columns:20px 1fr auto; gap:10px; align-items:start; background:var(--surface); border:1px solid var(--hair); border-radius:8px; padding:11px 14px; }
+  .task .dot { width:9px; height:9px; border-radius:50%; margin-top:6px; }
+  .task .dot.high { background:var(--red); }
+  .task .dot.mid { background:var(--clay); }
+  .task .dot.low { background:var(--ink-soft); opacity:.5; }
+  .task b { display:block; font-size:13.5px; }
+  .task span.d { font-size:12px; color:var(--ink-soft); }
+  .badge { font-family:var(--f-mono); font-size:10px; padding:3px 8px; border-radius:100px; white-space:nowrap; height:fit-content; }
+  .badge.high { background:var(--red-soft); color:var(--red); }
+  .badge.mid { background:var(--clay-soft); color:var(--clay); }
+  .badge.low { background:var(--sunken); color:var(--ink-soft); }
+
+  .errbox { background:var(--surface); border:1px solid var(--hair); border-left:4px solid var(--red); border-radius:8px; padding:14px 16px; margin-bottom:12px; }
+  .errbox b { display:block; font-size:13.5px; margin-bottom:6px; }
+  .errbox .kv { font-size:12.5px; margin:4px 0; }
+  .errbox .kv b.k { color:var(--ink-soft); font-weight:700; display:inline; font-size:11px; font-family:var(--f-mono); margin-right:6px; }
+
+  .callout { background:var(--indigo-soft); border-radius:10px; padding:15px 17px; font-size:13px; margin-top:14px; }
+  .callout b { color:var(--indigo); }
+  .callout.warn { background:var(--red-soft); }
+  .callout.warn b { color:var(--red); }
+
+  footer.bottom { max-width:1100px; margin:60px auto 0; padding:18px 22px; border-top:1px solid var(--hair); font-size:12px; color:var(--ink-soft); }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="mast">
+    <h1 class="title">大洲カンパニーLINE — 設計ドキュメント一式<a href="index.html">← 設計資料トップ</a></h1>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button class="active" data-tab="overall">全体設計書</button>
+    <button data-tab="database">データベース設計書</button>
+    <button data-tab="spec">仕様</button>
+    <button data-tab="tasks">積み残しのタスク</button>
+    <button data-tab="incident">エラー対策</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ============ 全体設計書 ============ -->
+<div class="panel active" id="panel-overall">
+  <section>
+    <div class="eyebrow">目的<span class="line"></span></div>
+    <h2>何のためのシステムか</h2>
+    <p>「大洲カンパニー」は、大洲市の関係人口づくりプロジェクト「OZU555」の入口となる公式LINEアカウント。友だち追加した人に対して、6問のあいさつラリーで興味・関係性・お住まい・関わり方の希望を聞き取り、以後はリッチメニュー経由でまちの情報・関わり方の入口を提供する。</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">全体構成<span class="line"></span></div>
+    <h2>3つの構成要素</h2>
+    <div class="tablewrap">
+    <table>
+      <tr><th>要素</th><th>役割</th><th>実体</th></tr>
+      <tr><td>LINE公式アカウント</td><td>ユーザーとの唯一の接点。友だち追加／メッセージ／postback／リッチメニュー表示</td><td>LINE Developers（チャンネルID 2011331444）</td></tr>
+      <tr><td>Bot本体</td><td>Webhookを受けて会話ロジックを実行し、LINE Messaging APIで返信する</td><td>Cloudflare Workers（<code>ozu555-line-worker</code>）</td></tr>
+      <tr><td>会員台帳</td><td>会員の状態・回答内容・イベント履歴を保存</td><td>Cloudflare D1（SQLite）</td></tr>
+      <tr><td>ファイル置き場</td><td>リッチメニュー画像・Webhookの取りこぼしデータの一時保管</td><td>Cloudflare R2</td></tr>
+    </table>
+    </div>
+    <p class="note">運用主体は一般社団法人キタ・マネジメント（KM／三好）。Bot実装はバリューマネジメント（VM／丸岡さん）と共同。</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">処理の流れ<span class="line"></span></div>
+    <h2>リクエストのライフサイクル</h2>
+    <ol>
+      <li>LINEプラットフォームがユーザー操作（メッセージ／postback／友だち追加）をWebhookとしてWorkerに送信</li>
+      <li>Worker（<code>worker.js</code>）が署名（LINE_CHANNEL_SECRET）を検証</li>
+      <li>イベント種別に応じて <code>core.js</code> のハンドラーに振り分け（handleFollow / handleMessage / handlePostback）</li>
+      <li>回答内容は <code>kernel.js</code> の許可リスト（ALLOWED）を通過したものだけを <code>member_events</code> に追記し、対応するテーブル（members / member_attributes / member_referrals 等）を更新</li>
+      <li>LINE Messaging APIで返信（reply）。reply tokenが失効している場合はpush APIにフォールバック</li>
+      <li>処理できない内容・想定外のエラーは事務局へ内部通知（現状ログのみ、メール送信は未設定）</li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="eyebrow">設計方針<span class="line"></span></div>
+    <h2>重視していること</h2>
+    <ul>
+      <li><b>個人情報を集めすぎない</b>：本名・住所・電話番号は聞かない。ニックネームのみで参加可能。</li>
+      <li><b>特定情報と統計情報を物理的に分離</b>：削除依頼が来たときに、必要な範囲だけを確実に消せるようにする（詳細は「データベース設計書」）。</li>
+      <li><b>冪等性</b>：LINEプラットフォームからの再送信（重複Webhook）があっても、同じイベントを二重に記録しない（idempotency_key）。</li>
+      <li><b>自由記述の最小化</b>：ユーザーの自由記述はkernelの許可リストにより、イベントログ本体には残らず、専用テーブル（member_referrals）にのみ書き込まれる構造にしている。</li>
+    </ul>
+  </section>
+</div>
+
+<!-- ============ データベース設計書 ============ -->
+<div class="panel" id="panel-database">
+  <section>
+    <div class="eyebrow">設計思想<span class="line"></span></div>
+    <h2>5層＋αに分ける理由</h2>
+    <p>「消してほしい」という依頼が来たときに、必要な部分だけを確実に消せるようにするため、集める情報の性質ごとにテーブルを分けている。特に本人を特定できる情報（氏名・第三者の名前など）と、統計的な属性情報を、はっきり別の場所に保管するのが設計の核。</p>
+    <div class="layerlist">
+      <div class="layer"><div class="lnum">core</div><div class="lname">members<small>会員マスタ</small></div><div class="ldesc">LINEユーザーID・友だち追加日・退会日・pending_intake（入力待ち状態）を持つ土台テーブル。氏名等のPIIはここには置かない。</div></div>
+      <div class="layer pii"><div class="lnum">①</div><div class="lname">member_pii<small>個人特定情報</small></div><div class="ldesc">表示名（ニックネーム）・メールアドレスのみ。削除依頼時は最優先でここを消す。</div></div>
+      <div class="layer"><div class="lnum">②</div><div class="lname">member_attributes<small>非PII属性</small></div><div class="ldesc">推し・大洲との関係・お住まい区分/詳細（都道府県・市町）を保持。単体では個人を特定しにくい属性情報。</div></div>
+      <div class="layer pii"><div class="lnum">③</div><div class="lname">member_referrals<small>第三者情報</small></div><div class="ldesc">紹介者のお名前など、本人以外の名前が入り得る自由記述。member_piiとは別枠にして削除範囲を明確に区切っている。</div></div>
+      <div class="layer"><div class="lnum">④</div><div class="lname">member_tags<small>複数選択タグ</small></div><div class="ldesc">関わり方の希望（手伝う・学ぶ・あそぶ・応援する・住む等）を複数保持できるタグテーブル。source列で取得経路（rallyなど）を記録。</div></div>
+      <div class="layer"><div class="lnum">⑤</div><div class="lname">member_events<small>追記専用ログ</small></div><div class="ldesc">「いつ・何をしたか」を追記するだけのログ。idempotency_keyで二重記録を防止。payloadは<code>kernel.js</code>のALLOWEDリストを通過した値のみ格納可（自由記述は構造的に入らない）。</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h3>members.pending_intake について</h3>
+    <p>あいさつラリー終盤の「紹介者名（自由入力）」を待っている間だけ立てる一時フラグ。CHECK制約で <code>'referrer_note'</code> または <code>NULL</code> のみ許可。回答を受け取るかスキップされると即座にNULLへ戻す。</p>
+  </section>
+
+  <section>
+    <h3>マイグレーション適用状況</h3>
+    <div class="tablewrap">
+    <table>
+      <tr><th>ファイル</th><th>内容</th><th>状態</th></tr>
+      <tr><td><code>0001〜0004</code></td><td>初期スキーマ（members / 単一member_pii / member_tags / member_events）</td><td>本番適用済み</td></tr>
+      <tr><td><code>0005_p1c_layered_pii.sql</code></td><td>単一member_piiをmember_attributes / member_referralsへ分割</td><td>本番適用済み</td></tr>
+      <tr><td><code>0006_p1e_pending_intake.sql</code></td><td>members.pending_intake / pending_intake_at 追加</td><td>本番適用済み</td></tr>
+    </table>
+    </div>
+    <p class="note">D1はクライアントからの <code>PRAGMA foreign_keys</code> 変更と <code>CREATE TEMP TABLE</code> を "not authorized: SQLITE_AUTH" で拒否するため、0005は一時テーブルを使わず、旧member_pii（分割前・全カラム保持）から新テーブルへ直接コピーしたあとに旧テーブルを縮小する順序で書き直している。</p>
+  </section>
+</div>
+
+<!-- ============ 仕様 ============ -->
+<div class="panel" id="panel-spec">
+  <section>
+    <div class="eyebrow">機能仕様<span class="line"></span></div>
+    <h2>実装済み機能</h2>
+    <div class="tablewrap">
+    <table>
+      <tr><th>機能</th><th>トリガー</th><th>概要</th></tr>
+      <tr><td>あいさつラリー</td><td>友だち追加（follow イベント）</td><td>6問の選択式ヒアリング。回答ごとにmember_attributes / member_tags / member_events更新。詳細は<a href="flows.html">全ボタン動線図</a>参照。</td></tr>
+      <tr><td>紹介者名の自由記述</td><td>ラリー終盤、pending_intake='referrer_note'中のテキストメッセージ</td><td>member_referralsへ直接書き込み。イベントペイロードには残さない。</td></tr>
+      <tr><td>リッチメニュー（まちを知る／まちに関わる）</td><td>常時表示、タブ切替はrichmenuswitch postback</td><td>各カードは外部ページへのリンク（LIFF外の静的ページ）。「仕事で関わる」のみBot内応答。</td></tr>
+      <tr><td>会員情報について</td><td>リッチメニュー下部バー／「会員情報について」キーワード</td><td>登録内容の確認・退会案内。更新機能は未実装（積み残し参照）。</td></tr>
+      <tr><td>FAQ（その他キーワード応答）</td><td>あいさつラリー外の自由入力テキスト</td><td>キーワードマッチで固定回答。一致しない場合は事務局へ内部通知。</td></tr>
+      <tr><td>削除依頼</td><td>「消してほしい」等の発話</td><td>member_pii / member_referralsを中心に削除。member_attributes等は統計目的で匿名的に残す方針。</td></tr>
+    </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">技術仕様<span class="line"></span></div>
+    <h2>環境・設定値</h2>
+    <div class="tablewrap">
+    <table>
+      <tr><th>項目</th><th>値／状態</th></tr>
+      <tr><td>ランタイム</td><td>Cloudflare Workers</td></tr>
+      <tr><td>DB</td><td>Cloudflare D1（database_id: a9fff12a-791b-4c4a-b2b5-761992441af5）</td></tr>
+      <tr><td>ストレージ</td><td>Cloudflare R2（webhook_fallback/ 他）</td></tr>
+      <tr><td>LINEチャンネルID</td><td>2011331444</td></tr>
+      <tr><td>GREETING_RALLY</td><td>on（テスト運用のため一時的にon。公開前に要再確認）</td></tr>
+      <tr><td>LIFF_ID</td><td>未設定</td></tr>
+      <tr><td>管理API</td><td><code>/admin/setup_richmenu</code>（ADMIN_TOKENで保護、リッチメニュー再登録用）</td></tr>
+    </table>
+    </div>
+  </section>
+</div>
+
+<!-- ============ 積み残しのタスク ============ -->
+<div class="panel" id="panel-tasks">
+  <section>
+    <div class="eyebrow">未対応・要判断事項<span class="line"></span></div>
+    <h2>公開前に片付けるべきこと</h2>
+    <div class="tasklist">
+      <div class="task"><div class="dot high"></div><div><b>GREETING_RALLY=on の恒久化判断</b><span class="d">現在は本番テストのため一時的にonにしている。一般公開前に、この状態のままでよいか再確認が必要。</span></div><span class="badge high">重要</span></div>
+      <div class="task"><div class="dot high"></div><div><b>本番DBでのテストデータ整理方針</b><span class="d">専用ステージング環境がないため、テスト用の会員データが本番DBに混在している。手動削除かis_testフラグ追加かを決定し、実行する。</span></div><span class="badge high">重要</span></div>
+      <div class="task"><div class="dot mid"></div><div><b>「会員情報について」の更新機能</b><span class="d">登録内容の確認・退会は実装済みだが、「更新する」機能は未実装（現在ボタンは無効表示）。</span></div><span class="badge mid">中</span></div>
+      <div class="task"><div class="dot mid"></div><div><b>LIFF設定</b><span class="d">LIFF_IDが未設定。会員証機能を使う場合はLIFFアプリの作成・登録が必要。</span></div><span class="badge mid">中</span></div>
+      <div class="task"><div class="dot mid"></div><div><b>R2ライフサイクルルール</b><span class="d">webhook_fallback/ 配下の自動削除（30日想定）ルールが未設定。</span></div><span class="badge mid">中</span></div>
+      <div class="task"><div class="dot mid"></div><div><b>異常通知のメール送信</b><span class="d">ALERT_EMAIL_FROMが未設定のため、異常検知は現状ログ出力のみでメール通知はされない。</span></div><span class="badge mid">中</span></div>
+      <div class="task"><div class="dot low"></div><div><b>リッチメニュー最終デザインの正式承認</b><span class="d">丸岡さん・フクヤマさんからの正式なサインオフがまだ確認できていない。</span></div><span class="badge low">低</span></div>
+      <div class="task"><div class="dot low"></div><div><b>ADMIN_TOKENのバックアップ</b><span class="d">管理者トークンの控えを、しかるべき保管先（Tier C台帳等）へ保存する作業が未実施。</span></div><span class="badge low">低</span></div>
+      <div class="task"><div class="dot low"></div><div><b>cronジョブの表示確認</b><span class="d">定期実行の登録はコード上済みだが、Cloudflareダッシュボード上での見た目の確認がまだ。</span></div><span class="badge low">低</span></div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ エラー対策 ============ -->
+<div class="panel" id="panel-incident">
+  <section>
+    <div class="eyebrow">起きたことがある／起こりうる不具合と対処<span class="line"></span></div>
+    <h2>エラーが起きた際の対策</h2>
+
+    <div class="errbox">
+      <b>Webhookは届くがDBに何も書き込まれない</b>
+      <p class="kv"><b class="k">症状</b>メッセージを送っても既読にならず、返信も来ない。</p>
+      <p class="kv"><b class="k">原因①</b>LINE Official Account Managerの「チャット」機能がONになっていると、メッセージがWebhookより先にチャット機能に横取りされる。</p>
+      <p class="kv"><b class="k">対策①</b>manager.line.bizで「チャット」をOFFにする。</p>
+      <p class="kv"><b class="k">原因②</b>LINE_CHANNEL_SECRETが誤っている場合、署名検証に失敗し401エラーになる。</p>
+      <p class="kv"><b class="k">対策②</b><code>npx wrangler tail --format json</code>でresponse.statusを確認し、401であればシークレットを再設定（<code>npx wrangler secret put LINE_CHANNEL_SECRET</code>）。</p>
+    </div>
+
+    <div class="errbox">
+      <b>リッチメニューが更新されない／表示が消える</b>
+      <p class="kv"><b class="k">症状</b>新しい画像で登録し直したのに、トーク画面に古いものが表示され続ける。トーク画面を開き直しても内容が古いまま、あるいは一時的に非表示になる。</p>
+      <p class="kv"><b class="k">原因</b>LINEアプリ・LINEプラットフォーム側のキャッシュ。または新しいrichmenuIdをdefaultに設定する前後の一瞬に旧メニューが削除されている。</p>
+      <p class="kv"><b class="k">対策</b>トーク画面を一度閉じて開き直す。それでも変わらない場合は数分待つ（LINE側のキャッシュ反映待ち）。<code>/admin/setup_richmenu</code>実行時は「新規作成→アップロード→default設定→旧メニュー削除」の順で行い、default未設定の空白時間を作らない。</p>
+    </div>
+
+    <div class="errbox">
+      <b>D1マイグレーションが "not authorized: SQLITE_AUTH" で失敗する</b>
+      <p class="kv"><b class="k">症状</b><code>wrangler d1 migrations apply</code>実行時にSQLITE_AUTHエラー。</p>
+      <p class="kv"><b class="k">原因</b>D1はクライアントからの<code>PRAGMA foreign_keys</code>変更と<code>CREATE TEMP TABLE</code>を許可しない。</p>
+      <p class="kv"><b class="k">対策</b>マイグレーションSQLからPRAGMA文を削除し、一時テーブルを使わない手順（新テーブルへ直接コピー→旧テーブル縮小）に書き換える。</p>
+    </div>
+
+    <div class="errbox">
+      <b>友だち追加イベントでBotが応答しない（DB書き込みエラー）</b>
+      <p class="kv"><b class="k">症状</b>followイベント処理中にWorkerが例外を投げる。</p>
+      <p class="kv"><b class="k">原因</b>INSERT文が、マイグレーションで既に削除されたカラム（例：role）を参照している。スキーマ変更時にコード側のSQL文を更新し忘れると発生する。</p>
+      <p class="kv"><b class="k">対策</b>スキーマ変更（マイグレーション追加・カラム削除）を行った際は、該当テーブルへの全INSERT/UPDATE文をコード全体で検索し、整合性を確認する。node:sqliteを使ったローカル実行テストで検出可能。</p>
+    </div>
+
+    <div class="errbox">
+      <b>返信が届かない・二重送信される</b>
+      <p class="kv"><b class="k">症状</b>reply tokenの期限切れ、またはLINE側の再送信により同じ処理が二重実行される。</p>
+      <p class="kv"><b class="k">対策</b>reply失敗時はpush APIへフォールバック。DB更新は必ずidempotency_keyで冪等化し、同一イベントの再処理では二重書き込みしない。</p>
+    </div>
+
+    <div class="callout warn">
+      <b>共通の心構え：</b>後戻りできない操作（本番D1へのdestructiveなマイグレーション、richmenuの一括削除、シークレットの上書きなど）を行う前には、必ず現状のバックアップまたはロールバック手順を確認してから実行する。
+    </div>
+  </section>
+</div>
+
+</main>
+
+<footer class="bottom">
+  お問い合わせ：三好飛鳥（一般社団法人キタ・マネジメント）
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('#tabs button');
+  const panels = document.querySelectorAll('.panel');
+  function activate(name) {
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    panels.forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
+    history.replaceState(null, '', '#' + name);
+  }
+  tabs.forEach(t => t.addEventListener('click', () => activate(t.dataset.tab)));
+  const initial = location.hash.replace('#', '');
+  if (initial && document.getElementById('panel-' + initial)) activate(initial);
+</script>
+
+</body>
+</html>

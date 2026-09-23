@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>全ボタン動線図</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --paper:#F6F1E6; --surface:#FFFFFF; --sunken:#ECE5D6; --ink:#262019; --ink-soft:#6F6252;
+    --hair:#DDD1B8; --indigo:#2B4A63; --indigo-soft:#DEE6EC; --clay:#A85A2A; --clay-soft:#F3E2D2;
+    --moss:#4C6B52; --moss-soft:#E3EAE0;
+    --f-body:"Zen Kaku Gothic New",sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--f-body); }
+  header.top { position:sticky; top:0; z-index:10; background:var(--paper); border-bottom:1px solid var(--hair); }
+  .mast { max-width:1100px; margin:0 auto; padding:14px 20px 0; display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  h1 { font-size:17px; margin:0 0 12px; }
+  h1 a { color:var(--ink-soft); font-size:12px; font-family:var(--f-mono); text-decoration:none; margin-left:10px; }
+  nav.tabs { display:flex; gap:2px; max-width:1100px; margin:0 auto; padding:0 20px; overflow-x:auto; }
+  nav.tabs button { font-family:var(--f-body); font-size:13px; font-weight:700; white-space:nowrap; background:none; border:none; color:var(--ink-soft); cursor:pointer; padding:10px 14px; border-bottom:3px solid transparent; }
+  nav.tabs button.active { color:var(--indigo); border-bottom-color:var(--indigo); }
+  main { max-width:1100px; margin:0 auto; padding:26px 20px 90px; }
+  .panel { display:none; }
+  .panel.active { display:block; }
+
+  /* ---- flowchart ---- */
+  .flow { display:flex; flex-direction:column; align-items:flex-start; gap:0; }
+  .node { position:relative; padding-left:26px; padding-bottom:26px; }
+  .node::before { content:""; position:absolute; left:7px; top:26px; bottom:0; width:2px; background:var(--hair); }
+  .node:last-child::before { display:none; }
+  .node::after { content:""; position:absolute; left:2px; top:4px; width:12px; height:12px; border-radius:50%; background:var(--indigo); border:3px solid var(--paper); }
+  .node.branch::after { background:var(--clay); }
+  .node.end::after { background:var(--moss); }
+
+  .tag { display:inline-block; font-family:var(--f-mono); font-size:10.5px; font-weight:600; border-radius:5px; padding:3px 8px; margin-bottom:8px; }
+  .tag.tap { background:var(--moss-soft); color:var(--moss); }
+  .tag.type { background:var(--clay-soft); color:var(--clay); }
+  .tag.auto { background:var(--indigo-soft); color:var(--indigo); }
+
+  .msgbox { background:var(--surface); border:1.5px solid var(--ink); border-radius:4px; padding:12px 15px; font-size:13.5px; white-space:pre-wrap; max-width:56ch; line-height:1.7; box-shadow:3px 3px 0 var(--hair); }
+  .msgbox .ext { color:var(--moss); font-family:var(--f-mono); font-size:12px; }
+
+  .choicerow { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+  .choicebox { font-size:12px; font-weight:700; background:var(--sunken); border:1.5px solid var(--ink); border-radius:100px; padding:6px 13px; position:relative; }
+  .choicebox.link { background:var(--moss-soft); border-color:var(--moss); color:var(--moss); }
+  .choicebox::before { content:"→"; margin-right:4px; opacity:.5; }
+
+  .branchlabel { font-size:12px; font-weight:700; color:var(--clay); margin-bottom:6px; }
+
+  .sidebranch { margin-top:14px; margin-left:8px; padding-left:16px; border-left:2px dashed var(--hair); }
+
+  .subnote { font-size:11.5px; color:var(--ink-soft); margin-top:6px; }
+  .disabled { opacity:.55; text-decoration:line-through; }
+
+  .lgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:10px; }
+  .lcard { background:var(--surface); border:1.5px solid var(--ink); border-radius:6px; padding:12px 14px; box-shadow:3px 3px 0 var(--hair); }
+  .lcard b { font-size:13.5px; display:block; margin-bottom:3px; }
+  .lcard span { font-family:var(--f-mono); font-size:11px; color:var(--moss); }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="mast">
+    <h1>大洲カンパニーLINE — 全ボタン動線図<a href="index.html">← 設計資料トップ</a></h1>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button class="active" data-tab="rally">あいさつラリー</button>
+    <button data-tab="shiru">まちを知るタブ</button>
+    <button data-tab="kakawaru">まちに関わるタブ</button>
+    <button data-tab="member">会員情報について</button>
+    <button data-tab="other">その他</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ============ あいさつラリー ============ -->
+  <div class="panel active" id="panel-rally">
+    <div class="flow">
+
+      <div class="node">
+        <span class="tag auto">友だち追加（自動）</span>
+        <div class="msgbox">はじめまして！30秒だけ、教えてください。
+
+大洲の「気になる」は、どれに近いですか？
+（下のボタンから選ぶだけです。あとで変えられます）</div>
+        <div class="choicerow">
+          <span class="choicebox">お城・歴史</span><span class="choicebox">人に会いたい</span>
+          <span class="choicebox">たべもの・商品</span><span class="choicebox">川・自然</span>
+          <span class="choicebox">まちづくり</span><span class="choicebox">まだわからない</span>
+        </div>
+      </div>
+
+      <div class="node">
+        <span class="tag tap">推しを選択</span>
+        <div class="msgbox">ありがとうございます！
+
+（選んだ推しに応じたコメント＋おすすめページのURL）
+▼ おすすめはこちら</div>
+        <div class="msgbox" style="margin-top:8px">大洲とは、いまどんな関係ですか？</div>
+        <div class="choicerow">
+          <span class="choicebox">大洲に住んでいる</span><span class="choicebox">大洲の出身（いまは市外）</span>
+          <span class="choicebox">何度か行った</span><span class="choicebox">一度行った</span><span class="choicebox">まだ行っていない</span>
+        </div>
+      </div>
+
+      <div class="node branch">
+        <span class="tag tap">関係を選択</span>
+        <div class="msgbox">いま、どちらにお住まいですか？</div>
+        <div class="choicerow">
+          <span class="choicebox">大洲市内</span><span class="choicebox">愛媛県内（大洲市以外）</span><span class="choicebox">愛媛県外</span>
+        </div>
+
+        <div class="sidebranch">
+          <div class="branchlabel">「愛媛県内（大洲市以外）」を選んだ場合</div>
+          <div class="msgbox">県内のどのエリアですか？（大洲市を除く19市町）</div>
+          <div class="choicerow"><span class="choicebox">東予</span><span class="choicebox">中予</span><span class="choicebox">南予</span></div>
+          <div class="msgbox" style="margin-top:8px">どちらの市町ですか？</div>
+          <div class="subnote">例：東予→今治市・新居浜市・西条市・四国中央市・上島町　中予→松山市・伊予市・東温市・久万高原町・松前町・砥部町　南予→宇和島市・八幡浜市・西予市・内子町・伊方町・松野町・鬼北町・愛南町</div>
+        </div>
+
+        <div class="sidebranch">
+          <div class="branchlabel">「愛媛県外」を選んだ場合</div>
+          <div class="msgbox">どちらの地方からですか？</div>
+          <div class="choicerow">
+            <span class="choicebox">北海道</span><span class="choicebox">東北</span><span class="choicebox">関東</span><span class="choicebox">中部</span>
+            <span class="choicebox">近畿</span><span class="choicebox">中国</span><span class="choicebox">四国</span><span class="choicebox">九州・沖縄</span>
+          </div>
+          <div class="msgbox" style="margin-top:8px">どちらの都道府県ですか？（北海道を選んだ場合はこの質問は出ず、そのまま確定）</div>
+          <div class="subnote">選んだ地方内の都道府県（愛媛県を除く46都道府県）から選択</div>
+        </div>
+      </div>
+
+      <div class="node">
+        <span class="tag tap">お住まい確定</span>
+        <div class="msgbox">これから、どんな関わり方に興味がありますか？
+（いくつでも選べます。1つ選んだら続けます）</div>
+        <div class="choicerow">
+          <span class="choicebox">手伝う</span><span class="choicebox">学ぶ</span><span class="choicebox">あそぶ・会う</span>
+          <span class="choicebox">応援する</span><span class="choicebox">住む・もどる</span><span class="choicebox">まだ決めていない</span>
+        </div>
+      </div>
+
+      <div class="node branch">
+        <span class="tag tap">関わり方を選択</span>
+        <div class="msgbox">最後にもうひとつだけ。
+このアカウント、どなたかのご紹介ですか？</div>
+        <div class="choicerow">
+          <span class="choicebox">紹介ではない</span><span class="choicebox">家族・友人</span><span class="choicebox">大洲のお店・事業者</span>
+          <span class="choicebox">スタッフ・関係者</span><span class="choicebox">記事・テレビ・SNS</span><span class="choicebox">イベントで知った</span>
+        </div>
+
+        <div class="sidebranch">
+          <div class="branchlabel">「紹介ではない」「記事・テレビ・SNS」以外を選んだ場合</div>
+          <div class="msgbox">よろしければ、どなたのご紹介か教えてください。お礼をお伝えします。
+（お店の名前でも、下のお名前だけでもかまいません）</div>
+          <div class="choicerow"><span class="choicebox">（自由入力）</span><span class="choicebox">スキップする</span></div>
+        </div>
+      </div>
+
+      <div class="node end">
+        <span class="tag auto">ラリー終了</span>
+        <div class="msgbox">ありがとうございます！ ご縁に感謝です。
+（「紹介ではない」の場合は「ようこそ、OZUカンパニーへ。」）
+
+これからは、大洲の「人」と「動き」を週1回だけ、そっとお届けします。</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ まちを知るタブ ============ -->
+  <div class="panel" id="panel-shiru">
+    <div class="lgrid">
+      <div class="lcard"><b>大洲の人</b><span>→ 外部ページ：hito.html</span></div>
+      <div class="lcard"><b>まちの動き</b><span>→ 外部ページ：ugoki.html</span></div>
+      <div class="lcard"><b>きょうの大洲</b><span>→ 外部ページ：kyou.html</span></div>
+      <div class="lcard"><b>数字でみる大洲</b><span>→ 外部ページ：kazu.html</span></div>
+    </div>
+  </div>
+
+  <!-- ============ まちに関わるタブ ============ -->
+  <div class="panel" id="panel-kakawaru">
+    <div class="lgrid">
+      <div class="lcard"><b>手伝う</b><span>→ 外部ページ：tetsudau.html</span></div>
+      <div class="lcard"><b>学ぶ</b><span>→ 外部ページ：manabu.html</span></div>
+      <div class="lcard"><b>あそぶ・会う</b><span>→ 外部ページ：asobu.html</span></div>
+      <div class="lcard"><b>応援する</b><span>→ 外部ページ：ouen.html</span></div>
+      <div class="lcard"><b>住む</b><span>→ 外部ページ：sumu.html</span></div>
+    </div>
+    <div class="flow" style="margin-top:20px">
+      <div class="node end">
+        <span class="tag tap">仕事で関わる</span>
+        <div class="msgbox">💼 仕事でのご相談
+
+お仕事での関わり（専門スキルでの共創・お取引のご提案など）は、このLINEでは受け付けず、一度お会いした方・ご紹介のある方から個別にお話しする形をとっています。
+
+まずは「手伝う」「あそぶ・会う」からまちに関わっていただき、顔の見える関係から始めさせてください。</div>
+        <div class="choicerow"><span class="choicebox">手伝うから始める</span><span class="choicebox">関わり方を見る</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 会員情報について ============ -->
+  <div class="panel" id="panel-member">
+    <div class="flow">
+      <div class="node">
+        <span class="tag tap">会員情報について</span>
+        <div class="msgbox">会員情報について、何を知りたいですか？</div>
+        <div class="choicerow"><span class="choicebox">登録内容を確認する</span><span class="choicebox">退会について</span></div>
+      </div>
+      <div class="node branch">
+        <span class="branchlabel">「登録内容を確認する」を選んだ場合</span>
+        <div class="msgbox">現在、登録されている内容は以下のとおりです。
+
+・推し：（回答した推し）
+・大洲との関係：（回答した関係）
+・お住まい：（区分＋市町/都道府県）
+・関わり方の希望：（回答したタグ）
+・紹介元：（回答した種別）
+・紹介者のお名前：登録あり（登録がある場合のみ）
+
+※1つも登録が無い場合は「現在、登録されている内容はまだありません。」</div>
+        <div class="choicerow"><span class="choicebox disabled">更新する（未実装）</span><span class="choicebox">このままでよい</span></div>
+      </div>
+      <div class="node end">
+        <span class="branchlabel">「退会について」を選んだ場合</span>
+        <div class="msgbox">🔒 お預かりする情報について
+
+取得するもの：LINEの内部ID・友だち追加の経路・ご回答いただいた内容
+使いみち：コミュニティの運営と集計
+
+通知だけ止めたい方は、このアカウントをブロックすればOKです。
+
+登録した情報（お住まい・推し・紹介者名など）を完全に消してほしい方は、ブロックだけでは消えません。「消してほしい」と送っていただければ、こちらで削除の手続きをします。削除の受付後、処理中のお知らせが最大で数分ぶん届く場合があります。</div>
+        <div class="choicerow"><span class="choicebox">登録内容を確認する</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ その他 ============ -->
+  <div class="panel" id="panel-other">
+    <div class="flow">
+      <div class="node">
+        <span class="tag type">「OZUカンパニー」「555とは」「カンパニー」等</span>
+        <div class="msgbox">OZUカンパニーは、大洲のまちに関わる人がゆるやかに寄り合うコミュニティです。
+
+知る → 応援する → 一緒に活動する。関わり方は人それぞれで、どこから入っても、どこに留まってもかまいません。
+
+いまこの中で、2030年に向けた大きなプロジェクト「OZU555」が動いています。
+▼ OZU555 のこと
+https://ozu-vision.com/</div>
+        <div class="choicerow"><span class="choicebox link">OZU555のこと（外部）</span></div>
+      </div>
+
+      <div class="node">
+        <span class="tag type">「関わりたい」「参加したい」「手伝い」等</span>
+        <div class="msgbox">まちへの関わり方は、5つの入り口があります。
+
+🧹 手伝う — まちの困りごとにちょっと力を貸す
+📚 学ぶ — インターン・まちづくり大学・視察
+🏯 あそぶ・会う — 泊まる・食べる・川であそぶ
+📣 応援する — 買って・泊まって・投げ銭で
+🏠 住む・もどる — 移住・Uターン・試し住み
+
+気になる入り口の言葉（「手伝う」など）を送っていただくと、その案内を返します。</div>
+        <div class="choicerow"><span class="choicebox">手伝う</span><span class="choicebox">学ぶ</span><span class="choicebox">あそぶ・会う</span><span class="choicebox">応援する</span><span class="choicebox">住む・もどる</span></div>
+      </div>
+
+      <div class="node">
+        <span class="tag type">「手伝う」「ボランティア」「お題」等</span>
+        <div class="msgbox">🧹 手伝う（ボランティア）
+
+大洲の「手伝ってほしいこと」を、少しずつお題の形でお知らせしていきます。いま募集中のお題は、こちらのページにまとまっています。
+
+やってみたいものがあれば、そのままトークで教えてください。事務局からご連絡します。</div>
+        <div class="choicerow"><span class="choicebox link">お題を見る（外部）</span></div>
+      </div>
+
+      <div class="node">
+        <span class="tag type">「学ぶ」「インターン」「まちづくり大学」等</span>
+        <div class="msgbox">📚 学ぶ（修行・研修）
+
+インターン・まちづくり大学・視察研修など、大洲を学びの場にする入り口です。
+
+受け入れのご相談は、このトークにそのまま書いてください。担当につなぎます。</div>
+        <div class="choicerow"><span class="choicebox link">学ぶの入り口を見る（外部）</span></div>
+      </div>
+
+      <div class="node">
+        <span class="tag type">「あそぶ」「泊まる」「城泊」等</span>
+        <div class="msgbox">🏯 あそぶ・会う（交流）
+
+泊まる・食べる・川であそぶ・人と知り合う。大洲の楽しみ方はこちらです。
+
+泊まりのご予約や施設の詳しいことは、各施設の公式サイトへどうぞ（このトークでは受け付けていません）。</div>
+        <div class="choicerow"><span class="choicebox link">あそぶ・会うを見る（外部）</span></div>
+      </div>
+
+      <div class="node">
+        <span class="tag type">「応援する」「投げ銭」「寄付」等</span>
+        <div class="msgbox">📣 応援する（投げ銭・買って応援）
+
+離れていても、大洲は応援できます。買う・泊まる・オーナーになる——お金の流れが見える形でまとめています。</div>
+        <div class="choicerow"><span class="choicebox link">応援の仕方を見る（外部）</span></div>
+      </div>
+
+      <div class="node">
+        <span class="tag type">「住む」「もどる」「移住」「Uターン」等</span>
+        <div class="msgbox">🏠 住む・もどる（移住・Uターン）
+
+実際に戻った人の話と、試し住みの段取りをまとめています。
+
+個別のご相談は、このトークにそのまま書いてください。事務局から折り返します。</div>
+        <div class="choicerow"><span class="choicebox link">住む・もどるを見る（外部）</span></div>
+      </div>
+
+      <div class="node">
+        <span class="tag type">「ものづくり」「商品開発」「作り手」等</span>
+        <div class="msgbox">🛠 ものづくりの活動
+
+大洲の作り手と、売れる商品をつくる活動が動いています。商品の試作テストなど「手伝う」お題もここから出ます。
+
+活動に参加したい方は、下のボタンからどうぞ。</div>
+        <div class="choicerow"><span class="choicebox">手伝うお題を見る</span><span class="choicebox">関わり方を見る</span></div>
+      </div>
+
+      <div class="node">
+        <span class="tag type">「人」「メンバー」「事業者」等</span>
+        <div class="msgbox">👤 大洲の人
+
+まちで動いている人たちを、顔の見える形で紹介しています。
+
+※ お名前とお顔の掲載は、ご本人の同意をいただいた方のみです。</div>
+        <div class="choicerow"><span class="choicebox link">大洲の人を見る（外部）</span></div>
+      </div>
+
+      <div class="node">
+        <span class="tag type">「まちの動き」「ニュース」「活動報告」等</span>
+        <div class="msgbox">🏘 まちの動き
+
+2016年の危機から今日までの10年の物語と、いまの動きをまとめています。</div>
+        <div class="choicerow"><span class="choicebox link">まちの動きを見る（外部）</span></div>
+      </div>
+
+      <div class="node">
+        <span class="tag type">「きょう」「今日」「イベント」「予定」等</span>
+        <div class="msgbox">📅 きょうの大洲
+
+四季の見どころと定例の営みをまとめています。
+
+イベントカレンダーはいま準備中です。整い次第、ここでお知らせします。</div>
+        <div class="choicerow"><span class="choicebox link">きょうの大洲を見る（外部）</span></div>
+      </div>
+
+      <div class="node">
+        <span class="tag type">「数字」「人口」「来訪者」「実績」等</span>
+        <div class="msgbox">📊 数字でみる大洲
+
+2030年の目標と現在地を、良い数字も届いていない数字もそのまま公開しています。
+
+気になる数字があれば、その項目名を送ってください。</div>
+        <div class="choicerow"><span class="choicebox link">数字でみる大洲（外部）</span><span class="choicebox">大洲の人</span></div>
+      </div>
+
+      <div class="node">
+        <span class="tag type">「会員証」「会員登録」「登録」等</span>
+        <div class="msgbox">🎫 OZUカンパニー 会員証
+
+登録すると、参加の申し込みができるようになり、関わりの記録が会員証にたまっていきます。登録は無料・1分です。
+
+下の「会員証をひらく」からどうぞ。</div>
+        <div class="choicerow"><span class="choicebox link">会員証をひらく（LIFF起動）</span></div>
+      </div>
+
+      <div class="node">
+        <span class="tag type">「個人情報」「削除」「退会」「消して」等</span>
+        <div class="msgbox">🔒 お預かりする情報について
+
+取得するもの：LINEの内部ID・友だち追加の経路・ご回答いただいた内容
+使いみち：コミュニティの運営と集計
+
+通知だけ止めたい方は、このアカウントをブロックすればOKです。
+
+登録した情報（お住まい・推し・紹介者名など）を完全に消してほしい方は、ブロックだけでは消えません。「消してほしい」と送っていただければ、こちらで削除の手続きをします。削除の受付後、処理中のお知らせが最大で数分ぶん届く場合があります。</div>
+        <div class="choicerow"><span class="choicebox">登録内容を確認する</span></div>
+      </div>
+
+      <div class="node">
+        <span class="tag type">「問い合わせ」「連絡」「窓口」等</span>
+        <div class="msgbox">📮 お問い合わせ
+
+このトークにそのまま書いていただければ、事務局（一般社団法人キタ・マネジメント）が確認してお返事します。お急ぎの場合はその旨も添えてください。</div>
+        <div class="subnote">ボタンなし</div>
+      </div>
+
+      <div class="node end">
+        <span class="tag auto">どれにも一致しない発言</span>
+        <div class="msgbox">ご質問ありがとうございます。この内容は自動ではお答えできないため、事務局で確認してお返事します。少しお時間をください。
+
+すぐ見られるもの：「関わりたい」「数字」「きょう」と送ると、それぞれの案内が返ります。</div>
+        <div class="subnote">事務局へ内部通知（利用者には見えない）</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+function show(tab) {
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + tab));
+}
+document.querySelectorAll('#tabs button').forEach(b => b.addEventListener('click', () => show(b.dataset.tab)));
+</script>
+
+</body>
+</html>
