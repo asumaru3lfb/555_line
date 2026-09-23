@@ -82,36 +82,14 @@
   .textprompt button { background: var(--accent); color:#fff; border:none; border-radius:16px; padding:7px 13px; font-size:12px; cursor:pointer; flex:none; }
   .placeholder { color: var(--muted); font-size: 12.5px; text-align:center; margin:auto; padding: 0 20px; }
 
-  /* ---- richmenu ---- */
+  /* ---- richmenu（本番採用画像をそのまま表示し、実座標に透明ボタンを重ねる） ---- */
   .richmenu { flex: none; border-top: 2px solid var(--hair); background: var(--panel); }
-  .tabbar { display:flex; }
-  .tabbtn {
-    flex:1; text-align:center; padding: 9px 4px; font-size:12px; font-weight:700; cursor:pointer;
-    background: var(--sunken); color: var(--muted); border:none; border-bottom: 3px solid transparent;
-    font-family: var(--f-body);
-  }
-  .tabbtn.active { background: var(--panel); color: var(--tabgreen); border-bottom-color: var(--tabgreen); }
-
-  /* 実際のLINEリッチメニューは1枚の固定サイズ画像。タブが変わっても
-     枠のサイズ自体は変わらない仕様のため、列数が変わっても行数は常に2行に揃え、
-     高さを固定で確保する（街を知る＝2列×2行、街に関わる＝3列×2行）。 */
-  .grid { display:grid; grid-template-rows: repeat(2, 1fr); gap: 1px; background: var(--hair); height: 168px; }
-  .cell {
-    background: var(--panel); border:none; padding: 10px 4px 9px; cursor:pointer;
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; font-family: var(--f-body);
-  }
-  .cell.empty { cursor:default; visibility:hidden; }
+  .menuimgwrap { position: relative; width: 100%; line-height: 0; }
+  .menuimgwrap img { width: 100%; display: block; }
+  .hotspot { position: absolute; border: none; background: transparent; padding: 0; cursor: pointer; }
+  .hotspot:hover { background: rgba(0,0,0,.05); }
   .bubble.popup { background: #FFF7E8; border:1px dashed var(--new); }
   .bubble.popup .popuptag { display:block; font-family:var(--f-mono); font-size:10px; color:var(--new); margin-bottom:6px; }
-  .cell:hover { background: var(--sunken); }
-  .cell .ic { font-size: 18px; line-height:1; }
-  .cell .lb { font-size: 10.5px; font-weight:700; color: var(--ink); line-height:1.3; text-align:center; }
-
-  .memberbar { padding: 8px 10px; border-top:1px solid var(--hair); background: var(--sunken); display:flex; gap:6px; }
-  .memberbar button {
-    flex:1; min-width:0; font-size:11px; font-weight:700; color: var(--ink); background: var(--panel);
-    border:1px solid var(--hair); border-radius:8px; padding:8px 4px; cursor:pointer; font-family: var(--f-body);
-  }
   .demonote { flex: 1 1 100%; font-size: 11.5px; color: var(--muted); text-align:center; margin: 8px 0 0; }
 
   .legend { flex: 1 1 320px; min-width: 280px; max-width: 460px; background: var(--panel); border:1px solid var(--hair); border-radius:12px; padding: 16px 18px; box-sizing: border-box; }
@@ -149,8 +127,8 @@
 <div class="shell">
 
   <div class="banner">
-    <span class="tag">プロトタイプ</span>
-    <b>リッチメニューの動作確認モックアップです。</b>本番のLINE・Cloudflareには接続していません。<b>街を知る・街に関わるの既存ボタンは、実際には外部ページへ直接遷移する設計</b>（<code>worker.js</code>のREDIRECTS経由）のため、押すと「外部リンクに遷移します」という案内のみ表示します（この案内自体はプロトタイプ独自の仕様で、正式仕様ではありません）。<b>「仕事で関わる」「会員情報について」は、ボットが会話で応答する新設項目</b>のため、実際に操作して流れを確認できます。
+    <span class="tag">本番採用デザイン</span>
+    <b>実際に本番のLINEアカウントへ登録済みの画像を、そのまま表示しています。</b>「まちを知る」「まちに関わる」の各ボタンは実際には外部ページへ直接遷移する設計のため、押すと「外部リンクに遷移します」という案内のみ表示します（この案内自体はこのデモ独自の仕様です）。<b>「仕事で関わる」「会員情報について」は、ボットが会話で応答する項目</b>のため、実際に操作して流れを確認できます。
   </div>
 
   <div class="phonewrap">
@@ -159,7 +137,7 @@
         <div class="dot">大</div>
         <div>
           <div class="name">大洲カンパニー</div>
-          <div class="sub">リッチメニュー プロトタイプ</div>
+          <div class="sub">リッチメニュー（本番デザイン）</div>
         </div>
       </div>
       <div class="chat" id="chat">
@@ -167,26 +145,26 @@
       </div>
 
       <div class="richmenu">
-        <div class="tabbar">
-          <button class="tabbtn active" id="tab-shiru" onclick="showTab('shiru')">街を知る</button>
-          <button class="tabbtn" id="tab-kakawaru" onclick="showTab('kakawaru')">街に関わる</button>
-        </div>
-        <div id="gridArea"></div>
-        <div class="memberbar">
-          <button onclick="onMemberBar()">会員情報について</button>
+        <div class="menuimgwrap" id="menuimgwrap">
+          <img id="menuimg" src="assets_richmenu_shiru.png" alt="リッチメニュー">
+          <!-- 座標は make_richmenu3.py の実寸レイアウト（2500x1686）を%換算 -->
+          <button class="hotspot" style="left:0%;top:0%;width:50%;height:11.27%" onclick="showTab('shiru')" aria-label="まちを知るタブ"></button>
+          <button class="hotspot" style="left:50%;top:0%;width:50%;height:11.27%" onclick="showTab('kakawaru')" aria-label="まちに関わるタブ"></button>
+          <div id="gridHotspots"></div>
+          <button class="hotspot" style="left:0%;top:81.02%;width:100%;height:18.98%" onclick="onMemberBar()" aria-label="会員情報について"></button>
         </div>
       </div>
     </div>
   </div>
 
   <div class="legend">
-    <h2>このプロトタイプの前提</h2>
+    <h2>このデザインについて</h2>
     <ul>
-      <li><b>街を知る</b>（4マス）：大洲の人／まちの動き／きょうの大洲／数字でみる大洲。<code>worker.js</code>のREDIRECTS（hito/ugoki/kyou/kazu）にそのまま対応</li>
-      <li><b>街に関わる</b>（既存5＋新規1）：手伝う／学ぶ／あそぶ・会う／応援する／住む・もどる（既存）＋仕事で関わる</li>
-      <li><b>仕事で関わる</b>は、返答表に既にある<code>st_shigoto</code>（キーワード反応「仕事/働く」）と同じ文面を、ボタンからも呼べるようにした想定です。8/30-31議事録の懸念（知らない相手からの営業リスク）を踏まえ、あえて間口を絞った文言のままにしています</li>
-      <li><b>会員情報について</b>：登録内容の確認・更新・退会案内をまとめたバー。8/31検討の「退会案内」を含む項目です</li>
-      <li>実際の画像・配置は丸岡さんの実装待ちです。ここではボタンの構成と文面の確認を目的にしています</li>
+      <li>表示している画像は、<code>/admin/setup_richmenu</code>経由で実際に本番LINEアカウントへ登録済みの最終デザイン（ユーザー提供の実写アイコンを使用）です</li>
+      <li><b>まちを知る</b>（2×2）：大洲の人／まちの動き／きょうの大洲／数字でみる大洲</li>
+      <li><b>まちに関わる</b>（3×2）：手伝う／学ぶ／あそぶ・会う／応援する／住む／仕事で関わる</li>
+      <li><b>仕事で関わる</b>は、8/30-31議事録の懸念（知らない相手からの営業リスク）を踏まえ、あえて間口を絞った文言にしています</li>
+      <li><b>会員情報について</b>：下部の固定バー。「登録内容を確認する」「退会について」の2項目（更新機能は未実装・積み残しタスク参照）</li>
     </ul>
   </div>
 
@@ -366,44 +344,51 @@
 
 <script>
 const chat = document.getElementById('chat');
-const gridArea = document.getElementById('gridArea');
+const menuimg = document.getElementById('menuimg');
+const gridHotspots = document.getElementById('gridHotspots');
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
-/* 街を知る・街に関わるの既存ボタンは、worker.js の REDIRECTS（/r/<slug>）を経由して
-   外部ページへ直接遷移する設計（タップ数だけ匿名で記録し、302で転送）。
-   ボット内の会話（返答表のテキスト＋サブボタン）にはならないため、
-   プロトタイプでは「外部リンクに遷移します」の案内のみを表示する。 */
+/* まちを知る・まちに関わるの各ボタンは、実際には外部ページへ直接遷移する設計
+   （worker.js の REDIRECTS 経由）。ボット内の会話にはならないため、
+   このデモでは「外部リンクに遷移します」の案内のみを表示する。
+   座標は make_richmenu3.py の実寸レイアウト（2500x1686、PAD=13/GAP=10）を%換算したもの。 */
+const CELL_W_2COL = 49.28, CELL_W_3COL = 32.72, CELL_H = 34.58, ROW0 = 11.27, ROW1 = 46.44;
+const COLX_2 = [0.52, 50.20];
+const COLX_3 = [0.52, 33.64, 66.76];
+
 const SHIRU = [
-  { ic:'👤', lb:'大洲の人', page:'hito.html', external:true },
-  { ic:'🏘', lb:'まちの動き', page:'ugoki.html', external:true },
-  { ic:'📅', lb:'きょうの大洲', page:'kyou.html', external:true },
-  { ic:'📊', lb:'数字でみる大洲', page:'kazu.html', external:true },
+  { lb:'大洲の人', page:'hito.html', external:true, x:COLX_2[0], y:ROW0, w:CELL_W_2COL, h:CELL_H },
+  { lb:'まちの動き', page:'ugoki.html', external:true, x:COLX_2[1], y:ROW0, w:CELL_W_2COL, h:CELL_H },
+  { lb:'きょうの大洲', page:'kyou.html', external:true, x:COLX_2[0], y:ROW1, w:CELL_W_2COL, h:CELL_H },
+  { lb:'数字でみる大洲', page:'kazu.html', external:true, x:COLX_2[1], y:ROW1, w:CELL_W_2COL, h:CELL_H },
 ];
 
 const KAKAWARU = [
-  { ic:'🧹', lb:'手伝う', page:'tetsudau.html', external:true },
-  { ic:'📚', lb:'学ぶ', page:'manabu.html', external:true },
-  { ic:'🏯', lb:'あそぶ・会う', page:'asobu.html', external:true },
-  { ic:'📣', lb:'応援する', page:'ouen.html', external:true },
-  { ic:'🏠', lb:'住む・もどる', page:'sumu.html', external:true },
-  { ic:'💼', lb:'仕事で関わる', external:false,
+  { lb:'手伝う', page:'tetsudau.html', external:true, x:COLX_3[0], y:ROW0, w:CELL_W_3COL, h:CELL_H },
+  { lb:'学ぶ', page:'manabu.html', external:true, x:COLX_3[1], y:ROW0, w:CELL_W_3COL, h:CELL_H },
+  { lb:'あそぶ・会う', page:'asobu.html', external:true, x:COLX_3[2], y:ROW0, w:CELL_W_3COL, h:CELL_H },
+  { lb:'応援する', page:'ouen.html', external:true, x:COLX_3[0], y:ROW1, w:CELL_W_3COL, h:CELL_H },
+  { lb:'住む', page:'sumu.html', external:true, x:COLX_3[1], y:ROW1, w:CELL_W_3COL, h:CELL_H },
+  { lb:'仕事で関わる', external:false, x:COLX_3[2], y:ROW1, w:CELL_W_3COL, h:CELL_H,
     text: '仕事でのご相談\n\nお仕事での関わり（専門スキルでの共創・お取引のご提案など）は、このLINEでは受け付けず、一度お会いした方・ご紹介のある方から個別にお話しする形をとっています。\n\nまずは「手伝う」「あそぶ・会う」からまちに関わっていただき、顔の見える関係から始めさせてください。',
     sub:['手伝うから始める','関わり方を見る'] },
 ];
 
 function renderGrid(tab) {
+  menuimg.src = tab === 'shiru' ? 'assets_richmenu_shiru.png' : 'assets_richmenu_kakawaru.png';
   const items = tab === 'shiru' ? SHIRU : KAKAWARU;
-  const cols = tab === 'shiru' ? 2 : 3;
-  gridArea.innerHTML = `<div class="grid" id="gridInner" style="grid-template-columns:repeat(${cols},1fr)"></div>`;
-  const gridInner = document.getElementById('gridInner');
-  // 街を知る＝2×2＝4マス／街に関わる＝3×2＝6マス、どちらもぴったり埋まるため空セルは不要
+  gridHotspots.innerHTML = '';
   items.forEach(item => {
     const b = document.createElement('button');
-    b.className = 'cell';
-    b.innerHTML = `<span class="ic">${item.ic}</span><span class="lb">${esc(item.lb)}</span>`;
+    b.className = 'hotspot';
+    b.style.left = item.x + '%';
+    b.style.top = item.y + '%';
+    b.style.width = item.w + '%';
+    b.style.height = item.h + '%';
+    b.setAttribute('aria-label', item.lb);
     b.onclick = () => onPress(item);
-    gridInner.appendChild(b);
+    gridHotspots.appendChild(b);
   });
 }
 
@@ -431,11 +416,11 @@ function onPress(item) {
   chat.appendChild(m);
 }
 
-/* ---------- 会員情報について（実際に操作できるフロー） ---------- */
+/* ---------- 会員情報について（本番core.jsのonMemberInfoTop/onMemberInfoView相当） ---------- */
 
-// 登録時に集める項目（member_pii / member_attributes / member_tags / member_referrals 由来）
-const PROFILE_FIELDS = ['表示名','推し','大洲との関係','お住まい','年代','出身','趣味','今後やりたいこと','関わり方の希望'];
-const profileValues = {}; // このプロトタイプ内だけの仮の現在値（保存はされません）
+// あいさつラリーで集める項目（member_attributes / member_tags / member_referrals 由来）
+const PROFILE_FIELDS = ['推し','大洲との関係','お住まい','関わり方の希望','紹介元','紹介者のお名前'];
+const profileValues = {}; // このデモ内だけの仮の現在値（保存はされません）
 
 function esc2(s){ return esc(s); }
 
@@ -479,61 +464,33 @@ function onMemberBar() {
   chat.innerHTML = '';
   addBubble('会員情報について、何を知りたいですか？', [
     { label: '登録内容を確認する', onClick: showProfileSummary },
-    { label: '会員情報の更新', onClick: () => showUpdateMenu(true) },
     { label: '退会について', onClick: onWithdrawInfo },
   ]);
 }
 
 function showProfileSummary() {
   const filled = PROFILE_FIELDS.filter(f => profileValues[f]);
-  if (!filled.length) {
-    addBubble(
-      '現在、登録されている内容はありません（このプロトタイプではまだ何も入力していないためです）。\n\n' +
-      '実際のアカウントでは、あいさつラリーでお答えいただいた内容がここに一覧表示されます。'
-    );
-  } else {
-    addBubble('現在、登録されている内容は以下のとおりです。\n\n' + filled.map(f => `・${f}：${profileValues[f]}`).join('\n'));
-  }
-  addBubble('内容を直したい項目はありますか？', [
-    { label: '更新する', onClick: () => showUpdateMenu(true) },
+  const summary = filled.length
+    ? '現在、登録されている内容は以下のとおりです。\n\n' + filled.map(f => `・${f}：${profileValues[f]}`).join('\n')
+    : '現在、登録されている内容はまだありません（このデモではまだ何も入力していないためです）。\n\n実際のアカウントでは、あいさつラリーでお答えいただいた内容がここに一覧表示されます。';
+  addBubble(summary, [
+    { label: '更新する（未実装）', onClick: () => addBubble('更新機能は現在準備中です。しばらくお待ちください。') },
     { label: 'このままでよい', onClick: () => addBubble('ありがとうございます。またいつでも確認できます。') },
   ]);
 }
 
-function showUpdateMenu(isFirst) {
-  const label = isFirst ? 'どの項目を更新しますか？' : '他に修正する項目はありますか？';
-  const buttons = PROFILE_FIELDS.map(f => ({
-    label: profileValues[f] ? `${f}（現在：${profileValues[f]}）` : f,
-    onClick: () => editField(f),
-  }));
-  buttons.push({ label: '以上です', onClick: onUpdateDone });
-  addBubble(label, buttons);
-}
-
-function editField(fieldName) {
-  addBubble(`「${fieldName}」の新しい内容を送ってください。`);
-  addTextPrompt(`例：${fieldName}の新しい内容`, (value) => {
-    profileValues[fieldName] = value;
-    addBubble(`「${fieldName}」を「${value}」に更新しました。`);
-    showUpdateMenu(false);
-  });
-}
-
-function onUpdateDone() {
-  addBubble('ありがとうございます。以上で更新を終わります。');
-}
-
 function onWithdrawInfo() {
   addBubble(
-    '【退会・情報の削除について】\n' +
+    '🔒 お預かりする情報について\n\n' +
+    '取得するもの：LINEの内部ID・友だち追加の経路・ご回答いただいた内容\n' +
+    '使いみち：コミュニティの運営と集計\n\n' +
     '通知だけ止めたい方は、このアカウントをブロックすればOKです。\n\n' +
-    '登録した情報（お住まい・推し・紹介者名など）を完全に消してほしい方は、ブロックだけでは消えません。お手数ですが、このトークに「消してほしい」とメッセージを送ってください。確認のうえ、削除いたします。'
+    '登録した情報（お住まい・推し・紹介者名など）を完全に消してほしい方は、ブロックだけでは消えません。「消してほしい」と送っていただければ、こちらで削除の手続きをします。削除の受付後、処理中のお知らせが最大で数分ぶん届く場合があります。',
+    [ { label: '登録内容を確認する', onClick: showProfileSummary } ]
   );
 }
 
 function showTab(tab) {
-  document.getElementById('tab-shiru').classList.toggle('active', tab === 'shiru');
-  document.getElementById('tab-kakawaru').classList.toggle('active', tab === 'kakawaru');
   renderGrid(tab);
   chat.innerHTML = '<div class="placeholder">下のメニューのボタンを押すと、<br>実際に返る文面がここに表示されます</div>';
 }
