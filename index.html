@@ -183,6 +183,27 @@
   .callout.warn b { color: var(--red); }
 
   footer.bottom { max-width: 1100px; margin: 60px auto 0; padding: 18px 22px; border-top: 1px solid var(--hair); font-size: 12px; color: var(--ink-soft); }
+
+  /* ---- あいさつラリー 全パターンツリー ---- */
+  .tree, .tree ul { list-style: none; margin: 0; padding-left: 20px; }
+  .tree { padding-left: 0; font-family: var(--f-mono); font-size: 12.5px; }
+  .tree li { position: relative; padding: 5px 0 5px 20px; }
+  .tree li::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 1px;
+    background: var(--hair);
+  }
+  .tree li:last-child::before { bottom: calc(100% - 19px); }
+  .tree li::after {
+    content: ""; position: absolute; left: 0; top: 19px; width: 14px; height: 1px;
+    background: var(--hair);
+  }
+  .tree > li { padding-left: 0; }
+  .tree > li::before, .tree > li::after { display: none; }
+  .tree .q { font-family: var(--f-body); font-weight: 700; color: var(--ink); font-size: 13px; }
+  .tree .choices { color: var(--ink-soft); }
+  .tree .choices b { color: var(--indigo); font-weight: 700; }
+  .tree .end { color: var(--moss); font-weight: 700; }
+  .tree .end::before { content: "🏁 "; }
 </style>
 </head>
 <body>
@@ -267,6 +288,90 @@
         </div>
         <iframe src="rally.html" height="900" loading="lazy" title="あいさつラリー動作確認"></iframe>
       </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">全分岐<span class="line"></span></div>
+      <h2>あいさつラリー：全パターン一覧（ツリー形式）</h2>
+      <p class="note">友だち追加から終了メッセージまでに存在する、すべての分岐をツリーで表しています。同じ質問でも選択肢によって次の質問が変わる箇所（お住まい／紹介元）を中心に枝分かれします。</p>
+      <ul class="tree">
+        <li>
+          <span class="q">① 推しは？</span>
+          <ul>
+            <li><span class="choices">お城・歴史 / 人に会いたい / たべもの・商品 / 川・自然 / まちづくり / まだわからない　→　<b>いずれも同じ②へ</b></span>
+              <ul>
+                <li>
+                  <span class="q">② 大洲との関係は？</span>
+                  <ul>
+                    <li><span class="choices">住んでいる / 出身（市外） / 何度か行った / 一度行った / まだ行っていない　→　<b>いずれも同じ③へ</b></span>
+                      <ul>
+                        <li>
+                          <span class="q">③ お住まいは？</span>
+                          <ul>
+                            <li><span class="choices"><b>大洲市内</b> → そのまま④へ</span></li>
+                            <li><span class="choices"><b>愛媛県内（大洲市以外）</b></span>
+                              <ul>
+                                <li><span class="q">③-a エリアは？（東予／中予／南予）</span>
+                                  <ul><li><span class="choices">いずれかを選択 → ③-b 市町を選択（19市町から） → ④へ</span></li></ul>
+                                </li>
+                              </ul>
+                            </li>
+                            <li><span class="choices"><b>愛媛県外</b></span>
+                              <ul>
+                                <li><span class="q">③-a 地方は？（北海道／東北／関東／中部／近畿／中国／四国／九州・沖縄）</span>
+                                  <ul>
+                                    <li><span class="choices"><b>北海道</b> → 都道府県の質問はスキップ → ④へ</span></li>
+                                    <li><span class="choices">北海道以外の7地方 → ③-b 都道府県を選択（該当地方内） → ④へ</span></li>
+                                  </ul>
+                                </li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </li>
+                        <li>
+                          <span class="q">④ 関わり方の希望は？（複数選択可）</span>
+                          <ul>
+                            <li><span class="choices">手伝う / 学ぶ / あそぶ・会う / 応援する / 住む・もどる / まだ決めていない　→　<b>いずれも同じ⑤へ</b></span>
+                              <ul>
+                                <li>
+                                  <span class="q">⑤ 紹介元は？</span>
+                                  <ul>
+                                    <li><span class="choices"><b>紹介ではない</b></span>
+                                      <ul><li><span class="end">ラリー終了（「ようこそ、OZUカンパニーへ。」）</span></li></ul>
+                                    </li>
+                                    <li><span class="choices"><b>記事・テレビ・SNS</b></span>
+                                      <ul><li><span class="end">ラリー終了（「ありがとうございます！ ご縁に感謝です。」）</span></li></ul>
+                                    </li>
+                                    <li><span class="choices"><b>家族・友人 / 大洲のお店・事業者 / スタッフ・関係者 / イベントで知った</b></span>
+                                      <ul>
+                                        <li><span class="q">⑥ 紹介者のお名前（任意・自由入力）</span>
+                                          <ul>
+                                            <li><span class="choices">自由入力する → 内容をmember_referralsに保存</span>
+                                              <ul><li><span class="end">ラリー終了（「ありがとうございます！ ご縁に感謝です。」）</span></li></ul>
+                                            </li>
+                                            <li><span class="choices">スキップする</span>
+                                              <ul><li><span class="end">ラリー終了（「ありがとうございます！ ご縁に感謝です。」）</span></li></ul>
+                                            </li>
+                                          </ul>
+                                        </li>
+                                      </ul>
+                                    </li>
+                                  </ul>
+                                </li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <p class="note">分岐の総数：推し6 × 関係5 × お住まい（大洲市内1＋県内19市町＋県外「北海道1＋他7地方の都道府県」）× 関わり方（複数選択のため組み合わせ多数）× 紹介元6（うち4つは紹介者名の入力／スキップでさらに分岐）</p>
     </section>
   </div>
 
