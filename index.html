@@ -199,11 +199,9 @@
     <button data-tab="db">データベース設計</button>
     <button data-tab="decisions">意思決定ログ</button>
     <button data-tab="glossary">用語集</button>
+    <button data-tab="flows">全ボタン動線図</button>
+    <button data-tab="docs">設計ドキュメント一式</button>
   </nav>
-  <div class="mast" style="padding:10px 22px 12px; display:flex; gap:14px; flex-wrap:wrap;">
-    <a href="flows.html" style="font-size:12.5px; font-family:var(--f-mono);">→ 全ボタン動線図（あいさつラリー／リッチメニュー／会員情報／その他）</a>
-    <a href="docs.html" style="font-size:12.5px; font-family:var(--f-mono);">→ 全体設計書・DB設計書・仕様・積み残しタスク・エラー対策</a>
-  </div>
 </header>
 
 <main>
@@ -284,6 +282,38 @@
           <a class="openlink" href="richmenu.html" target="_blank" rel="noopener">別タブで開く ↗</a>
         </div>
         <iframe src="richmenu.html" height="2150" loading="lazy" title="リッチメニュー動作確認"></iframe>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ 全ボタン動線図 ============ -->
+  <div class="panel" id="panel-flows">
+    <section>
+      <div class="eyebrow">全ボタン動線図<span class="line"></span></div>
+      <h2>あいさつラリー／リッチメニュー／会員情報／その他 — 全ボタン動線</h2>
+      <p>それぞれのボタン・キーワードを押したときに何が起きるかを、5つのタブ（あいさつラリー／リッチメニュー「まちを知る」タブ／リッチメニュー「まちに関わる」タブ／会員情報について／その他）に分けて図解しています。LINEで実際に送られるメッセージは、実装コードの文言をそのまま記載しています。</p>
+      <div class="screenwrap">
+        <div class="screenhead">
+          <b>全ボタン動線図</b>
+          <a class="openlink" href="flows.html" target="_blank" rel="noopener">別タブで開く ↗</a>
+        </div>
+        <iframe src="flows.html" height="2400" loading="lazy" title="全ボタン動線図"></iframe>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ 設計ドキュメント一式 ============ -->
+  <div class="panel" id="panel-docs">
+    <section>
+      <div class="eyebrow">設計ドキュメント一式<span class="line"></span></div>
+      <h2>全体設計書・データベース設計書・仕様・積み残しのタスク・エラー対策</h2>
+      <p>5つのタブ（全体設計書／データベース設計書／仕様／積み残しのタスク／エラーが起きた際の対策）にまとめています。</p>
+      <div class="screenwrap">
+        <div class="screenhead">
+          <b>設計ドキュメント一式</b>
+          <a class="openlink" href="docs.html" target="_blank" rel="noopener">別タブで開く ↗</a>
+        </div>
+        <iframe src="docs.html" height="2400" loading="lazy" title="設計ドキュメント一式"></iframe>
       </div>
     </section>
   </div>
