@@ -9,20 +9,21 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap">
 <style>
   :root {
-    --paper:#F6F1E6; --surface:#FFFFFF; --sunken:#ECE5D6; --ink:#262019; --ink-soft:#6F6252;
-    --hair:#DDD1B8; --indigo:#2B4A63; --indigo-soft:#DEE6EC; --clay:#A85A2A; --clay-soft:#F3E2D2;
-    --moss:#4C6B52; --moss-soft:#E3EAE0;
+    --paper:#F4F6FB; --surface:#FFFFFF; --sunken:#ECEFF9; --ink:#0C0F14; --ink-soft:#5A6472;
+    --hair:#E1E5F0; --indigo:#1E4FFF; --indigo-soft:#E8EDFF; --clay:#FF6B4A; --clay-soft:#FFE9E2;
+    --moss:#0EA672; --moss-soft:#E1F8EE;
     --f-body:"Zen Kaku Gothic New",sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
   }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--f-body); }
-  header.top { position:sticky; top:0; z-index:10; background:var(--paper); border-bottom:1px solid var(--hair); }
-  .mast { max-width:1100px; margin:0 auto; padding:14px 20px 0; display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-  h1 { font-size:17px; margin:0 0 12px; }
-  h1 a { color:var(--ink-soft); font-size:12px; font-family:var(--f-mono); text-decoration:none; margin-left:10px; }
-  nav.tabs { display:flex; gap:2px; max-width:1100px; margin:0 auto; padding:0 20px; overflow-x:auto; }
-  nav.tabs button { font-family:var(--f-body); font-size:13px; font-weight:700; white-space:nowrap; background:none; border:none; color:var(--ink-soft); cursor:pointer; padding:10px 14px; border-bottom:3px solid transparent; }
-  nav.tabs button.active { color:var(--indigo); border-bottom-color:var(--indigo); }
+  header.top { position:sticky; top:0; z-index:10; background:var(--ink); color:#fff; }
+  .mast { max-width:1100px; margin:0 auto; padding:18px 20px 12px; display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  h1 { font-size:17px; font-weight:900; margin:0; color:#fff; }
+  h1 a { color:rgba(255,255,255,.6); font-size:12px; font-family:var(--f-mono); text-decoration:none; margin-left:10px; }
+  nav.tabs { display:flex; gap:6px; max-width:1100px; margin:0 auto; padding:0 20px 14px; overflow-x:auto; }
+  nav.tabs button { font-family:var(--f-body); font-size:13px; font-weight:700; white-space:nowrap; background:rgba(255,255,255,.08); border:none; color:rgba(255,255,255,.72); cursor:pointer; padding:9px 16px; border-radius:100px; }
+  nav.tabs button:hover { background:rgba(255,255,255,.16); color:#fff; }
+  nav.tabs button.active { color:var(--ink); background:#fff; }
   main { max-width:1100px; margin:0 auto; padding:26px 20px 90px; }
   .panel { display:none; }
   .panel.active { display:block; }
