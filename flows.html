@@ -21,6 +21,7 @@
   h1 { font-size:17px; font-weight:900; margin:0; color:#fff; }
   h1 a { color:rgba(255,255,255,.6); font-size:12px; font-family:var(--f-mono); text-decoration:none; margin-left:10px; }
   nav.tabs { display:flex; gap:6px; max-width:1300px; margin:0 auto; padding:0 20px 14px; overflow-x:auto; }
+  @media (min-width: 700px) { nav.tabs { flex-wrap: wrap; overflow-x: visible; } }
   nav.tabs button { font-family:var(--f-body); font-size:13px; font-weight:700; white-space:nowrap; background:rgba(255,255,255,.08); border:none; color:rgba(255,255,255,.72); cursor:pointer; padding:9px 16px; border-radius:100px; }
   nav.tabs button:hover { background:rgba(255,255,255,.16); color:#fff; }
   nav.tabs button.active { color:var(--ink); background:#fff; }

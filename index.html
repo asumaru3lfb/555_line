@@ -72,6 +72,9 @@
 
   /* ---- tabs ---- */
   nav.tabs { display:flex; gap: 6px; overflow-x: auto; max-width: 1600px; margin: 0 auto; padding: 0 24px 16px; }
+  @media (min-width: 900px) {
+    nav.tabs { flex-wrap: wrap; overflow-x: visible; }
+  }
   nav.tabs button {
     font-family: var(--f-body); font-size: 13px; font-weight: 700; white-space: nowrap;
     background: rgba(255,255,255,.08); border: none; color: rgba(255,255,255,.72); cursor: pointer;
