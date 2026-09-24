@@ -181,8 +181,40 @@
   .callout b { color: var(--indigo); }
   .callout.warn { background: var(--red-soft); }
   .callout.warn b { color: var(--red); }
+  .callout.tip { background: var(--moss-soft); }
+  .callout.tip b { color: var(--moss); }
 
   footer.bottom { max-width: 1100px; margin: 60px auto 0; padding: 18px 22px; border-top: 1px solid var(--hair); font-size: 12px; color: var(--ink-soft); }
+
+  /* ---- 運用マニュアル：手順ステップ／コード／カード ---- */
+  .steps { display:flex; flex-direction:column; gap:0; counter-reset: stepnum; margin: 18px 0; }
+  .step { position:relative; padding:0 0 24px 40px; border-left:2px solid var(--hair); margin-left:15px; }
+  .step:last-child { border-left-color:transparent; padding-bottom:2px; }
+  .step::before {
+    counter-increment: stepnum; content: counter(stepnum);
+    position:absolute; left:-15px; top:0; width:30px; height:30px; border-radius:50%;
+    background:var(--indigo); color:#fff; font-family:var(--f-mono); font-weight:700; font-size:13px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .step .stitle { font-weight:700; font-size:14.5px; margin-bottom:6px; }
+  .step .sbody { font-size:13.5px; color:var(--ink-soft); }
+  .step .sbody b { color: var(--ink); }
+  .navpath { display:inline-block; font-family:var(--f-mono); font-size:11.5px; background:var(--sunken); border:1px solid var(--hair); border-radius:6px; padding:3px 9px; margin:4px 4px 4px 0; color:var(--ink); }
+  .navpath .arrow { color:var(--ink-soft); margin:0 3px; }
+
+  .codebox { background:var(--ink); color:#E8ECFF; font-family:var(--f-mono); font-size:12.5px; line-height:1.8; border-radius:12px; padding:16px 18px; overflow-x:auto; margin:10px 0 16px; white-space:pre; }
+  .codebox .cm { color:#8B93A8; }
+
+  .cardgrid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin:16px 0; }
+  @media (max-width:640px) { .cardgrid { grid-template-columns:1fr; } }
+  .cardgrid .card { background: var(--surface); border:1px solid var(--hair); border-radius:18px; padding:18px 20px; box-shadow:0 2px 0 var(--hair); }
+  .cardgrid .card b { display:block; font-size:14px; margin-bottom:6px; }
+  .cardgrid .card p { font-size:12.5px; color:var(--ink-soft); margin:0; }
+
+  .tw { overflow-x:auto; }
+  .tw table { border-collapse:collapse; width:100%; font-size:12.5px; margin:12px 0 18px; }
+  .tw th, .tw td { border:1px solid var(--hair); padding:8px 11px; text-align:left; vertical-align:top; }
+  .tw th { background:var(--sunken); font-weight:700; }
 
   /* ---- あいさつラリー 全パターンツリー ---- */
   .tree, .tree ul { list-style: none; margin: 0; padding-left: 20px; }
@@ -215,6 +247,13 @@
   </div>
   <nav class="tabs" id="tabs">
     <button data-tab="overview" class="active">概要</button>
+    <button data-tab="man-overview">運用：全体像</button>
+    <button data-tab="man-line">運用：LINE管理画面</button>
+    <button data-tab="man-developers">運用：LINE Developers</button>
+    <button data-tab="man-cloudflare">運用：Cloudflare</button>
+    <button data-tab="man-terminal">運用：ターミナル操作</button>
+    <button data-tab="man-data">運用：データの見方</button>
+    <button data-tab="man-trouble">運用：困ったときは</button>
     <button data-tab="rally">あいさつラリー</button>
     <button data-tab="richmenu">リッチメニュー</button>
     <button data-tab="db">データベース設計</button>
@@ -222,7 +261,6 @@
     <button data-tab="glossary">用語集</button>
     <button data-tab="flows">全ボタン動線図</button>
     <button data-tab="docs">設計ドキュメント一式</button>
-    <button data-tab="manual">運用マニュアル</button>
   </nav>
 </header>
 
@@ -423,16 +461,294 @@
     </section>
   </div>
 
-  <!-- ============ 運用マニュアル ============ -->
-  <div class="panel" id="panel-manual">
+  <!-- ============ 運用：全体像 ============ -->
+  <div class="panel" id="panel-man-overview">
     <section>
-      <div class="eyebrow">はじめての方へ</div>
-      <h2>運用マニュアル：知識ゼロから引き継げる手順書</h2>
-      <p>担当が代わっても迷わないよう、LINE Official Account Manager・LINE Developers・Cloudflareダッシュボード・ターミナル操作のすべてを、実際の画面のメニュー名まで指定して手順化しています。</p>
-      <div class="screenwrap">
-        <div class="screenhead"><b>運用マニュアル</b></div>
-        <iframe src="manual.html" height="2600" loading="lazy" title="運用マニュアル"></iframe>
+      <div class="eyebrow">最初に読む</div>
+      <h2>この仕組みは、何がどこで動いているか</h2>
+      <p class="lede">4つの管理画面を、目的別に行き来しながら運用します。それぞれ「何をするための画面か」だけ覚えておけば、迷ったときにどこを見ればいいか分かります。</p>
+
+      <div class="cardgrid">
+        <div class="card"><b>① LINE Official Account Manager</b><p>お客さま向けの管理画面。友だち数の確認、リッチメニューの見た目確認、配信メッセージの作成、「チャット」機能のON/OFF切り替えをここで行う。<br><code>manager.line.biz</code></p></div>
+        <div class="card"><b>② LINE Developers コンソール</b><p>エンジニア向けの管理画面。Webhook URLの設定確認、チャネルシークレット／アクセストークンの再発行をここで行う。<br><code>developers.line.biz</code></p></div>
+        <div class="card"><b>③ Cloudflareダッシュボード</b><p>Bot本体のプログラム（Workers）、会員データ（D1）、ファイル置き場（R2）を管理する画面。エラーログの確認・データの中身の確認もここで行う。<br><code>dash.cloudflare.com</code></p></div>
+        <div class="card"><b>④ ターミナル（wrangler）</b><p>本番環境へコードやデータベースの変更を反映（デプロイ）するための操作。パソコンにインストールした「wrangler」というコマンドツールを使う。</p></div>
       </div>
+
+      <h3>ふだんの運用で使う画面（多い順）</h3>
+      <ol>
+        <li><b>①LINE Official Account Manager</b> — 友だち数の確認、配信、リッチメニューの見た目チェック。最も頻繁に開く画面。</li>
+        <li><b>③Cloudflareダッシュボード</b> — 「メッセージが届かない」等のトラブル時にログを見る。データを確認したいときにD1を開く。</li>
+        <li><b>②LINE Developers</b> — 通常はほぼ開かない。シークレットの再発行が必要になったときだけ。</li>
+        <li><b>④ターミナル</b> — コードやリッチメニュー画像を更新するときだけ。日常の運用では基本的に使わない。</li>
+      </ol>
+
+      <div class="callout">
+        <b>合言葉：</b>「お客さまに見える部分（友だち追加・メッセージ・メニュー）」はLINE管理画面、「裏側の仕組み（プログラム・データ・エラー）」はCloudflare、と覚えると迷いません。
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ 運用：LINE管理画面 ============ -->
+  <div class="panel" id="panel-man-line">
+    <section>
+      <div class="eyebrow">manager.line.biz</div>
+      <h2>LINE Official Account Manager の使い方</h2>
+      <p>お客さま向けの管理画面。ここではアカウントの見た目・配信・友だちの状況を確認します。</p>
+
+      <h3>ログイン方法</h3>
+      <div class="steps">
+        <div class="step"><div class="stitle">ブラウザで manager.line.biz を開く</div><div class="sbody">アドレスバーに <code>https://manager.line.biz</code> と入力してアクセスします。</div></div>
+        <div class="step"><div class="stitle">LINEアカウントでログイン</div><div class="sbody">「大洲カンパニー」の管理者権限を持つLINEアカウント（またはメールアドレス）でログインします。権限が分からない場合は三好へ確認してください。</div></div>
+        <div class="step"><div class="stitle">アカウントを選択</div><div class="sbody">複数アカウントを管理している場合、ログイン後の一覧から<b>「大洲カンパニー」</b>を選びます。</div></div>
+      </div>
+
+      <h3>「チャット」機能は必ずOFFにしておく</h3>
+      <div class="callout warn">
+        <b>重要：</b>「チャット」機能がONだと、お客さまからのメッセージがBot（Cloudflare Workers）に届かず、この管理画面上の「チャット」に横取りされてしまい、自動応答が一切動かなくなります。
+      </div>
+      <div class="steps">
+        <div class="step"><div class="stitle">設定画面を開く</div><div class="sbody"><span class="navpath">画面左メニュー「ホーム」<span class="arrow">→</span>右上の歯車アイコン「設定」</span> を開きます。</div></div>
+        <div class="step"><div class="stitle">応答設定を確認</div><div class="sbody"><span class="navpath">「応答設定」</span> のページで、<b>「チャット」がオフ</b>になっていることを確認します。オンになっていたらオフに切り替えてください。「Webhook」は逆に<b>オン</b>である必要があります。</div></div>
+      </div>
+
+      <h3>リッチメニューの見た目を確認する</h3>
+      <div class="steps">
+        <div class="step"><div class="stitle">リッチメニュー管理画面を開く</div><div class="sbody"><span class="navpath">画面左メニュー「トーク画面管理」<span class="arrow">→</span>「リッチメニュー」</span></div></div>
+        <div class="step"><div class="stitle">現在使われているメニューを確認</div><div class="sbody">一覧に表示されている画像とタイトルを確認します。ただし本アカウントのリッチメニューは<b>ターミナル（wrangler）からLINE APIを直接呼び出して登録</b>しているため、ここから新規作成・編集は行いません（詳しくは「運用：ターミナル操作」タブ）。</div></div>
+      </div>
+
+      <h3>友だち数・統計を見る</h3>
+      <div class="steps">
+        <div class="step"><div class="stitle">分析画面を開く</div><div class="sbody"><span class="navpath">画面左メニュー「分析」</span></div></div>
+        <div class="step"><div class="stitle">友だち数の推移・ブロック率を確認</div><div class="sbody">「友だちの推移」グラフで日次の増減、「概要」タブでブロック率を確認できます。</div></div>
+      </div>
+
+      <h3>メッセージを配信する（一斉配信）</h3>
+      <div class="steps">
+        <div class="step"><div class="stitle">配信作成画面を開く</div><div class="sbody"><span class="navpath">画面左メニュー「チャット・配信」<span class="arrow">→</span>「メッセージ配信」<span class="arrow">→</span>「作成」</span></div></div>
+        <div class="step"><div class="stitle">配信内容を作成</div><div class="sbody">テキスト・画像・カードなどを選び、内容を入力します。</div></div>
+        <div class="step"><div class="stitle">配信対象を絞り込む（必要な場合）</div><div class="sbody">「配信先」で属性やタグによる絞り込みが可能ですが、本アカウントの回答データ（推し・お住まい等）はLINE側のタグ機能ではなくCloudflare D1に保存されているため、<b>D1側のデータで絞り込んだ上で、対象者にだけ個別配信したい場合はBot側の実装が別途必要</b>です（現状未実装。積み残しタスク参照）。</div></div>
+        <div class="step"><div class="stitle">配信予約または即時配信</div><div class="sbody">内容を確認して配信します。配信後の取り消しはできないため、必ずプレビューで見え方を確認してください。</div></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ 運用：LINE Developers ============ -->
+  <div class="panel" id="panel-man-developers">
+    <section>
+      <div class="eyebrow">developers.line.biz</div>
+      <h2>LINE Developers コンソールの使い方</h2>
+      <p>ふだんはほとんど開きませんが、<b>Webhookが届かない・認証エラーが出る</b>ときに必ず確認する画面です。</p>
+
+      <h3>ログインとチャネルの開き方</h3>
+      <div class="steps">
+        <div class="step"><div class="stitle">developers.line.biz を開いてログイン</div><div class="sbody">manager.line.bizと同じLINEアカウントでログインできます。</div></div>
+        <div class="step"><div class="stitle">プロバイダーを選択</div><div class="sbody">一覧から本プロジェクトのプロバイダーを選びます。</div></div>
+        <div class="step"><div class="stitle">Messaging APIチャネルを選択</div><div class="sbody">チャネル一覧から<b>「大洲カンパニー」</b>（チャネルID：<code>2011331444</code>）を選びます。</div></div>
+      </div>
+
+      <h3>Webhook URLを確認する</h3>
+      <div class="steps">
+        <div class="step"><div class="stitle">「Messaging API設定」タブを開く</div><div class="sbody">チャネル詳細画面の上部タブから <span class="navpath">Messaging API設定</span> を選びます。</div></div>
+        <div class="step"><div class="stitle">Webhook URLを確認</div><div class="sbody">「Webhook URL」の欄に、Cloudflare Workersのアドレス（<code>https://〜.workers.dev</code> または独自ドメイン）が正しく入っているか確認します。「検証」ボタンを押すと接続確認ができます（成功と出ればWorker側は正常に応答している状態）。</div></div>
+        <div class="step"><div class="stitle">「Webhookの利用」がオンになっているか確認</div><div class="sbody">同じ画面内のスイッチが<b>オン</b>になっている必要があります。</div></div>
+      </div>
+
+      <h3>チャネルシークレット／アクセストークンを再発行する</h3>
+      <div class="callout warn"><b>注意：</b>再発行すると古い値は即座に無効になります。再発行後は必ずCloudflare側のシークレットも更新（「運用：ターミナル操作」タブ参照）しないと、Botが一切応答しなくなります。</div>
+      <div class="steps">
+        <div class="step"><div class="stitle">チャネルシークレットの場所</div><div class="sbody"><span class="navpath">「チャネル基本設定」タブ<span class="arrow">→</span>「チャネルシークレット」</span> 欄。「発行」または「再発行」ボタンで更新できます。</div></div>
+        <div class="step"><div class="stitle">チャネルアクセストークンの場所</div><div class="sbody"><span class="navpath">「Messaging API設定」タブ<span class="arrow">→</span>「チャネルアクセストークン（長期）」</span> 欄。「発行」で新しいトークンが表示されます（表示は一度きりなので、その場でコピーしてターミナルに貼り付けます）。</div></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ 運用：Cloudflare ============ -->
+  <div class="panel" id="panel-man-cloudflare">
+    <section>
+      <div class="eyebrow">dash.cloudflare.com</div>
+      <h2>Cloudflareダッシュボードの使い方</h2>
+      <p>Bot本体のプログラム（Workers）・会員データ（D1）・ファイル置き場（R2）を確認する画面です。</p>
+
+      <h3>ログイン方法</h3>
+      <div class="steps">
+        <div class="step"><div class="stitle">dash.cloudflare.com を開く</div><div class="sbody">Cloudflareアカウントのメールアドレスとパスワードでログインします。</div></div>
+        <div class="step"><div class="stitle">正しいアカウントを選択</div><div class="sbody">画面左上のアカウント名が、本プロジェクトを運用しているアカウント（一般社団法人キタ・マネジメント名義）になっているか確認します。</div></div>
+      </div>
+
+      <h3>Workers（プログラム本体）を見る</h3>
+      <div class="steps">
+        <div class="step"><div class="stitle">Workers &amp; Pages を開く</div><div class="sbody"><span class="navpath">画面左メニュー「Compute（Workers）」<span class="arrow">→</span>「Workers & Pages」</span></div></div>
+        <div class="step"><div class="stitle">対象のWorkerを選択</div><div class="sbody">一覧から <code>ozu555-line-worker</code> を選びます。</div></div>
+        <div class="step"><div class="stitle">ログを見る</div><div class="sbody"><span class="navpath">「Logs」タブ<span class="arrow">→</span>「Begin log stream」</span> を押すと、リアルタイムのアクセスログ・エラーが流れ始めます（この後に実際にLINEでメッセージを送ると、その処理内容がここに表示されます）。</div></div>
+        <div class="step"><div class="stitle">設定値（環境変数）を見る</div><div class="sbody"><span class="navpath">「Settings」タブ<span class="arrow">→</span>「Variables and Secrets」</span> で、GREETING_RALLYなどの設定値を確認できます（シークレット系の値そのものは表示されず、更新のみ可能）。</div></div>
+      </div>
+
+      <h3>D1（会員データベース）を見る</h3>
+      <div class="steps">
+        <div class="step"><div class="stitle">D1の一覧を開く</div><div class="sbody"><span class="navpath">画面左メニュー「Storage & Databases」<span class="arrow">→</span>「D1 SQL Database」</span></div></div>
+        <div class="step"><div class="stitle">対象のデータベースを選択</div><div class="sbody">一覧から本番用データベース（database_id: <code>a9fff12a-791b-4c4a-b2b5-761992441af5</code>）を選びます。</div></div>
+        <div class="step"><div class="stitle">テーブルの中身を見る</div><div class="sbody"><span class="navpath">「Tables」タブ</span> でテーブル一覧（members / member_pii / member_attributes / member_referrals / member_tags / member_events）が見られ、クリックすると中身の行が一覧表示されます。</div></div>
+        <div class="step"><div class="stitle">SQLを直接実行して調べる</div><div class="sbody"><span class="navpath">「Console」タブ</span> にSQL文を入力して「Execute」を押すと、その場で結果が表示されます。具体的な文例は「運用：データの見方」タブ参照。</div></div>
+      </div>
+      <div class="callout warn"><b>注意：</b>Consoleから<code>DELETE</code>や<code>UPDATE</code>を直接実行すると、Bot側のコードを経由せずデータが変更されます。原則として「見るだけ」に使い、変更が必要な場合は事前に丸岡さんに相談してください。</div>
+
+      <h3>R2（ファイル置き場）を見る</h3>
+      <div class="steps">
+        <div class="step"><div class="stitle">R2の一覧を開く</div><div class="sbody"><span class="navpath">画面左メニュー「Storage & Databases」<span class="arrow">→</span>「R2 Object Storage」</span></div></div>
+        <div class="step"><div class="stitle">バケットを開いて中身を見る</div><div class="sbody">対象のバケットを選ぶと、フォルダ・ファイルの一覧が見られます。<code>webhook_fallback/</code> 以下は、Webhook処理に失敗した際の取りこぼしデータの一時保管場所です。</div></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ 運用：ターミナル操作 ============ -->
+  <div class="panel" id="panel-man-terminal">
+    <section>
+      <div class="eyebrow">wrangler CLI</div>
+      <h2>ターミナル操作（コードやデータの更新）</h2>
+      <p>本番環境にコード・データベース構造・秘密情報を反映するときだけ使います。日常の運用では基本的に触りません。</p>
+
+      <h3>事前準備（初回のみ）</h3>
+      <div class="steps">
+        <div class="step"><div class="stitle">Node.jsをインストール</div><div class="sbody">公式サイト（nodejs.org）からLTS版をインストールします。</div></div>
+        <div class="step"><div class="stitle">プロジェクトフォルダを開く</div><div class="sbody">ターミナル（PowerShellまたはコマンドプロンプト）で <code>ozu555-line-worker</code> フォルダに移動します。</div></div>
+        <div class="step"><div class="stitle">依存パッケージをインストール</div>
+          <div class="codebox"><span class="cm"># プロジェクトフォルダ内で実行</span>
+npm install</div>
+        </div>
+        <div class="step"><div class="stitle">Cloudflareにログイン</div>
+          <div class="codebox">npx wrangler login</div>
+          <div class="sbody">ブラウザが自動で開くので、Cloudflareアカウントでログイン・許可します。</div>
+        </div>
+      </div>
+
+      <h3>コードを本番へ反映する（デプロイ）</h3>
+      <div class="codebox">npx wrangler deploy</div>
+      <p class="note">実行するとCloudflare上のWorkerが即座に新しいコードに置き換わります。数秒〜十数秒で反映されます。</p>
+
+      <h3>データベースの構造を変更する（マイグレーション適用）</h3>
+      <div class="callout warn"><b>後戻りしにくい操作：</b>本番データベースへの適用は取り消せません。<code>--remote</code> を付けると本番に、付けないとローカルの確認用に適用されます。</div>
+      <div class="codebox"><span class="cm"># まずローカルで確認してから</span>
+npx wrangler d1 migrations apply ozu555-line-db
+
+<span class="cm"># 問題なければ本番へ</span>
+npx wrangler d1 migrations apply ozu555-line-db --remote</div>
+
+      <h3>秘密情報（シークレット）を設定する</h3>
+      <div class="codebox">npx wrangler secret put LINE_CHANNEL_SECRET
+<span class="cm"># Enterを押すと値の入力を求められるので、貼り付けてEnter</span>
+
+npx wrangler secret put LINE_CHANNEL_ACCESS_TOKEN
+npx wrangler secret put ADMIN_TOKEN</div>
+      <p class="note">値は画面に表示されず、入力してEnterを押すだけで登録されます。LINE Developersでシークレットやトークンを再発行した直後は、必ずこのコマンドで更新してください。</p>
+
+      <h3>リッチメニューを更新する</h3>
+      <div class="steps">
+        <div class="step"><div class="stitle">画像を作り直す</div><div class="sbody"><code>scratchpad/make_richmenu3.py</code>（Python）を編集・実行し、新しい画像を生成します。</div></div>
+        <div class="step"><div class="stitle">管理用APIを呼び出して登録する</div>
+          <div class="codebox"><span class="cm"># PowerShellの場合</span>
+Invoke-RestMethod -Method Post `
+  -Uri "https://ozu555-line-worker.〜.workers.dev/admin/setup_richmenu" `
+  -Headers @{ "Authorization" = "Bearer （ADMIN_TOKENの値）" }</div>
+          <div class="sbody">このAPIが「新しい画像で登録→デフォルトに設定→古いメニューを削除」までを自動で行います。</div>
+        </div>
+        <div class="step"><div class="stitle">LINEアプリで確認</div><div class="sbody">トーク画面を一度閉じて開き直すと、新しいメニューに切り替わります（反映までに数分かかる場合があります）。</div></div>
+      </div>
+
+      <h3>リアルタイムでログを見る</h3>
+      <div class="codebox">npx wrangler tail --format json</div>
+      <p class="note">実行した状態でLINE上から操作すると、その処理内容がターミナルに逐次表示されます。<code>response.status</code>が401ならシークレットの不一致、500ならコード側のエラーです。</p>
+    </section>
+  </div>
+
+  <!-- ============ 運用：データの見方 ============ -->
+  <div class="panel" id="panel-man-data">
+    <section>
+      <div class="eyebrow">D1 Console</div>
+      <h2>データの見方（SQLの実行例）</h2>
+      <p>Cloudflareダッシュボードの <span class="navpath">D1 SQL Database<span class="arrow">→</span>対象DB<span class="arrow">→</span>Console</span> タブに、以下のSQL文をそのまま貼り付けて「Execute」を押してください。</p>
+
+      <h3>友だち数を確認する</h3>
+      <div class="codebox">SELECT COUNT(*) AS 友だち数 FROM members WHERE unfollowed_at IS NULL;</div>
+
+      <h3>直近で友だち追加した人を新しい順に見る</h3>
+      <div class="codebox">SELECT line_user_id, followed_at, stage
+FROM members
+ORDER BY followed_at DESC
+LIMIT 20;</div>
+
+      <h3>ある人の回答内容をまとめて見る（1人分）</h3>
+      <p class="note"><code>line_user_id</code> の値は、上記のmembers一覧やmember_eventsのidempotency_keyなどから調べられます。</p>
+      <div class="codebox"><span class="cm">-- 属性（推し・関係・お住まい）</span>
+SELECT * FROM member_attributes WHERE line_user_id = '（対象のID）';
+
+<span class="cm">-- 関わり方の希望タグ</span>
+SELECT * FROM member_tags WHERE line_user_id = '（対象のID）';
+
+<span class="cm">-- 紹介元・紹介者名</span>
+SELECT * FROM member_referrals WHERE line_user_id = '（対象のID）';</div>
+
+      <h3>「推し」の回答分布を見る（簡易集計）</h3>
+      <div class="codebox">SELECT oshi, COUNT(*) AS 件数
+FROM member_attributes
+GROUP BY oshi
+ORDER BY 件数 DESC;</div>
+
+      <h3>直近のイベントログを見る（動作確認・トラブル調査用）</h3>
+      <div class="codebox">SELECT line_user_id, event_type, created_at
+FROM member_events
+ORDER BY created_at DESC
+LIMIT 50;</div>
+
+      <div class="tw">
+      <table>
+        <tr><th>テーブル名</th><th>ここに何が入っているか</th></tr>
+        <tr><td><code>members</code></td><td>会員の土台。友だち追加日・退会日・現在の状態</td></tr>
+        <tr><td><code>member_pii</code></td><td>表示名・メールアドレスのみ（個人特定情報）</td></tr>
+        <tr><td><code>member_attributes</code></td><td>推し・大洲との関係・お住まい（統計的な属性）</td></tr>
+        <tr><td><code>member_referrals</code></td><td>紹介元の種別・紹介者のお名前（第三者情報）</td></tr>
+        <tr><td><code>member_tags</code></td><td>関わり方の希望など、複数選択できるタグ</td></tr>
+        <tr><td><code>member_events</code></td><td>いつ・何をしたかの記録ログ</td></tr>
+      </table>
+      </div>
+      <p class="note">各テーブルの設計思想の詳細は「設計ドキュメント一式」タブの「データベース設計書」を参照してください。</p>
+    </section>
+  </div>
+
+  <!-- ============ 運用：困ったときは ============ -->
+  <div class="panel" id="panel-man-trouble">
+    <section>
+      <div class="eyebrow">症状別チェックリスト</div>
+      <h2>困ったときは、まずここを確認する</h2>
+
+      <h3>症状：メッセージを送っても既読にならない・返信が来ない</h3>
+      <div class="steps">
+        <div class="step"><div class="stitle">LINE Official Account Managerの「チャット」設定を確認</div><div class="sbody"><span class="navpath">ホーム<span class="arrow">→</span>設定<span class="arrow">→</span>応答設定</span> で「チャット」がオフになっているか確認（オンだと横取りされます）。</div></div>
+        <div class="step"><div class="stitle">LINE Developersで接続確認</div><div class="sbody"><span class="navpath">Messaging API設定<span class="arrow">→</span>Webhook URL<span class="arrow">→</span>検証</span> を押し、成功するか確認。</div></div>
+        <div class="step"><div class="stitle">wrangler tailでログを見る</div><div class="sbody">ターミナルで <code>npx wrangler tail --format json</code> を実行し、実際にLINEでメッセージを送ってみる。<code>response.status</code>が401ならシークレット不一致 → LINE Developersで値を確認し、ターミナルから <code>wrangler secret put</code> で再設定。</div></div>
+      </div>
+
+      <h3>症状：リッチメニューが表示されない・古いまま</h3>
+      <div class="steps">
+        <div class="step"><div class="stitle">トーク画面を閉じて開き直す</div><div class="sbody">LINEアプリ側のキャッシュが原因のことが多いです。</div></div>
+        <div class="step"><div class="stitle">数分待つ</div><div class="sbody">LINEプラットフォーム側の反映に時間がかかる場合があります。</div></div>
+        <div class="step"><div class="stitle">それでも直らない場合は再登録</div><div class="sbody">「運用：ターミナル操作」タブの「リッチメニューを更新する」手順で、<code>/admin/setup_richmenu</code>を再実行します。</div></div>
+      </div>
+
+      <h3>症状：Cloudflareへのデプロイ・マイグレーションが失敗する</h3>
+      <div class="steps">
+        <div class="step"><div class="stitle">エラーメッセージを確認</div><div class="sbody">"not authorized: SQLITE_AUTH" の場合、SQL文の中に <code>PRAGMA</code> や <code>CREATE TEMP TABLE</code> が含まれていないか確認してください（D1では使用不可）。</div></div>
+        <div class="step"><div class="stitle">ログイン状態を確認</div><div class="sbody"><code>npx wrangler login</code> を再実行し、正しいCloudflareアカウントでログインしているか確認します。</div></div>
+      </div>
+
+      <h3>症状：友だち追加してもDBに何も記録されない</h3>
+      <div class="steps">
+        <div class="step"><div class="stitle">D1 Consoleで直接確認</div><div class="sbody"><code>SELECT * FROM members ORDER BY followed_at DESC LIMIT 5;</code> を実行し、新しい行が増えているか確認。</div></div>
+        <div class="step"><div class="stitle">増えていなければwrangler tailでエラーを確認</div><div class="sbody">followイベント処理中の例外（SQLエラー等）が表示されていないか確認します。</div></div>
+      </div>
+
+      <div class="callout tip"><b>共通の心構え：</b>まず「LINE側の設定」→「Webhookの接続」→「Cloudflare側のログ」の順に切り分けると、原因の層（LINE側かCloudflare側か）を早く特定できます。</div>
     </section>
   </div>
 
