@@ -217,9 +217,9 @@
   .tw th { background:var(--sunken); font-weight:700; }
 
   /* ---- あいさつラリー 全パターンツリー ---- */
-  .tree, .tree ul { list-style: none; margin: 0; padding-left: 20px; }
-  .tree { padding-left: 0; font-family: var(--f-mono); font-size: 12.5px; }
-  .tree li { position: relative; padding: 5px 0 5px 20px; }
+  .tree, .tree ul { list-style: none; margin: 0; padding-left: 20px; max-width: 100%; }
+  .tree { padding-left: 0; font-family: var(--f-mono); font-size: 12.5px; max-width: 100%; overflow-x: auto; }
+  .tree li { position: relative; padding: 5px 0 5px 20px; max-width: 100%; }
   .tree li::before {
     content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 1px;
     background: var(--hair);
@@ -231,11 +231,15 @@
   }
   .tree > li { padding-left: 0; }
   .tree > li::before, .tree > li::after { display: none; }
-  .tree .q { font-family: var(--f-body); font-weight: 700; color: var(--ink); font-size: 13px; }
-  .tree .choices { color: var(--ink-soft); }
+  .tree .q { font-family: var(--f-body); font-weight: 700; color: var(--ink); font-size: 13px; overflow-wrap: anywhere; }
+  .tree .choices { color: var(--ink-soft); overflow-wrap: anywhere; }
   .tree .choices b { color: var(--indigo); font-weight: 700; }
   .tree .end { color: var(--moss); font-weight: 700; }
   .tree .end::before { content: "🏁 "; }
+  @media (max-width: 560px) {
+    .tree, .tree ul { padding-left: 12px; }
+    .tree li { padding-left: 14px; }
+  }
 </style>
 </head>
 <body>
