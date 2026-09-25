@@ -88,6 +88,21 @@
   .btn-outline { background:var(--surface); border:1.5px solid var(--hair); color:var(--ink); border-radius:10px; padding:9px 15px; font-size:12.5px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; width:auto; }
   .btn-outline:hover { background:var(--sunken); }
 
+  /* ---- 項目別絞り込み ---- */
+  .filterpanel { background:var(--surface); border:1px solid var(--hair); border-radius:14px; padding:14px 16px; margin-bottom:14px; }
+  .filtergrid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+  @media (max-width:1100px) { .filtergrid { grid-template-columns:repeat(2,1fr); } }
+  .filterfield label { display:block; font-size:10.5px; font-weight:700; color:var(--ink-soft); margin-bottom:5px; text-transform:uppercase; letter-spacing:.03em; }
+  .filterfield select, .filterfield input[type=date] { width:100%; border:1.5px solid var(--hair); background:var(--sunken); border-radius:8px; padding:8px 10px; font-size:12.5px; color:var(--ink); font-family:inherit; }
+  .filterfield .daterange { display:flex; align-items:center; gap:6px; }
+  .filterfield .daterange span { font-size:11px; color:var(--ink-soft); }
+  .filter-tagpicker { display:flex; flex-wrap:wrap; gap:5px; }
+  .filter-tagpicker .tagchip { font-size:11px; font-weight:700; border:1.5px solid var(--hair); background:var(--sunken); border-radius:100px; padding:5px 10px; cursor:pointer; color:var(--ink-soft); }
+  .filter-tagpicker .tagchip.active { background:var(--indigo); border-color:var(--indigo); color:#fff; }
+  .filterfoot { display:flex; align-items:center; justify-content:space-between; margin-top:12px; padding-top:12px; border-top:1px solid var(--hair); }
+  .filterfoot .hits { font-size:12px; color:var(--ink-soft); font-weight:700; }
+  .link-reset { background:none; border:none; color:var(--indigo); font-size:12px; font-weight:700; cursor:pointer; text-decoration:underline; }
+
   .selectbar { display:none; align-items:center; gap:12px; background:var(--indigo); color:#fff; border-radius:12px; padding:10px 16px; margin-bottom:14px; font-size:12.5px; font-weight:700; }
   .selectbar.show { display:flex; }
   .selectbar button { background:rgba(255,255,255,.15); border:none; color:#fff; border-radius:8px; padding:7px 13px; font-size:12px; font-weight:700; cursor:pointer; }
@@ -166,6 +181,25 @@
 
   .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 20px; border-radius:10px; font-size:13px; font-weight:700; z-index:60; display:none; box-shadow:0 8px 24px rgba(0,0,0,.2); }
   .toast.show { display:block; }
+
+  /* ---- ページ切り替え（会員一覧 / 設定） ---- */
+  .page { display:none; }
+  .page.active { display:block; }
+
+  /* ---- 設定：管理者一覧 ---- */
+  .settingsnote { display:flex; gap:10px; background:var(--indigo-soft); border-radius:12px; padding:13px 16px; font-size:12.5px; color:var(--indigo); line-height:1.7; margin-bottom:20px; }
+  .adminlist { background:var(--surface); border:1px solid var(--hair); border-radius:16px; overflow:hidden; }
+  .adminrow { display:grid; grid-template-columns:38px 1fr 1fr 120px 110px 90px; align-items:center; gap:12px; padding:13px 16px; border-bottom:1px solid var(--hair); font-size:13px; }
+  .adminrow:last-child { border-bottom:none; }
+  .adminrow.head { background:var(--sunken); font-size:10.5px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em; padding:11px 16px; }
+  @media (max-width:900px) { .adminrow { grid-template-columns:32px 1fr 90px; } .adminrow .col-email, .adminrow .col-added { display:none; } }
+  .adminavatar { width:30px; height:30px; border-radius:50%; background:var(--indigo-soft); color:var(--indigo); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; }
+  .adminrow b { font-size:13px; }
+  .rolepill { font-size:10.5px; font-weight:700; border-radius:100px; padding:3px 9px; white-space:nowrap; }
+  .rolepill.admin { background:var(--indigo-soft); color:var(--indigo); }
+  .rolepill.viewer { background:var(--sunken); color:var(--ink-soft); }
+  .selfnote { font-size:10.5px; color:var(--ink-soft); }
+  .settings-actions-bar { display:flex; justify-content:flex-end; margin-bottom:14px; }
 </style>
 </head>
 <body>
@@ -196,9 +230,9 @@
     <div class="topbar">
       <div class="brand"><div class="mark">大</div>大洲カンパニー 管理画面</div>
       <nav>
-        <a href="#" class="active">会員一覧</a>
-        <a href="#" onclick="return false">配信（準備中）</a>
-        <a href="#" onclick="return false">設定（準備中）</a>
+        <a href="#" class="active" data-page="members" onclick="return showPage('members')">会員一覧</a>
+        <a href="#" onclick="return false" title="このデモの対象外です">配信（準備中）</a>
+        <a href="#" data-page="settings" onclick="return showPage('settings')">設定</a>
       </nav>
       <div class="spacer"></div>
       <div class="who"><div class="avatar">飛</div>三好飛鳥</div>
@@ -207,6 +241,7 @@
   </header>
 
   <main class="wrap">
+  <div class="page active" id="page-members">
     <h1 class="pagetitle">会員一覧</h1>
     <p class="pagelede">友だち追加している会員の一覧です。行をクリックすると詳細が確認できます。（サンプルデータ 24件）</p>
 
@@ -227,10 +262,57 @@
       <button class="chip" data-filter="withdrawn" onclick="setFilter('withdrawn')">退会・ブロック</button>
       <button class="chip" data-filter="referral" onclick="setFilter('referral')">紹介者名あり</button>
       <div class="grow"></div>
+      <button class="btn-outline" onclick="toggleFilterPanel()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16"/><path d="M7 12h10"/><path d="M10 18h4"/></svg>
+        項目で絞り込む
+      </button>
       <button class="btn-outline" onclick="openCsvModal(false)">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
         CSVダウンロード
       </button>
+    </div>
+
+    <div class="filterpanel" id="filterPanel" style="display:none">
+      <div class="filtergrid">
+        <div class="filterfield">
+          <label>推し</label>
+          <select id="f-oshi" onchange="render()">
+            <option value="">すべて</option>
+          </select>
+        </div>
+        <div class="filterfield">
+          <label>大洲との関係</label>
+          <select id="f-relation" onchange="render()">
+            <option value="">すべて</option>
+          </select>
+        </div>
+        <div class="filterfield">
+          <label>お住まい</label>
+          <select id="f-residence" onchange="render()">
+            <option value="">すべて</option>
+          </select>
+        </div>
+        <div class="filterfield">
+          <label>紹介元</label>
+          <select id="f-refkind" onchange="render()">
+            <option value="">すべて</option>
+          </select>
+        </div>
+        <div class="filterfield">
+          <label>友だち追加日</label>
+          <div class="daterange">
+            <input type="date" id="f-dateFrom" onchange="render()"><span>〜</span><input type="date" id="f-dateTo" onchange="render()">
+          </div>
+        </div>
+      </div>
+      <div class="filterfield" style="margin-top:12px">
+        <label>関わり方の希望（複数選択可・OR条件）</label>
+        <div class="filter-tagpicker" id="f-tags"></div>
+      </div>
+      <div class="filterfoot">
+        <span class="hits" id="filterHits">24件がヒット</span>
+        <button class="link-reset" onclick="resetFilters()">絞り込みをクリア</button>
+      </div>
     </div>
 
     <div class="selectbar" id="selectbar">
@@ -263,6 +345,30 @@
         <div class="btns"><button disabled>前へ</button><button disabled>次へ</button></div>
       </div>
     </div>
+  </div>
+
+  <div class="page" id="page-settings">
+    <h1 class="pagetitle">設定</h1>
+    <p class="pagelede">この管理画面にログインできる人を管理します。</p>
+
+    <div class="settingsnote">
+      🔒 ここでの追加・削除は、本番ではCloudflare Access の許可メールアドレス一覧（Access Policy）に反映される想定です。このデモでは画面上の操作のみで、実際の認証設定は変更されません。
+    </div>
+
+    <div class="settings-actions-bar">
+      <button class="btn-outline" style="background:var(--ink); color:#fff; border-color:var(--ink);" onclick="openAdminAddModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+        管理者を追加
+      </button>
+    </div>
+
+    <div class="adminlist">
+      <div class="adminrow head">
+        <span></span><span>名前</span><span class="col-email">メールアドレス</span><span>権限</span><span class="col-added">追加日</span><span></span>
+      </div>
+      <div id="adminTableBody"></div>
+    </div>
+  </div>
   </main>
 </div>
 
@@ -354,6 +460,46 @@
   </div>
 </div>
 
+<!-- ============ 管理者を追加モーダル ============ -->
+<div class="modal" id="adminAddModal">
+  <div class="modalbox">
+    <h2>管理者を追加</h2>
+    <p>追加した相手に、ログイン用のワンタイムコードがメールで送られる想定です（このデモでは送信されません）。</p>
+    <div class="field">
+      <label>名前</label>
+      <input type="text" id="adminNameInput" placeholder="例：山田 太郎">
+    </div>
+    <div class="field">
+      <label>メールアドレス</label>
+      <input type="text" id="adminEmailInput" placeholder="example@kita-m.com">
+    </div>
+    <div class="field">
+      <label>権限</label>
+      <select id="adminRoleInput" style="width:100%; border:1.5px solid var(--hair); background:var(--sunken); border-radius:10px; padding:11px 13px; font-size:13.5px;">
+        <option value="admin">管理者（閲覧・削除・CSV出力・設定変更）</option>
+        <option value="viewer">閲覧のみ（一覧の閲覧のみ、削除・CSV出力不可）</option>
+      </select>
+    </div>
+    <div class="row" style="margin-top:6px">
+      <button class="btn-cancel" onclick="closeAdminAddModal()">キャンセル</button>
+      <button class="btn-confirm-danger" style="background:var(--indigo)" onclick="confirmAdminAdd()">追加する</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 管理者を削除する確認モーダル ============ -->
+<div class="modal" id="adminDeleteModal">
+  <div class="modalbox danger">
+    <h2>管理者を削除しますか？</h2>
+    <p id="adminDeleteText">対象：—</p>
+    <div class="warnbox">この操作により、対象の方はこの管理画面にログインできなくなります。</div>
+    <div class="row">
+      <button class="btn-cancel" onclick="closeAdminDeleteModal()">キャンセル</button>
+      <button class="btn-confirm-danger" onclick="confirmAdminDelete()">削除する</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -400,19 +546,73 @@ let MEMBERS = NAMES.map((name, i) => {
   };
 });
 
-let state = { filter: "all", selected: new Set() };
+let state = { filter: "all", selected: new Set(), tagFilter: new Set() };
 
 function statusLabel(m){ return m.status === "active" ? "有効" : "退会・ブロック"; }
 
+/* ---------------- 項目別フィルターパネルの初期化 ---------------- */
+function fillSelect(id, options){
+  const sel = document.getElementById(id);
+  options.forEach(o => {
+    const opt = document.createElement("option");
+    opt.value = o; opt.textContent = o;
+    sel.appendChild(opt);
+  });
+}
+function initFilterPanel(){
+  fillSelect("f-oshi", OSHI);
+  fillSelect("f-relation", RELATION);
+  fillSelect("f-residence", RESIDENCE);
+  fillSelect("f-refkind", REFKIND);
+  const tagWrap = document.getElementById("f-tags");
+  tagWrap.innerHTML = TAGS_POOL.map(t => `<button type="button" class="tagchip" data-tag="${t}" onclick="toggleTagFilter('${t}', this)">${t}</button>`).join("");
+}
+function toggleFilterPanel(){
+  const panel = document.getElementById("filterPanel");
+  panel.style.display = panel.style.display === "none" ? "block" : "none";
+}
+function toggleTagFilter(tag, el){
+  if (state.tagFilter.has(tag)) state.tagFilter.delete(tag); else state.tagFilter.add(tag);
+  el.classList.toggle("active");
+  render();
+}
+function resetFilters(){
+  document.getElementById("f-oshi").value = "";
+  document.getElementById("f-relation").value = "";
+  document.getElementById("f-residence").value = "";
+  document.getElementById("f-refkind").value = "";
+  document.getElementById("f-dateFrom").value = "";
+  document.getElementById("f-dateTo").value = "";
+  state.tagFilter.clear();
+  document.querySelectorAll(".filter-tagpicker .tagchip").forEach(c => c.classList.remove("active"));
+  render();
+}
+
 function filtered(){
   const q = document.getElementById("searchInput").value.trim().toLowerCase();
-  return MEMBERS.filter(m => {
+  const fOshi = document.getElementById("f-oshi").value;
+  const fRelation = document.getElementById("f-relation").value;
+  const fResidence = document.getElementById("f-residence").value;
+  const fRefkind = document.getElementById("f-refkind").value;
+  const fFrom = document.getElementById("f-dateFrom").value;
+  const fTo = document.getElementById("f-dateTo").value;
+  const list = MEMBERS.filter(m => {
     if (state.filter === "active" && m.status !== "active") return false;
     if (state.filter === "withdrawn" && m.status !== "withdrawn") return false;
     if (state.filter === "referral" && !m.refNote) return false;
     if (q && !m.name.toLowerCase().includes(q)) return false;
+    if (fOshi && m.oshi !== fOshi) return false;
+    if (fRelation && m.relation !== fRelation) return false;
+    if (fResidence && m.residence !== fResidence) return false;
+    if (fRefkind && m.refKind !== fRefkind) return false;
+    if (fFrom && m.followed < fFrom) return false;
+    if (fTo && m.followed > fTo) return false;
+    if (state.tagFilter.size > 0 && !m.tags.some(t => state.tagFilter.has(t))) return false;
     return true;
   });
+  const hitsEl = document.getElementById("filterHits");
+  if (hitsEl) hitsEl.textContent = `${list.length}件がヒット`;
+  return list;
 }
 
 function render(){
@@ -555,11 +755,82 @@ function doCsvDownload(){
   showToast(`${targets.length}件をCSVでダウンロードしました`);
 }
 
+/* ---------------- ページ切り替え（会員一覧 / 設定） ---------------- */
+function showPage(name){
+  document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.id === "page-" + name));
+  document.querySelectorAll(".topbar nav a[data-page]").forEach(a => a.classList.toggle("active", a.dataset.page === name));
+  return false;
+}
+
+/* ---------------- 設定：管理者一覧（サンプルデータ） ---------------- */
+const CURRENT_ADMIN_EMAIL = "asuka.miyoshi@kita-m.com";
+let ADMINS = [
+  { name: "三好飛鳥", email: "asuka.miyoshi@kita-m.com", role: "admin", added: "2026-08-30" },
+  { name: "丸岡直樹", email: "maruoka@example-vm.co.jp", role: "admin", added: "2026-08-30" },
+  { name: "フクヤマ", email: "fukuyama@example.jp", role: "viewer", added: "2026-09-05" },
+];
+
+function initials(name){ return name.slice(0,1); }
+function renderAdminTable(){
+  const wrap = document.getElementById("adminTableBody");
+  wrap.innerHTML = ADMINS.map((a, i) => {
+    const isSelf = a.email === CURRENT_ADMIN_EMAIL;
+    return `
+      <div class="adminrow">
+        <div class="adminavatar">${initials(a.name)}</div>
+        <div><b>${a.name}</b>${isSelf ? '<div class="selfnote">自分自身</div>' : ''}</div>
+        <div class="col-email">${a.email}</div>
+        <div><span class="rolepill ${a.role}">${a.role === 'admin' ? '管理者' : '閲覧のみ'}</span></div>
+        <div class="col-added">${a.added}</div>
+        <div>
+          <button class="iconbtn del" title="削除" ${isSelf ? "disabled style=\"opacity:.35;cursor:not-allowed\"" : `onclick="openAdminDeleteModal(${i})"`}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+          </button>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function openAdminAddModal(){
+  document.getElementById("adminNameInput").value = "";
+  document.getElementById("adminEmailInput").value = "";
+  document.getElementById("adminRoleInput").value = "admin";
+  document.getElementById("adminAddModal").classList.add("show");
+}
+function closeAdminAddModal(){ document.getElementById("adminAddModal").classList.remove("show"); }
+function confirmAdminAdd(){
+  const name = document.getElementById("adminNameInput").value.trim();
+  const email = document.getElementById("adminEmailInput").value.trim();
+  const role = document.getElementById("adminRoleInput").value;
+  if (!name || !email){ showToast("名前とメールアドレスを入力してください"); return; }
+  ADMINS.push({ name, email, role, added: new Date().toISOString().slice(0,10) });
+  closeAdminAddModal();
+  renderAdminTable();
+  showToast(`${name} さんを追加しました（本番ではCloudflare Accessの許可リストに反映）`);
+}
+
+let adminDeleteIndex = null;
+function openAdminDeleteModal(i){
+  adminDeleteIndex = i;
+  document.getElementById("adminDeleteText").textContent = `対象：${ADMINS[i].name}（${ADMINS[i].email}）`;
+  document.getElementById("adminDeleteModal").classList.add("show");
+}
+function closeAdminDeleteModal(){ document.getElementById("adminDeleteModal").classList.remove("show"); }
+function confirmAdminDelete(){
+  const removed = ADMINS[adminDeleteIndex];
+  ADMINS.splice(adminDeleteIndex, 1);
+  closeAdminDeleteModal();
+  renderAdminTable();
+  showToast(`${removed.name} さんを削除しました`);
+}
+
 /* ---------------- ログイン／トースト ---------------- */
 function doLogin(){
   document.getElementById("screen-login").style.display = "none";
   document.getElementById("screen-dash").style.display = "block";
+  initFilterPanel();
   render();
+  renderAdminTable();
 }
 function doLogout(){
   document.getElementById("screen-dash").style.display = "none";
