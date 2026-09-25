@@ -45,6 +45,9 @@
   .field label { display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); margin-bottom:6px; }
   .field input { width:100%; border:1.5px solid var(--hair); background:var(--sunken); border-radius:10px; padding:11px 13px; font-size:13.5px; color:var(--ink); }
   .field input:focus { outline:2px solid var(--indigo); outline-offset:1px; background:var(--surface); }
+  .field textarea { width:100%; border:1.5px solid var(--hair); background:var(--sunken); border-radius:10px; padding:11px 13px; font-size:13.5px; color:var(--ink); font-family:inherit; resize:vertical; }
+  .field textarea:focus { outline:2px solid var(--indigo); outline-offset:1px; background:var(--surface); }
+  .charcount { text-align:right; font-size:11px; color:var(--ink-soft); margin-top:4px; }
   .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; border:none; border-radius:10px; font-weight:700; font-size:13.5px; padding:12px 18px; cursor:pointer; width:100%; }
   .btn-primary { background:var(--ink); color:#fff; }
   .btn-primary:hover { opacity:.88; }
@@ -162,7 +165,7 @@
   /* ---------- モーダル（削除確認・CSV） ---------- */
   .modal { position:fixed; inset:0; background:rgba(12,15,20,.5); display:none; align-items:center; justify-content:center; z-index:50; padding:20px; }
   .modal.show { display:flex; }
-  .modalbox { width:100%; max-width:420px; background:var(--surface); border-radius:18px; padding:26px; }
+  .modalbox { width:100%; max-width:420px; max-height:90vh; overflow-y:auto; background:var(--surface); border-radius:18px; padding:26px; }
   .modalbox.danger h2 { color:var(--red); }
   .modalbox h2 { font-size:17px; margin:0 0 10px; }
   .modalbox p { font-size:13px; color:var(--ink-soft); line-height:1.7; margin:0 0 14px; }
@@ -269,6 +272,10 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
         CSVダウンロード
       </button>
+      <button class="btn-outline" onclick="openDeliverModal(false)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
+        LINE配信
+      </button>
     </div>
 
     <div class="filterpanel" id="filterPanel" style="display:none">
@@ -318,6 +325,7 @@
       <span id="selectcount">0件選択中</span>
       <div class="grow"></div>
       <button onclick="openCsvModal(true)">選択分をCSVダウンロード</button>
+      <button onclick="openDeliverModal(true)">選択分に配信</button>
       <button class="danger" onclick="openDeleteModal(true)">選択分を削除</button>
       <button class="clear" onclick="clearSelection()">選択解除</button>
     </div>
@@ -455,6 +463,27 @@
     <div class="row">
       <button class="btn-cancel" onclick="closeCsvModal()">キャンセル</button>
       <button class="btn-confirm-danger" style="background:var(--indigo)" onclick="doCsvDownload()">ダウンロード</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ LINE配信モーダル ============ -->
+<div class="modal" id="deliverModal">
+  <div class="modalbox">
+    <h2>LINE配信</h2>
+    <p id="deliverTargetText">配信対象：現在の絞り込み 24件</p>
+    <div class="warnbox" id="deliverWarnBox" style="display:none;"></div>
+    <div class="field">
+      <label>メッセージ本文</label>
+      <textarea id="deliverMessageInput" rows="5" maxlength="500" placeholder="配信するメッセージを入力してください" oninput="onDeliverInput()"></textarea>
+      <div class="charcount" id="deliverCharCount">0 / 500文字</div>
+    </div>
+    <div class="keepbox" style="margin-bottom:16px;">
+      <b>自動的に除外される方：</b>退会・ブロック済みの会員、LINEの友だち連携が外れている会員には送信されません。誰に届くかは対象件数の確認だけで、個々の氏名は表示・送信しません。
+    </div>
+    <div class="row">
+      <button class="btn-cancel" onclick="closeDeliverModal()">キャンセル</button>
+      <button class="btn-confirm-danger" id="deliverConfirmBtn" style="background:var(--indigo)" disabled onclick="confirmDeliver()">送信する</button>
     </div>
   </div>
 </div>
@@ -752,6 +781,46 @@ function doCsvDownload(){
   URL.revokeObjectURL(url);
   closeCsvModal();
   showToast(`${targets.length}件をCSVでダウンロードしました`);
+}
+
+/* ---------------- LINE配信モーダル ---------------- */
+let deliverBulk = false;
+function deliverTargets(){
+  return deliverBulk ? MEMBERS.filter(m => state.selected.has(m.id)) : filtered();
+}
+function openDeliverModal(bulk){
+  deliverBulk = bulk;
+  const targets = deliverTargets();
+  const sendable = targets.filter(m => m.status === "active");
+  document.getElementById("deliverTargetText").textContent =
+    `配信対象：${bulk ? "選択中" : "現在の絞り込み"} ${targets.length}件（うち送信可能 ${sendable.length}件。退会・ブロック済みは自動で除外）`;
+  document.getElementById("deliverMessageInput").value = "";
+  document.getElementById("deliverCharCount").textContent = "0 / 500文字";
+  const activeTotal = MEMBERS.filter(m => m.status === "active").length;
+  const warnBox = document.getElementById("deliverWarnBox");
+  if (activeTotal > 0 && sendable.length > activeTotal * 0.8){
+    warnBox.style.display = "block";
+    warnBox.innerHTML = `<b>注意：</b>配信対象（${sendable.length}件）が有効会員（${activeTotal}件）の8割を超えています。内容をよく確認してから送信してください。`;
+  } else {
+    warnBox.style.display = "none";
+  }
+  checkDeliverInput();
+  document.getElementById("deliverModal").classList.add("show");
+}
+function closeDeliverModal(){ document.getElementById("deliverModal").classList.remove("show"); }
+function onDeliverInput(){
+  const v = document.getElementById("deliverMessageInput").value;
+  document.getElementById("deliverCharCount").textContent = `${v.length} / 500文字`;
+  checkDeliverInput();
+}
+function checkDeliverInput(){
+  const v = document.getElementById("deliverMessageInput").value.trim();
+  document.getElementById("deliverConfirmBtn").disabled = v.length === 0;
+}
+function confirmDeliver(){
+  const sendable = deliverTargets().filter(m => m.status === "active");
+  closeDeliverModal();
+  showToast(`${sendable.length}件にLINE配信しました（サンプル・実際には送信されません）`);
 }
 
 /* ---------------- ページ切り替え（会員一覧 / 設定） ---------------- */
