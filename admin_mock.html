@@ -203,6 +203,29 @@
   .rolepill.viewer { background:var(--sunken); color:var(--ink-soft); }
   .selfnote { font-size:10.5px; color:var(--ink-soft); }
   .settings-actions-bar { display:flex; justify-content:flex-end; margin-bottom:14px; }
+
+  /* ---- 配信 ---- */
+  .delivermodes { display:flex; gap:8px; margin-bottom:16px; }
+  .deliverpanel { background:var(--surface); border:1px solid var(--hair); border-radius:16px; padding:20px; margin-bottom:16px; }
+  .deliverpanel h3 { font-size:11px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; margin:0 0 14px; }
+  .delivercount { display:flex; align-items:center; gap:14px; background:var(--indigo-soft); border-radius:12px; padding:14px 16px; margin-top:14px; }
+  .delivercount .num { font-size:24px; font-weight:900; color:var(--indigo); font-variant-numeric:tabular-nums; }
+  .delivercount .lbl { font-size:12px; color:var(--indigo); line-height:1.6; }
+  .deliversearch-results { border:1px solid var(--hair); border-radius:12px; overflow:hidden; margin-top:12px; max-height:280px; overflow-y:auto; }
+  .deliversearch-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 14px; border-bottom:1px solid var(--hair); cursor:pointer; font-size:13px; }
+  .deliversearch-row:last-child { border-bottom:none; }
+  .deliversearch-row:hover { background:var(--sunken); }
+  .deliversearch-row.disabled { opacity:.4; cursor:not-allowed; }
+  .deliversearch-row .name { font-weight:700; }
+  .deliversearch-row .uid { font-size:10.5px; color:var(--ink-soft); font-family:var(--f-mono); margin-left:6px; }
+  .deliverselected { display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--indigo-soft); border-radius:12px; padding:12px 16px; margin-top:12px; }
+  .deliverselected b { color:var(--indigo); }
+  .deliverselected .change { background:none; border:none; color:var(--indigo); font-size:12px; font-weight:700; cursor:pointer; text-decoration:underline; }
+  .deliverempty { font-size:12.5px; color:var(--ink-soft); padding:10px 2px; }
+  .deliverfoot { display:flex; justify-content:flex-end; }
+  .btn-deliver { background:var(--indigo); color:#fff; border:none; border-radius:10px; padding:12px 22px; font-weight:700; font-size:13.5px; cursor:pointer; }
+  .btn-deliver:disabled { opacity:.4; cursor:not-allowed; }
+  .deliverpreview { background:var(--sunken); border-radius:10px; padding:12px 14px; font-size:13px; line-height:1.7; white-space:pre-wrap; margin-bottom:16px; }
 </style>
 </head>
 <body>
@@ -234,6 +257,7 @@
       <div class="brand"><div class="mark">大</div>大洲カンパニー 管理画面</div>
       <nav>
         <a href="#" class="active" data-page="members" onclick="return showPage('members')">会員一覧</a>
+        <a href="#" data-page="deliver" onclick="return showPage('deliver')">配信</a>
         <a href="#" data-page="settings" onclick="return showPage('settings')">設定</a>
       </nav>
       <div class="spacer"></div>
@@ -271,10 +295,6 @@
       <button class="btn-outline" onclick="openCsvModal(false)">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
         CSVダウンロード
-      </button>
-      <button class="btn-outline" onclick="openDeliverModal(false)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
-        LINE配信
       </button>
     </div>
 
@@ -325,7 +345,6 @@
       <span id="selectcount">0件選択中</span>
       <div class="grow"></div>
       <button onclick="openCsvModal(true)">選択分をCSVダウンロード</button>
-      <button onclick="openDeliverModal(true)">選択分に配信</button>
       <button class="danger" onclick="openDeleteModal(true)">選択分を削除</button>
       <button class="clear" onclick="clearSelection()">選択解除</button>
     </div>
@@ -351,6 +370,87 @@
         <span id="pagerinfo">1〜24件（全24件）</span>
         <div class="btns"><button disabled>前へ</button><button disabled>次へ</button></div>
       </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-deliver">
+    <h1 class="pagetitle">LINE配信</h1>
+    <p class="pagelede">会員の属性で絞り込んで一斉配信するか、特定の1人へ個別メッセージを送ることができます。（このデモでは実際には送信されません）</p>
+
+    <div class="delivermodes">
+      <button class="chip active" id="deliverModeBtn-segment" onclick="setDeliverMode('segment')">属性で絞り込んで配信</button>
+      <button class="chip" id="deliverModeBtn-individual" onclick="setDeliverMode('individual')">個別に配信</button>
+    </div>
+
+    <div class="deliverpanel" id="deliverPanel-segment">
+      <h3>配信対象の絞り込み</h3>
+      <div class="filtergrid">
+        <div class="filterfield">
+          <label>推し</label>
+          <select id="dg-oshi" onchange="updateDeliverSegmentCount()">
+            <option value="">すべて</option>
+          </select>
+        </div>
+        <div class="filterfield">
+          <label>大洲との関係</label>
+          <select id="dg-relation" onchange="updateDeliverSegmentCount()">
+            <option value="">すべて</option>
+          </select>
+        </div>
+        <div class="filterfield">
+          <label>お住まい</label>
+          <select id="dg-residence" onchange="updateDeliverSegmentCount()">
+            <option value="">すべて</option>
+          </select>
+        </div>
+        <div class="filterfield">
+          <label>紹介元</label>
+          <select id="dg-refkind" onchange="updateDeliverSegmentCount()">
+            <option value="">すべて</option>
+          </select>
+        </div>
+        <div class="filterfield">
+          <label>友だち追加日</label>
+          <div class="daterange">
+            <input type="date" id="dg-dateFrom" onchange="updateDeliverSegmentCount()"><span>〜</span><input type="date" id="dg-dateTo" onchange="updateDeliverSegmentCount()">
+          </div>
+        </div>
+      </div>
+      <div class="filterfield" style="margin-top:12px">
+        <label>関わり方の希望（複数選択可・OR条件）</label>
+        <div class="filter-tagpicker" id="dg-tags"></div>
+      </div>
+      <div class="filterfoot">
+        <span class="hits" id="deliverFilterHits"></span>
+        <button class="link-reset" onclick="resetDeliverFilters()">絞り込みをクリア</button>
+      </div>
+      <div class="delivercount">
+        <div class="num" id="deliverSegmentCount">0</div>
+        <div class="lbl">件に配信されます<br>退会・ブロック済みの会員は自動的に除外した人数です</div>
+      </div>
+      <div class="warnbox" id="deliverSegmentWarn" style="display:none; margin-top:12px;"></div>
+    </div>
+
+    <div class="deliverpanel" id="deliverPanel-individual" style="display:none">
+      <h3>送る相手を選ぶ</h3>
+      <div class="searchbox" style="max-width:none">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="deliverSearchInput" placeholder="表示名で検索…" oninput="renderDeliverSearchResults()">
+      </div>
+      <div class="deliversearch-results" id="deliverSearchResults"></div>
+      <div id="deliverSelectedWrap"></div>
+    </div>
+
+    <div class="deliverpanel">
+      <h3>メッセージ本文</h3>
+      <div class="field" style="margin-bottom:0">
+        <textarea id="deliverMessageInput2" rows="5" maxlength="500" placeholder="配信するメッセージを入力してください" oninput="onDeliverMessageInput()"></textarea>
+        <div class="charcount" id="deliverCharCount2">0 / 500文字</div>
+      </div>
+    </div>
+
+    <div class="deliverfoot">
+      <button class="btn-deliver" id="deliverSendBtn" disabled onclick="openDeliverConfirm()">送信する</button>
     </div>
   </div>
 
@@ -467,23 +567,19 @@
   </div>
 </div>
 
-<!-- ============ LINE配信モーダル ============ -->
-<div class="modal" id="deliverModal">
+<!-- ============ LINE配信 確認モーダル ============ -->
+<div class="modal" id="deliverConfirmModal">
   <div class="modalbox">
-    <h2>LINE配信</h2>
-    <p id="deliverTargetText">配信対象：現在の絞り込み 24件</p>
-    <div class="warnbox" id="deliverWarnBox" style="display:none;"></div>
-    <div class="field">
-      <label>メッセージ本文</label>
-      <textarea id="deliverMessageInput" rows="5" maxlength="500" placeholder="配信するメッセージを入力してください" oninput="onDeliverInput()"></textarea>
-      <div class="charcount" id="deliverCharCount">0 / 500文字</div>
-    </div>
+    <h2>この内容で送信しますか？</h2>
+    <p id="deliverConfirmTargetText">配信対象：—</p>
+    <div class="deliverpreview" id="deliverConfirmPreview">—</div>
+    <div class="warnbox" id="deliverConfirmWarn" style="display:none;"></div>
     <div class="keepbox" style="margin-bottom:16px;">
-      <b>自動的に除外される方：</b>退会・ブロック済みの会員、LINEの友だち連携が外れている会員には送信されません。誰に届くかは対象件数の確認だけで、個々の氏名は表示・送信しません。
+      <b>自動的に除外される方：</b>退会・ブロック済みの会員、LINEの友だち連携が外れている会員には送信されません。
     </div>
     <div class="row">
-      <button class="btn-cancel" onclick="closeDeliverModal()">キャンセル</button>
-      <button class="btn-confirm-danger" id="deliverConfirmBtn" style="background:var(--indigo)" disabled onclick="confirmDeliver()">送信する</button>
+      <button class="btn-cancel" onclick="closeDeliverConfirm()">キャンセル</button>
+      <button class="btn-confirm-danger" style="background:var(--indigo)" onclick="confirmDeliverSend()">送信を確定</button>
     </div>
   </div>
 </div>
@@ -783,50 +879,169 @@ function doCsvDownload(){
   showToast(`${targets.length}件をCSVでダウンロードしました`);
 }
 
-/* ---------------- LINE配信モーダル ---------------- */
-let deliverBulk = false;
-function deliverTargets(){
-  return deliverBulk ? MEMBERS.filter(m => state.selected.has(m.id)) : filtered();
+/* ---------------- 配信タブ ---------------- */
+Object.assign(state, { deliverMode: "segment", deliverTagFilter: new Set() });
+let deliverSelectedMemberId = null;
+
+function initDeliverPanel(){
+  fillSelect("dg-oshi", OSHI);
+  fillSelect("dg-relation", RELATION);
+  fillSelect("dg-residence", RESIDENCE);
+  fillSelect("dg-refkind", REFKIND);
+  const tagWrap = document.getElementById("dg-tags");
+  tagWrap.innerHTML = TAGS_POOL.map(t => `<button type="button" class="tagchip" data-tag="${t}" onclick="toggleDeliverTagFilter('${t}', this)">${t}</button>`).join("");
+  updateDeliverSegmentCount();
+  renderDeliverSearchResults();
 }
-function openDeliverModal(bulk){
-  deliverBulk = bulk;
-  const targets = deliverTargets();
-  const sendable = targets.filter(m => m.status === "active");
-  document.getElementById("deliverTargetText").textContent =
-    `配信対象：${bulk ? "選択中" : "現在の絞り込み"} ${targets.length}件（うち送信可能 ${sendable.length}件。退会・ブロック済みは自動で除外）`;
-  document.getElementById("deliverMessageInput").value = "";
-  document.getElementById("deliverCharCount").textContent = "0 / 500文字";
+
+function setDeliverMode(mode){
+  state.deliverMode = mode;
+  document.getElementById("deliverModeBtn-segment").classList.toggle("active", mode === "segment");
+  document.getElementById("deliverModeBtn-individual").classList.toggle("active", mode === "individual");
+  document.getElementById("deliverPanel-segment").style.display = mode === "segment" ? "block" : "none";
+  document.getElementById("deliverPanel-individual").style.display = mode === "individual" ? "block" : "none";
+  updateDeliverSendButton();
+}
+
+function toggleDeliverTagFilter(tag, el){
+  if (state.deliverTagFilter.has(tag)) state.deliverTagFilter.delete(tag); else state.deliverTagFilter.add(tag);
+  el.classList.toggle("active");
+  updateDeliverSegmentCount();
+}
+
+function resetDeliverFilters(){
+  ["dg-oshi","dg-relation","dg-residence","dg-refkind","dg-dateFrom","dg-dateTo"].forEach(id => {
+    document.getElementById(id).value = "";
+  });
+  state.deliverTagFilter.clear();
+  document.querySelectorAll("#dg-tags .tagchip").forEach(c => c.classList.remove("active"));
+  updateDeliverSegmentCount();
+}
+
+/** 属性で絞り込んで配信＝送信できるのは有効会員のみ（退会・ブロックは常に自動除外）。 */
+function deliverSegmentTargets(){
+  const fOshi = document.getElementById("dg-oshi").value;
+  const fRelation = document.getElementById("dg-relation").value;
+  const fResidence = document.getElementById("dg-residence").value;
+  const fRefkind = document.getElementById("dg-refkind").value;
+  const fFrom = document.getElementById("dg-dateFrom").value;
+  const fTo = document.getElementById("dg-dateTo").value;
+  return MEMBERS.filter(m => {
+    if (m.status !== "active") return false;
+    if (fOshi && m.oshi !== fOshi) return false;
+    if (fRelation && m.relation !== fRelation) return false;
+    if (fResidence && m.residence !== fResidence) return false;
+    if (fRefkind && m.refKind !== fRefkind) return false;
+    if (fFrom && m.followed < fFrom) return false;
+    if (fTo && m.followed > fTo) return false;
+    if (state.deliverTagFilter.size > 0 && !m.tags.some(t => state.deliverTagFilter.has(t))) return false;
+    return true;
+  });
+}
+
+function updateDeliverSegmentCount(){
+  const targets = deliverSegmentTargets();
   const activeTotal = MEMBERS.filter(m => m.status === "active").length;
-  const warnBox = document.getElementById("deliverWarnBox");
-  if (activeTotal > 0 && sendable.length > activeTotal * 0.8){
+  document.getElementById("deliverSegmentCount").textContent = targets.length;
+  document.getElementById("deliverFilterHits").textContent = `全有効会員 ${activeTotal}件中`;
+  const warnBox = document.getElementById("deliverSegmentWarn");
+  if (activeTotal > 0 && targets.length > activeTotal * 0.8){
     warnBox.style.display = "block";
-    warnBox.innerHTML = `<b>注意：</b>配信対象（${sendable.length}件）が有効会員（${activeTotal}件）の8割を超えています。内容をよく確認してから送信してください。`;
+    warnBox.innerHTML = `<b>注意：</b>配信対象（${targets.length}件）が有効会員（${activeTotal}件）の8割を超えています。内容をよく確認してから送信してください。`;
   } else {
     warnBox.style.display = "none";
   }
-  checkDeliverInput();
-  document.getElementById("deliverModal").classList.add("show");
+  updateDeliverSendButton();
 }
-function closeDeliverModal(){ document.getElementById("deliverModal").classList.remove("show"); }
-function onDeliverInput(){
-  const v = document.getElementById("deliverMessageInput").value;
-  document.getElementById("deliverCharCount").textContent = `${v.length} / 500文字`;
-  checkDeliverInput();
+
+/* ---- 個別配信 ---- */
+function renderDeliverSearchResults(){
+  const q = (document.getElementById("deliverSearchInput")?.value || "").trim().toLowerCase();
+  const wrap = document.getElementById("deliverSearchResults");
+  const list = q ? MEMBERS.filter(m => m.name.toLowerCase().includes(q)) : MEMBERS;
+  if (!list.length){
+    wrap.innerHTML = `<div class="deliverempty">該当する会員がいません</div>`;
+    return;
+  }
+  wrap.innerHTML = list.slice(0, 30).map(m => {
+    const disabled = m.status !== "active";
+    return `<div class="deliversearch-row ${disabled ? "disabled" : ""}" ${disabled ? "" : `onclick="selectDeliverMember('${m.id}')"`}>
+      <span><span class="name">${m.name}</span><span class="uid">${m.id}</span></span>
+      <span class="pill ${m.status}">${statusLabel(m)}${disabled ? "・送信不可" : ""}</span>
+    </div>`;
+  }).join("");
 }
-function checkDeliverInput(){
-  const v = document.getElementById("deliverMessageInput").value.trim();
-  document.getElementById("deliverConfirmBtn").disabled = v.length === 0;
+function selectDeliverMember(id){
+  deliverSelectedMemberId = id;
+  const m = MEMBERS.find(x => x.id === id);
+  document.getElementById("deliverSelectedWrap").innerHTML = `
+    <div class="deliverselected">
+      <span><b>${m.name}</b> さんに送信します<span class="uid" style="margin-left:8px;color:var(--ink-soft);font-family:var(--f-mono);font-size:10.5px;">${m.id}</span></span>
+      <button class="change" onclick="clearDeliverSelection()">相手を変更</button>
+    </div>`;
+  updateDeliverSendButton();
 }
-function confirmDeliver(){
-  const sendable = deliverTargets().filter(m => m.status === "active");
-  closeDeliverModal();
-  showToast(`${sendable.length}件にLINE配信しました（サンプル・実際には送信されません）`);
+function clearDeliverSelection(){
+  deliverSelectedMemberId = null;
+  document.getElementById("deliverSelectedWrap").innerHTML = "";
+  updateDeliverSendButton();
+}
+
+/* ---- メッセージ本文・送信ボタンの活性判定 ---- */
+function onDeliverMessageInput(){
+  const v = document.getElementById("deliverMessageInput2").value;
+  document.getElementById("deliverCharCount2").textContent = `${v.length} / 500文字`;
+  updateDeliverSendButton();
+}
+function deliverMessageValue(){
+  return document.getElementById("deliverMessageInput2").value.trim();
+}
+function updateDeliverSendButton(){
+  const hasMessage = deliverMessageValue().length > 0;
+  const ready = state.deliverMode === "segment"
+    ? hasMessage && deliverSegmentTargets().length > 0
+    : hasMessage && deliverSelectedMemberId != null;
+  document.getElementById("deliverSendBtn").disabled = !ready;
+}
+
+/* ---- 送信確認モーダル ---- */
+function openDeliverConfirm(){
+  const msg = deliverMessageValue();
+  const warnBox = document.getElementById("deliverConfirmWarn");
+  warnBox.style.display = "none";
+  if (state.deliverMode === "segment"){
+    const targets = deliverSegmentTargets();
+    const activeTotal = MEMBERS.filter(m => m.status === "active").length;
+    document.getElementById("deliverConfirmTargetText").textContent = `配信対象：属性で絞り込み ${targets.length}件`;
+    if (activeTotal > 0 && targets.length > activeTotal * 0.8){
+      warnBox.style.display = "block";
+      warnBox.innerHTML = `<b>注意：</b>配信対象（${targets.length}件）が有効会員（${activeTotal}件）の8割を超えています。本当に送信しますか？`;
+    }
+  } else {
+    const m = MEMBERS.find(x => x.id === deliverSelectedMemberId);
+    document.getElementById("deliverConfirmTargetText").textContent = `配信対象：${m ? m.name + " さん（個別）" : "—"}`;
+  }
+  document.getElementById("deliverConfirmPreview").textContent = msg;
+  document.getElementById("deliverConfirmModal").classList.add("show");
+}
+function closeDeliverConfirm(){ document.getElementById("deliverConfirmModal").classList.remove("show"); }
+function confirmDeliverSend(){
+  const count = state.deliverMode === "segment" ? deliverSegmentTargets().length : 1;
+  closeDeliverConfirm();
+  document.getElementById("deliverMessageInput2").value = "";
+  document.getElementById("deliverCharCount2").textContent = "0 / 500文字";
+  updateDeliverSendButton();
+  showToast(`${count}件にLINE配信しました（サンプル・実際には送信されません）`);
 }
 
 /* ---------------- ページ切り替え（会員一覧 / 設定） ---------------- */
 function showPage(name){
   document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.id === "page-" + name));
   document.querySelectorAll(".topbar nav a[data-page]").forEach(a => a.classList.toggle("active", a.dataset.page === name));
+  if (name === "deliver"){
+    updateDeliverSegmentCount();
+    renderDeliverSearchResults();
+  }
   return false;
 }
 
@@ -899,6 +1114,7 @@ function doLogin(){
   initFilterPanel();
   render();
   renderAdminTable();
+  initDeliverPanel();
 }
 function doLogout(){
   document.getElementById("screen-dash").style.display = "none";
