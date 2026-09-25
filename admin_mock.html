@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>会員管理画面（イメージ）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --paper:#F4F6FB; --surface:#FFFFFF; --sunken:#ECEFF9; --ink:#0C0F14; --ink-soft:#5A6472; --hair:#E1E5F0;
+    --indigo:#1E4FFF; --indigo-soft:#E8EDFF; --clay:#FF6B4A; --clay-soft:#FFE9E2;
+    --moss:#0EA672; --moss-soft:#E1F8EE; --red:#E5484D; --red-soft:#FDE8E8;
+    --f-body:"Zen Kaku Gothic New",sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#0B0D12; --surface:#14171E; --sunken:#1B1F28; --ink:#EDEFF5; --ink-soft:#9AA3B2; --hair:#262B36;
+      --indigo:#5C82FF; --indigo-soft:#1B2440; --clay:#FF8A6B; --clay-soft:#3A241C; --moss:#3DD69A; --moss-soft:#123528;
+      --red:#F06A6E; --red-soft:#3A2020;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#0B0D12; --surface:#14171E; --sunken:#1B1F28; --ink:#EDEFF5; --ink-soft:#9AA3B2; --hair:#262B36;
+    --indigo:#5C82FF; --indigo-soft:#1B2440; --clay:#FF8A6B; --clay-soft:#3A241C; --moss:#3DD69A; --moss-soft:#123528;
+    --red:#F06A6E; --red-soft:#3A2020;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--f-body); font-size:14px; -webkit-font-smoothing:antialiased; }
+  button { font-family:inherit; }
+  code { font-family:var(--f-mono); }
+
+  .draftbar { background:var(--clay); color:#1a0f08; font-family:var(--f-mono); font-size:11.5px; font-weight:700; text-align:center; padding:7px; letter-spacing:.03em; }
+
+  /* ---------- ログイン画面 ---------- */
+  #screen-login { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+  .loginbox { width:100%; max-width:380px; background:var(--surface); border:1px solid var(--hair); border-radius:20px; padding:36px 32px; box-shadow:0 8px 0 var(--hair); }
+  .loginbox .brand { display:flex; align-items:center; gap:10px; margin-bottom:26px; }
+  .loginbox .brand .mark { width:34px; height:34px; border-radius:9px; background:var(--ink); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:15px; }
+  .loginbox .brand b { font-size:15px; }
+  .loginbox h1 { font-size:19px; font-weight:900; margin:0 0 6px; }
+  .loginbox p.lede { color:var(--ink-soft); font-size:12.5px; margin:0 0 24px; line-height:1.7; }
+  .field { margin-bottom:14px; }
+  .field label { display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); margin-bottom:6px; }
+  .field input { width:100%; border:1.5px solid var(--hair); background:var(--sunken); border-radius:10px; padding:11px 13px; font-size:13.5px; color:var(--ink); }
+  .field input:focus { outline:2px solid var(--indigo); outline-offset:1px; background:var(--surface); }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; border:none; border-radius:10px; font-weight:700; font-size:13.5px; padding:12px 18px; cursor:pointer; width:100%; }
+  .btn-primary { background:var(--ink); color:#fff; }
+  .btn-primary:hover { opacity:.88; }
+  .authnote { display:flex; gap:8px; background:var(--indigo-soft); border-radius:10px; padding:11px 13px; font-size:11.5px; color:var(--indigo); margin-top:18px; line-height:1.6; }
+
+  /* ---------- ダッシュボード ---------- */
+  #screen-dash { display:none; }
+  header.top { background:var(--ink); color:#fff; }
+  .topbar { max-width:1500px; margin:0 auto; padding:14px 24px; display:flex; align-items:center; gap:16px; }
+  .topbar .brand { display:flex; align-items:center; gap:9px; font-weight:900; font-size:14.5px; }
+  .topbar .brand .mark { width:26px; height:26px; border-radius:7px; background:var(--indigo); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; }
+  .topbar nav { display:flex; gap:4px; margin-left:8px; }
+  .topbar nav a { font-size:12.5px; font-weight:700; color:rgba(255,255,255,.6); padding:7px 12px; border-radius:100px; text-decoration:none; }
+  .topbar nav a.active { color:var(--ink); background:#fff; }
+  .topbar .spacer { flex:1; }
+  .topbar .who { display:flex; align-items:center; gap:8px; font-size:12px; color:rgba(255,255,255,.7); }
+  .topbar .avatar { width:26px; height:26px; border-radius:50%; background:var(--indigo-soft); color:var(--indigo); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:11px; }
+  .topbar .logout { font-size:11.5px; color:rgba(255,255,255,.5); background:none; border:none; cursor:pointer; text-decoration:underline; }
+
+  main.wrap { max-width:1500px; margin:0 auto; padding:28px 24px 90px; }
+
+  h1.pagetitle { font-size:21px; font-weight:900; margin:0 0 4px; }
+  p.pagelede { color:var(--ink-soft); font-size:12.5px; margin:0 0 22px; }
+
+  .statgrid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+  @media (max-width:900px) { .statgrid { grid-template-columns:repeat(2,1fr); } }
+  .statcard { background:var(--surface); border:1px solid var(--hair); border-radius:16px; padding:16px 18px; }
+  .statcard .label { font-size:11px; color:var(--ink-soft); font-weight:700; margin-bottom:8px; }
+  .statcard .value { font-size:26px; font-weight:900; font-variant-numeric:tabular-nums; }
+  .statcard .delta { font-size:11px; margin-top:4px; font-weight:700; }
+  .statcard .delta.up { color:var(--moss); }
+  .statcard .delta.flat { color:var(--ink-soft); }
+
+  .toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+  .searchbox { position:relative; flex:1; min-width:220px; max-width:340px; }
+  .searchbox input { width:100%; border:1.5px solid var(--hair); background:var(--surface); border-radius:10px; padding:9px 13px 9px 32px; font-size:13px; }
+  .searchbox svg { position:absolute; left:10px; top:50%; transform:translateY(-50%); opacity:.4; }
+  .chip { font-size:12px; font-weight:700; border:1.5px solid var(--hair); background:var(--surface); border-radius:100px; padding:7px 13px; cursor:pointer; color:var(--ink-soft); }
+  .chip.active { background:var(--indigo); border-color:var(--indigo); color:#fff; }
+  .toolbar .grow { flex:1; }
+  .btn-outline { background:var(--surface); border:1.5px solid var(--hair); color:var(--ink); border-radius:10px; padding:9px 15px; font-size:12.5px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; width:auto; }
+  .btn-outline:hover { background:var(--sunken); }
+
+  .selectbar { display:none; align-items:center; gap:12px; background:var(--indigo); color:#fff; border-radius:12px; padding:10px 16px; margin-bottom:14px; font-size:12.5px; font-weight:700; }
+  .selectbar.show { display:flex; }
+  .selectbar button { background:rgba(255,255,255,.15); border:none; color:#fff; border-radius:8px; padding:7px 13px; font-size:12px; font-weight:700; cursor:pointer; }
+  .selectbar button.danger { background:var(--red); }
+  .selectbar .grow { flex:1; }
+  .selectbar .clear { background:none; text-decoration:underline; color:rgba(255,255,255,.8); }
+
+  .tablewrap { background:var(--surface); border:1px solid var(--hair); border-radius:16px; overflow:hidden; }
+  table { width:100%; border-collapse:collapse; font-size:12.5px; }
+  thead th { text-align:left; font-size:10.5px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em; padding:11px 14px; border-bottom:1px solid var(--hair); background:var(--sunken); white-space:nowrap; }
+  tbody td { padding:11px 14px; border-bottom:1px solid var(--hair); vertical-align:middle; }
+  tbody tr:last-child td { border-bottom:none; }
+  tbody tr:hover { background:var(--sunken); cursor:pointer; }
+  td.ck, th.ck { width:34px; }
+  input[type="checkbox"] { width:16px; height:16px; accent-color:var(--indigo); cursor:pointer; }
+  .namecell { display:flex; flex-direction:column; }
+  .namecell b { font-size:13px; }
+  .namecell span { font-size:11px; color:var(--ink-soft); font-family:var(--f-mono); }
+  .pill { display:inline-block; font-size:10.5px; font-weight:700; border-radius:100px; padding:3px 9px; white-space:nowrap; }
+  .pill.active { background:var(--moss-soft); color:var(--moss); }
+  .pill.withdrawn { background:var(--sunken); color:var(--ink-soft); }
+  .tagrow { display:flex; flex-wrap:wrap; gap:4px; max-width:200px; }
+  .tag { font-size:10px; font-weight:700; background:var(--indigo-soft); color:var(--indigo); border-radius:6px; padding:2px 7px; }
+  .rowactions { display:flex; gap:6px; }
+  .iconbtn { width:28px; height:28px; border-radius:8px; border:1px solid var(--hair); background:var(--surface); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-soft); }
+  .iconbtn:hover { background:var(--sunken); color:var(--ink); }
+  .iconbtn.del:hover { background:var(--red-soft); color:var(--red); border-color:var(--red); }
+
+  .pager { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; font-size:12px; color:var(--ink-soft); }
+  .pager .btns { display:flex; gap:6px; }
+  .pager button { border:1px solid var(--hair); background:var(--surface); border-radius:8px; padding:6px 11px; font-size:12px; cursor:pointer; }
+  .pager button:disabled { opacity:.4; cursor:default; }
+
+  /* ---------- 詳細ドロワー ---------- */
+  .scrim { position:fixed; inset:0; background:rgba(12,15,20,.4); display:none; z-index:40; }
+  .scrim.show { display:block; }
+  .drawer { position:fixed; top:0; right:-460px; width:440px; max-width:92vw; height:100%; background:var(--surface); z-index:41; box-shadow:-8px 0 30px rgba(0,0,0,.15); transition:right .25s ease; display:flex; flex-direction:column; }
+  .drawer.show { right:0; }
+  .drawer .dhead { padding:20px 22px; border-bottom:1px solid var(--hair); display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .drawer .dhead h2 { font-size:17px; margin:0 0 4px; }
+  .drawer .dhead span { font-size:11.5px; color:var(--ink-soft); font-family:var(--f-mono); }
+  .drawer .close { background:none; border:none; font-size:20px; cursor:pointer; color:var(--ink-soft); line-height:1; }
+  .drawer .dbody { padding:20px 22px; overflow-y:auto; flex:1; }
+  .dsection { margin-bottom:22px; }
+  .dsection h3 { font-size:11px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; margin:0 0 10px; }
+  .kv { display:grid; grid-template-columns:96px 1fr; gap:8px 10px; font-size:13px; margin-bottom:6px; }
+  .kv b { color:var(--ink-soft); font-weight:600; font-size:12px; }
+  .timeline { display:flex; flex-direction:column; gap:0; }
+  .tlitem { position:relative; padding:0 0 16px 20px; border-left:2px solid var(--hair); margin-left:5px; font-size:12px; }
+  .tlitem:last-child { border-color:transparent; padding-bottom:0; }
+  .tlitem::before { content:""; position:absolute; left:-6px; top:2px; width:9px; height:9px; border-radius:50%; background:var(--indigo); }
+  .tlitem b { display:block; font-size:12.5px; }
+  .tlitem span { color:var(--ink-soft); font-family:var(--f-mono); font-size:10.5px; }
+  .drawer .dfoot { padding:16px 22px; border-top:1px solid var(--hair); display:flex; gap:10px; }
+  .btn-danger-outline { flex:1; background:var(--red-soft); color:var(--red); border:none; border-radius:10px; padding:11px; font-weight:700; font-size:13px; cursor:pointer; }
+
+  /* ---------- モーダル（削除確認・CSV） ---------- */
+  .modal { position:fixed; inset:0; background:rgba(12,15,20,.5); display:none; align-items:center; justify-content:center; z-index:50; padding:20px; }
+  .modal.show { display:flex; }
+  .modalbox { width:100%; max-width:420px; background:var(--surface); border-radius:18px; padding:26px; }
+  .modalbox.danger h2 { color:var(--red); }
+  .modalbox h2 { font-size:17px; margin:0 0 10px; }
+  .modalbox p { font-size:13px; color:var(--ink-soft); line-height:1.7; margin:0 0 14px; }
+  .modalbox .warnbox { background:var(--red-soft); border-radius:10px; padding:12px 14px; font-size:12px; color:var(--red); margin-bottom:16px; line-height:1.7; }
+  .modalbox .keepbox { background:var(--moss-soft); border-radius:10px; padding:12px 14px; font-size:12px; color:var(--moss); margin-bottom:16px; line-height:1.7; }
+  .modalbox input[type=text] { width:100%; border:1.5px solid var(--hair); border-radius:10px; padding:10px 13px; font-size:13px; margin-bottom:16px; }
+  .modalbox .row { display:flex; gap:10px; }
+  .modalbox .row button { flex:1; padding:11px; border-radius:10px; border:none; font-weight:700; font-size:13px; cursor:pointer; }
+  .btn-cancel { background:var(--sunken); color:var(--ink); }
+  .btn-confirm-danger { background:var(--red); color:#fff; }
+  .btn-confirm-danger:disabled { opacity:.4; cursor:not-allowed; }
+  .csv-fields { display:flex; flex-direction:column; gap:9px; margin-bottom:18px; max-height:220px; overflow-y:auto; }
+  .csv-fields label { display:flex; align-items:center; gap:9px; font-size:13px; }
+  .csv-fields label.pii { color:var(--red); }
+  .csv-fields label.pii .tagpii { font-family:var(--f-mono); font-size:9.5px; background:var(--red-soft); border-radius:5px; padding:1px 6px; margin-left:4px; }
+
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 20px; border-radius:10px; font-size:13px; font-weight:700; z-index:60; display:none; box-shadow:0 8px 24px rgba(0,0,0,.2); }
+  .toast.show { display:block; }
+</style>
+</head>
+<body>
+
+<div class="draftbar">デザイン案（イメージHTML） — 実データ・実際の認証には接続していません。サンプルデータで操作感のみ確認できます</div>
+
+<!-- ============ ログイン画面 ============ -->
+<div id="screen-login">
+  <div class="loginbox">
+    <div class="brand"><div class="mark">大</div><b>大洲カンパニー 管理画面</b></div>
+    <h1>ログイン</h1>
+    <p class="lede">会員データの閲覧・削除・書き出しには管理者アカウントでのログインが必要です。</p>
+    <div class="field">
+      <label>メールアドレス</label>
+      <input type="text" value="asuka.miyoshi@kita-m.com" readonly>
+    </div>
+    <button class="btn btn-primary" onclick="doLogin()">ログイン（ワンタイムコードを送信）</button>
+    <div class="authnote">
+      🔒 本番ではCloudflare Access（メールのワンタイムコード認証）に置き換わります。許可されたメールアドレス以外はこの画面にすら到達できません。このデモではボタンを押すとそのまま次の画面に進みます。
+    </div>
+  </div>
+</div>
+
+<!-- ============ ダッシュボード ============ -->
+<div id="screen-dash">
+  <div class="draftbar">デザイン案（イメージHTML） — 実データ・実際の認証には接続していません。サンプルデータで操作感のみ確認できます</div>
+  <header class="top">
+    <div class="topbar">
+      <div class="brand"><div class="mark">大</div>大洲カンパニー 管理画面</div>
+      <nav>
+        <a href="#" class="active">会員一覧</a>
+        <a href="#" onclick="return false">配信（準備中）</a>
+        <a href="#" onclick="return false">設定（準備中）</a>
+      </nav>
+      <div class="spacer"></div>
+      <div class="who"><div class="avatar">飛</div>三好飛鳥</div>
+      <button class="logout" onclick="doLogout()">ログアウト</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1 class="pagetitle">会員一覧</h1>
+    <p class="pagelede">友だち追加している会員の一覧です。行をクリックすると詳細が確認できます。（サンプルデータ 24件）</p>
+
+    <div class="statgrid">
+      <div class="statcard"><div class="label">総友だち数</div><div class="value">24</div><div class="delta up">▲ 3　今週</div></div>
+      <div class="statcard"><div class="label">有効会員</div><div class="value">21</div><div class="delta flat">全体の 87.5%</div></div>
+      <div class="statcard"><div class="label">退会・ブロック</div><div class="value">3</div><div class="delta flat">全体の 12.5%</div></div>
+      <div class="statcard"><div class="label">紹介者名 登録あり</div><div class="value">8</div><div class="delta flat">要事務局フォロー</div></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="searchbox">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="表示名で検索…" oninput="render()">
+      </div>
+      <button class="chip active" data-filter="all" onclick="setFilter('all')">すべて</button>
+      <button class="chip" data-filter="active" onclick="setFilter('active')">有効会員</button>
+      <button class="chip" data-filter="withdrawn" onclick="setFilter('withdrawn')">退会・ブロック</button>
+      <button class="chip" data-filter="referral" onclick="setFilter('referral')">紹介者名あり</button>
+      <div class="grow"></div>
+      <button class="btn-outline" onclick="openCsvModal(false)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+        CSVダウンロード
+      </button>
+    </div>
+
+    <div class="selectbar" id="selectbar">
+      <span id="selectcount">0件選択中</span>
+      <div class="grow"></div>
+      <button onclick="openCsvModal(true)">選択分をCSVダウンロード</button>
+      <button class="danger" onclick="openDeleteModal(true)">選択分を削除</button>
+      <button class="clear" onclick="clearSelection()">選択解除</button>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="ck"><input type="checkbox" id="checkAll" onchange="toggleAll(this)"></th>
+            <th>表示名</th>
+            <th>友だち追加日</th>
+            <th>ステータス</th>
+            <th>推し</th>
+            <th>お住まい</th>
+            <th>関わり方</th>
+            <th>紹介元</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="pager">
+        <span id="pagerinfo">1〜24件（全24件）</span>
+        <div class="btns"><button disabled>前へ</button><button disabled>次へ</button></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ============ 詳細ドロワー ============ -->
+<div class="scrim" id="scrim" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="dhead">
+    <div>
+      <h2 id="d-name">—</h2>
+      <span id="d-id">—</span>
+    </div>
+    <button class="close" onclick="closeDrawer()">×</button>
+  </div>
+  <div class="dbody">
+    <div class="dsection">
+      <h3>基本情報</h3>
+      <div class="kv"><b>ステータス</b><span id="d-status">—</span></div>
+      <div class="kv"><b>友だち追加</b><span id="d-followed">—</span></div>
+      <div class="kv"><b>推し</b><span id="d-oshi">—</span></div>
+      <div class="kv"><b>大洲との関係</b><span id="d-relation">—</span></div>
+      <div class="kv"><b>お住まい</b><span id="d-residence">—</span></div>
+    </div>
+    <div class="dsection">
+      <h3>関わり方の希望</h3>
+      <div class="tagrow" id="d-tags"></div>
+    </div>
+    <div class="dsection">
+      <h3>紹介元</h3>
+      <div class="kv"><b>紹介元</b><span id="d-refkind">—</span></div>
+      <div class="kv"><b>紹介者名</b><span id="d-refnote">—</span></div>
+    </div>
+    <div class="dsection">
+      <h3>最近のイベント</h3>
+      <div class="timeline" id="d-timeline"></div>
+    </div>
+  </div>
+  <div class="dfoot">
+    <button class="btn-danger-outline" onclick="openDeleteModal(false)">この会員のデータを削除する</button>
+  </div>
+</div>
+
+<!-- ============ 削除確認モーダル ============ -->
+<div class="modal" id="deleteModal">
+  <div class="modalbox danger">
+    <h2>本当に削除しますか？</h2>
+    <p id="deleteTargetText">対象：1件</p>
+    <div class="warnbox">
+      <b>即時に削除されるもの：</b>表示名・メールアドレス（member_pii）、紹介者のお名前（member_referrals）<br>
+      この操作は取り消せません。
+    </div>
+    <div class="keepbox">
+      <b>統計用に匿名で残るもの：</b>推し・大洲との関係・お住まい区分・関わり方タグ（member_attributes / member_tags）。個人と紐づく形では残りません。
+    </div>
+    <label style="font-size:12.5px; display:flex; align-items:center; gap:8px; margin-bottom:14px;">
+      確認のため「削除」と入力してください
+    </label>
+    <input type="text" id="deleteConfirmInput" placeholder="削除" oninput="checkDeleteInput()">
+    <div class="row">
+      <button class="btn-cancel" onclick="closeDeleteModal()">キャンセル</button>
+      <button class="btn-confirm-danger" id="deleteConfirmBtn" disabled onclick="confirmDelete()">削除を実行</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CSVダウンロードモーダル ============ -->
+<div class="modal" id="csvModal">
+  <div class="modalbox">
+    <h2>CSVダウンロード</h2>
+    <p id="csvTargetText">出力対象：全24件</p>
+    <div class="csv-fields" id="csvFields">
+      <label><input type="checkbox" value="line_user_id" checked> LINEユーザーID</label>
+      <label><input type="checkbox" value="followed_at" checked> 友だち追加日</label>
+      <label><input type="checkbox" value="status" checked> ステータス</label>
+      <label class="pii"><input type="checkbox" value="display_name"> 表示名<span class="tagpii">PII</span></label>
+      <label><input type="checkbox" value="oshi" checked> 推し</label>
+      <label><input type="checkbox" value="relation" checked> 大洲との関係</label>
+      <label><input type="checkbox" value="residence" checked> お住まい</label>
+      <label><input type="checkbox" value="tags" checked> 関わり方タグ</label>
+      <label><input type="checkbox" value="ref_kind" checked> 紹介元</label>
+      <label class="pii"><input type="checkbox" value="ref_note"> 紹介者のお名前<span class="tagpii">PII</span></label>
+    </div>
+    <div class="warnbox" style="margin-bottom:16px;">
+      <b>PII</b>を含む項目にチェックすると、個人が特定できる情報がCSVに含まれます。取り扱い・保管には十分ご注意ください。
+    </div>
+    <div class="row">
+      <button class="btn-cancel" onclick="closeCsvModal()">キャンセル</button>
+      <button class="btn-confirm-danger" style="background:var(--indigo)" onclick="doCsvDownload()">ダウンロード</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- サンプルデータ（すべてダミー） ---------------- */
+const OSHI = ["お城・歴史","人に会いたい","たべもの・商品","川・自然","まちづくり","まだわからない"];
+const RELATION = ["大洲に住んでいる","大洲の出身（いまは市外）","何度か行った","一度行った","まだ行っていない"];
+const RESIDENCE = ["大洲市内","愛媛県 松山市","愛媛県 内子町","東京都","大阪府","福岡県","広島県","神奈川県"];
+const TAGS_POOL = ["手伝う","学ぶ","あそぶ・会う","応援する","住む・もどる"];
+const REFKIND = ["紹介ではない","家族・友人","大洲のお店・事業者","スタッフ・関係者","記事・テレビ・SNS","イベントで知った"];
+const NAMES = ["はるか","たくみ","ゆい","しょうた","みお","けんじ","さくら","りょう","あやの","だいき","のぞみ","ゆうと","まなみ","こうた","りん","そら","ひなた","あおい","れん","つばさ","みずき","はると","ことね","ふゆき"];
+
+function pad(n){ return String(n).padStart(2,"0"); }
+function randDate(daysAgoMax){
+  const d = new Date(); d.setDate(d.getDate() - Math.floor(Math.random()*daysAgoMax));
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function pickTags(){
+  const n = 1 + Math.floor(Math.random()*3);
+  const shuffled = [...TAGS_POOL].sort(()=>Math.random()-0.5);
+  return shuffled.slice(0,n);
+}
+
+let MEMBERS = NAMES.map((name, i) => {
+  const withdrawn = Math.random() < 0.13;
+  const refKind = pick(REFKIND);
+  const hasRefNote = refKind !== "紹介ではない" && refKind !== "記事・テレビ・SNS" && Math.random() < 0.7;
+  return {
+    id: "U" + (100000 + i*137).toString(16),
+    name: name,
+    followed: randDate(220),
+    status: withdrawn ? "withdrawn" : "active",
+    oshi: pick(OSHI),
+    relation: pick(RELATION),
+    residence: pick(RESIDENCE),
+    tags: pickTags(),
+    refKind: refKind,
+    refNote: hasRefNote ? pick(["田中さん","大洲まちづくり会社の方","キタ・マネジメントの三好さん","地元のお店の方"]) : null,
+    events: [
+      { label: "友だち追加", at: randDate(220) },
+      { label: "あいさつラリー完了", at: randDate(200) },
+      { label: withdrawn ? "ブロック検知" : "会員情報について を確認", at: randDate(30) },
+    ]
+  };
+});
+
+let state = { filter: "all", selected: new Set() };
+
+function statusLabel(m){ return m.status === "active" ? "有効" : "退会・ブロック"; }
+
+function filtered(){
+  const q = document.getElementById("searchInput").value.trim().toLowerCase();
+  return MEMBERS.filter(m => {
+    if (state.filter === "active" && m.status !== "active") return false;
+    if (state.filter === "withdrawn" && m.status !== "withdrawn") return false;
+    if (state.filter === "referral" && !m.refNote) return false;
+    if (q && !m.name.toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+function render(){
+  const list = filtered();
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = "";
+  list.forEach(m => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="ck" onclick="event.stopPropagation()"><input type="checkbox" ${state.selected.has(m.id)?"checked":""} onchange="toggleSelect('${m.id}', this)"></td>
+      <td><div class="namecell"><b>${m.name}</b><span>${m.id}</span></div></td>
+      <td>${m.followed}</td>
+      <td><span class="pill ${m.status}">${statusLabel(m)}</span></td>
+      <td>${m.oshi}</td>
+      <td>${m.residence}</td>
+      <td><div class="tagrow">${m.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div></td>
+      <td>${m.refKind}</td>
+      <td class="rowactions" onclick="event.stopPropagation()">
+        <button class="iconbtn" title="詳細" onclick="openDrawer('${m.id}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+        <button class="iconbtn del" title="削除" onclick="openDeleteModal(false,'${m.id}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+        </button>
+      </td>`;
+    tr.onclick = () => openDrawer(m.id);
+    tbody.appendChild(tr);
+  });
+  document.getElementById("pagerinfo").textContent = `1〜${list.length}件（全${list.length}件 / 全体${MEMBERS.length}件）`;
+  updateSelectbar();
+}
+
+function setFilter(f){
+  state.filter = f;
+  document.querySelectorAll(".chip").forEach(c => c.classList.toggle("active", c.dataset.filter === f));
+  render();
+}
+
+function toggleSelect(id, el){
+  if (el.checked) state.selected.add(id); else state.selected.delete(id);
+  updateSelectbar();
+}
+function toggleAll(el){
+  const list = filtered();
+  if (el.checked) list.forEach(m => state.selected.add(m.id));
+  else list.forEach(m => state.selected.delete(m.id));
+  render();
+}
+function clearSelection(){ state.selected.clear(); render(); }
+function updateSelectbar(){
+  const bar = document.getElementById("selectbar");
+  const n = state.selected.size;
+  bar.classList.toggle("show", n > 0);
+  document.getElementById("selectcount").textContent = `${n}件選択中`;
+}
+
+/* ---------------- 詳細ドロワー ---------------- */
+let currentMemberId = null;
+function openDrawer(id){
+  currentMemberId = id;
+  const m = MEMBERS.find(x => x.id === id);
+  document.getElementById("d-name").textContent = m.name;
+  document.getElementById("d-id").textContent = m.id;
+  document.getElementById("d-status").innerHTML = `<span class="pill ${m.status}">${statusLabel(m)}</span>`;
+  document.getElementById("d-followed").textContent = m.followed;
+  document.getElementById("d-oshi").textContent = m.oshi;
+  document.getElementById("d-relation").textContent = m.relation;
+  document.getElementById("d-residence").textContent = m.residence;
+  document.getElementById("d-tags").innerHTML = m.tags.map(t=>`<span class="tag">${t}</span>`).join("");
+  document.getElementById("d-refkind").textContent = m.refKind;
+  document.getElementById("d-refnote").textContent = m.refNote || "登録なし";
+  document.getElementById("d-timeline").innerHTML = m.events.map(e => `<div class="tlitem"><b>${e.label}</b><span>${e.at}</span></div>`).join("");
+  document.getElementById("scrim").classList.add("show");
+  document.getElementById("drawer").classList.add("show");
+}
+function closeDrawer(){
+  document.getElementById("scrim").classList.remove("show");
+  document.getElementById("drawer").classList.remove("show");
+}
+
+/* ---------------- 削除モーダル ---------------- */
+let deleteBulk = false;
+function openDeleteModal(bulk, singleId){
+  deleteBulk = bulk;
+  if (singleId) currentMemberId = singleId;
+  const count = bulk ? state.selected.size : 1;
+  document.getElementById("deleteTargetText").textContent = `対象：${count}件`;
+  document.getElementById("deleteConfirmInput").value = "";
+  checkDeleteInput();
+  document.getElementById("deleteModal").classList.add("show");
+}
+function closeDeleteModal(){ document.getElementById("deleteModal").classList.remove("show"); }
+function checkDeleteInput(){
+  const ok = document.getElementById("deleteConfirmInput").value === "削除";
+  document.getElementById("deleteConfirmBtn").disabled = !ok;
+}
+function confirmDelete(){
+  if (deleteBulk){
+    const n = state.selected.size;
+    MEMBERS = MEMBERS.filter(m => !state.selected.has(m.id));
+    state.selected.clear();
+    showToast(`${n}件のデータを削除しました（表示名・紹介者名を消去、統計値は匿名で保持）`);
+  } else {
+    MEMBERS = MEMBERS.filter(m => m.id !== currentMemberId);
+    showToast(`1件のデータを削除しました（表示名・紹介者名を消去、統計値は匿名で保持）`);
+    closeDrawer();
+  }
+  closeDeleteModal();
+  render();
+}
+
+/* ---------------- CSVモーダル ---------------- */
+let csvBulk = false;
+function openCsvModal(bulk){
+  csvBulk = bulk;
+  const count = bulk ? state.selected.size : filtered().length;
+  document.getElementById("csvTargetText").textContent = `出力対象：${bulk ? "選択中" : "現在の絞り込み"} ${count}件`;
+  document.getElementById("csvModal").classList.add("show");
+}
+function closeCsvModal(){ document.getElementById("csvModal").classList.remove("show"); }
+function doCsvDownload(){
+  const fields = [...document.querySelectorAll("#csvFields input:checked")].map(i => i.value);
+  const targets = csvBulk ? MEMBERS.filter(m => state.selected.has(m.id)) : filtered();
+  const fieldMap = {
+    line_user_id: m => m.id, followed_at: m => m.followed, status: m => statusLabel(m),
+    display_name: m => m.name, oshi: m => m.oshi, relation: m => m.relation,
+    residence: m => m.residence, tags: m => m.tags.join("/"), ref_kind: m => m.refKind,
+    ref_note: m => m.refNote || "",
+  };
+  const header = fields.join(",");
+  const rows = targets.map(m => fields.map(f => `"${String(fieldMap[f](m)).replace(/"/g,'""')}"`).join(","));
+  const csv = "﻿" + [header, ...rows].join("\r\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = `ozu555_members_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  closeCsvModal();
+  showToast(`${targets.length}件をCSVでダウンロードしました`);
+}
+
+/* ---------------- ログイン／トースト ---------------- */
+function doLogin(){
+  document.getElementById("screen-login").style.display = "none";
+  document.getElementById("screen-dash").style.display = "block";
+  render();
+}
+function doLogout(){
+  document.getElementById("screen-dash").style.display = "none";
+  document.getElementById("screen-login").style.display = "flex";
+}
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => t.classList.remove("show"), 3200);
+}
+</script>
+
+</body>
+</html>
