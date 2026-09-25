@@ -226,6 +226,54 @@
   .btn-deliver { background:var(--indigo); color:#fff; border:none; border-radius:10px; padding:12px 22px; font-weight:700; font-size:13.5px; cursor:pointer; }
   .btn-deliver:disabled { opacity:.4; cursor:not-allowed; }
   .deliverpreview { background:var(--sunken); border-radius:10px; padding:12px 14px; font-size:13px; line-height:1.7; white-space:pre-wrap; margin-bottom:16px; }
+
+  /* ---- 個別配信：チャット風UI ---- */
+  .chatnote { display:flex; gap:10px; background:var(--indigo-soft); border-radius:12px; padding:12px 14px; font-size:12px; color:var(--indigo); line-height:1.7; margin-bottom:14px; }
+  .chatlayout { display:flex; gap:14px; height:560px; }
+  @media (max-width:800px) { .chatlayout { flex-direction:column; height:auto; } .chatsidebar { width:100%; height:220px; } .chatmain { height:480px; } }
+  .chatsidebar { width:260px; flex-shrink:0; display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--hair); border-radius:16px; overflow:hidden; }
+  .chatsidebar-search { padding:10px; border-bottom:1px solid var(--hair); }
+  .chatsidebar-search input { width:100%; border:1.5px solid var(--hair); background:var(--sunken); border-radius:8px; padding:8px 10px; font-size:12.5px; font-family:inherit; }
+  .chatsidebar-list { flex:1; overflow-y:auto; }
+  .chatsidebar-row { display:flex; align-items:center; gap:10px; padding:10px 12px; cursor:pointer; border-bottom:1px solid var(--hair); }
+  .chatsidebar-row:hover { background:var(--sunken); }
+  .chatsidebar-row.active { background:var(--indigo-soft); }
+  .chatsidebar-row.disabled { opacity:.4; cursor:not-allowed; }
+  .chatsidebar-row .avatar { width:32px; height:32px; border-radius:50%; background:var(--sunken); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; color:var(--ink-soft); flex-shrink:0; }
+  .chatsidebar-row .meta { flex:1; min-width:0; }
+  .chatsidebar-row .meta .row1 { display:flex; align-items:center; justify-content:space-between; gap:6px; }
+  .chatsidebar-row .meta b { font-size:12.5px; }
+  .chatsidebar-row .meta .preview { font-size:10.5px; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; }
+  .pausepill { font-size:9px; font-weight:700; background:var(--clay-soft); color:var(--clay); border-radius:100px; padding:1px 6px; white-space:nowrap; }
+
+  .chatmain { flex:1; display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--hair); border-radius:16px; overflow:hidden; min-width:0; }
+  .chatmain-empty { flex:1; display:flex; align-items:center; justify-content:center; color:var(--ink-soft); font-size:13px; text-align:center; padding:20px; }
+  .chathead { padding:13px 18px; border-bottom:1px solid var(--hair); display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .chathead .who b { font-size:14px; }
+  .chathead .who .uid { font-size:10.5px; color:var(--ink-soft); font-family:var(--f-mono); margin-left:6px; }
+  .pausetoggle { display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--ink-soft); }
+  .switch { position:relative; width:34px; height:19px; flex-shrink:0; }
+  .switch input { opacity:0; width:0; height:0; position:absolute; }
+  .switch .slider { position:absolute; inset:0; background:var(--hair); border-radius:100px; cursor:pointer; transition:.15s; }
+  .switch .slider::before { content:""; position:absolute; width:15px; height:15px; left:2px; top:2px; background:#fff; border-radius:50%; transition:.15s; }
+  .switch input:checked + .slider { background:var(--clay); }
+  .switch input:checked + .slider::before { transform:translateX(15px); }
+
+  .chatthread { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:8px; background:var(--paper); }
+  .bubblewrap { display:flex; flex-direction:column; max-width:72%; }
+  .bubblewrap.in { align-self:flex-start; align-items:flex-start; }
+  .bubblewrap.out { align-self:flex-end; align-items:flex-end; }
+  .bubble { padding:9px 13px; border-radius:16px; font-size:13px; line-height:1.6; word-break:break-word; }
+  .bubblewrap.in .bubble { background:var(--surface); border:1px solid var(--hair); border-bottom-left-radius:4px; }
+  .bubblewrap.out .bubble { background:var(--indigo); color:#fff; border-bottom-right-radius:4px; }
+  .bubbletime { font-size:10px; color:var(--ink-soft); margin-top:3px; padding:0 4px; }
+  .chatsystemnote { align-self:center; font-size:10.5px; color:var(--ink-soft); background:var(--sunken); border-radius:100px; padding:4px 12px; margin:4px 0; }
+
+  .chatinputbar { border-top:1px solid var(--hair); padding:12px 14px; display:flex; gap:10px; align-items:flex-end; }
+  .chatinputbar textarea { flex:1; border:1.5px solid var(--hair); background:var(--sunken); border-radius:12px; padding:10px 13px; font-size:13px; font-family:inherit; resize:none; max-height:100px; }
+  .chatinputbar textarea:focus { outline:2px solid var(--indigo); outline-offset:1px; background:var(--surface); }
+  .chatinputbar button { background:var(--indigo); color:#fff; border:none; border-radius:10px; padding:10px 18px; font-weight:700; font-size:13px; cursor:pointer; flex-shrink:0; }
+  .chatinputbar button:disabled { opacity:.4; cursor:not-allowed; }
 </style>
 </head>
 <body>
@@ -431,26 +479,35 @@
       <div class="warnbox" id="deliverSegmentWarn" style="display:none; margin-top:12px;"></div>
     </div>
 
-    <div class="deliverpanel" id="deliverPanel-individual" style="display:none">
-      <h3>送る相手を選ぶ</h3>
-      <div class="searchbox" style="max-width:none">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="deliverSearchInput" placeholder="表示名で検索…" oninput="renderDeliverSearchResults()">
+    <div id="deliverPanel-individual" style="display:none">
+      <div class="chatnote">
+        💬 1人の会員とLINE上でやり取りする画面です。ここで送った内容は、会員には通常のLINEメッセージとして届きます。自動応答（あいさつラリー・FAQ）と管理者の返信が競合しないよう、会話中はその会員への自動応答を一時停止できます。
       </div>
-      <div class="deliversearch-results" id="deliverSearchResults"></div>
-      <div id="deliverSelectedWrap"></div>
+      <div class="chatlayout">
+        <div class="chatsidebar">
+          <div class="chatsidebar-search">
+            <input type="text" id="chatSearchInput" placeholder="表示名で検索…" oninput="renderChatSidebar()">
+          </div>
+          <div class="chatsidebar-list" id="chatSidebarList"></div>
+        </div>
+        <div class="chatmain" id="chatMain">
+          <div class="chatmain-empty">左の一覧から会員を選ぶと、やり取りが表示されます</div>
+        </div>
+      </div>
     </div>
 
-    <div class="deliverpanel">
-      <h3>メッセージ本文</h3>
-      <div class="field" style="margin-bottom:0">
-        <textarea id="deliverMessageInput2" rows="5" maxlength="500" placeholder="配信するメッセージを入力してください" oninput="onDeliverMessageInput()"></textarea>
-        <div class="charcount" id="deliverCharCount2">0 / 500文字</div>
+    <div id="deliverPanel-segmentFoot">
+      <div class="deliverpanel">
+        <h3>メッセージ本文</h3>
+        <div class="field" style="margin-bottom:0">
+          <textarea id="deliverMessageInput2" rows="5" maxlength="500" placeholder="配信するメッセージを入力してください" oninput="onDeliverMessageInput()"></textarea>
+          <div class="charcount" id="deliverCharCount2">0 / 500文字</div>
+        </div>
       </div>
-    </div>
 
-    <div class="deliverfoot">
-      <button class="btn-deliver" id="deliverSendBtn" disabled onclick="openDeliverConfirm()">送信する</button>
+      <div class="deliverfoot">
+        <button class="btn-deliver" id="deliverSendBtn" disabled onclick="openDeliverConfirm()">送信する</button>
+      </div>
     </div>
   </div>
 
@@ -646,6 +703,24 @@ function pickTags(){
   const shuffled = [...TAGS_POOL].sort(()=>Math.random()-0.5);
   return shuffled.slice(0,n);
 }
+function randTime(daysAgoMax){
+  const d = new Date(); d.setDate(d.getDate() - Math.floor(Math.random()*daysAgoMax));
+  d.setHours(Math.floor(Math.random()*14)+8, Math.floor(Math.random()*60));
+  return `${d.getMonth()+1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+const SAMPLE_CHAT = [
+  ["こんにちは！大洲のことをもっと知りたくて登録しました。", "ご登録ありがとうございます！ぜひ色々見てみてください。"],
+  ["今度のイベントっていつからですか？", "今週末の土曜10時からです。会場は大洲城前広場になります。"],
+  ["会員証の写真がうまく登録できません…", "お手数おかけします。もう一度お試しいただくか、こちらで手動対応もできます。"],
+];
+function pickChatHistory(){
+  if (Math.random() < 0.35) return [];
+  const [inMsg, outMsg] = pick(SAMPLE_CHAT);
+  const hist = [{ dir: "in", text: inMsg, at: randTime(20) }];
+  if (Math.random() < 0.8) hist.push({ dir: "out", text: outMsg, at: randTime(19) });
+  if (Math.random() < 0.3) hist.push({ dir: "in", text: "ありがとうございます！", at: randTime(18) });
+  return hist;
+}
 
 let MEMBERS = NAMES.map((name, i) => {
   const withdrawn = Math.random() < 0.13;
@@ -666,7 +741,9 @@ let MEMBERS = NAMES.map((name, i) => {
       { label: "友だち追加", at: randDate(220) },
       { label: "あいさつラリー完了", at: randDate(200) },
       { label: withdrawn ? "ブロック検知" : "会員情報について を確認", at: randDate(30) },
-    ]
+    ],
+    chatHistory: withdrawn ? [] : pickChatHistory(),
+    botPaused: false,
   };
 });
 
@@ -881,7 +958,6 @@ function doCsvDownload(){
 
 /* ---------------- 配信タブ ---------------- */
 Object.assign(state, { deliverMode: "segment", deliverTagFilter: new Set() });
-let deliverSelectedMemberId = null;
 
 function initDeliverPanel(){
   fillSelect("dg-oshi", OSHI);
@@ -891,7 +967,7 @@ function initDeliverPanel(){
   const tagWrap = document.getElementById("dg-tags");
   tagWrap.innerHTML = TAGS_POOL.map(t => `<button type="button" class="tagchip" data-tag="${t}" onclick="toggleDeliverTagFilter('${t}', this)">${t}</button>`).join("");
   updateDeliverSegmentCount();
-  renderDeliverSearchResults();
+  renderChatSidebar();
 }
 
 function setDeliverMode(mode){
@@ -899,8 +975,9 @@ function setDeliverMode(mode){
   document.getElementById("deliverModeBtn-segment").classList.toggle("active", mode === "segment");
   document.getElementById("deliverModeBtn-individual").classList.toggle("active", mode === "individual");
   document.getElementById("deliverPanel-segment").style.display = mode === "segment" ? "block" : "none";
+  document.getElementById("deliverPanel-segmentFoot").style.display = mode === "segment" ? "block" : "none";
   document.getElementById("deliverPanel-individual").style.display = mode === "individual" ? "block" : "none";
-  updateDeliverSendButton();
+  if (mode === "individual") renderChatSidebar();
 }
 
 function toggleDeliverTagFilter(tag, el){
@@ -954,40 +1031,7 @@ function updateDeliverSegmentCount(){
   updateDeliverSendButton();
 }
 
-/* ---- 個別配信 ---- */
-function renderDeliverSearchResults(){
-  const q = (document.getElementById("deliverSearchInput")?.value || "").trim().toLowerCase();
-  const wrap = document.getElementById("deliverSearchResults");
-  const list = q ? MEMBERS.filter(m => m.name.toLowerCase().includes(q)) : MEMBERS;
-  if (!list.length){
-    wrap.innerHTML = `<div class="deliverempty">該当する会員がいません</div>`;
-    return;
-  }
-  wrap.innerHTML = list.slice(0, 30).map(m => {
-    const disabled = m.status !== "active";
-    return `<div class="deliversearch-row ${disabled ? "disabled" : ""}" ${disabled ? "" : `onclick="selectDeliverMember('${m.id}')"`}>
-      <span><span class="name">${m.name}</span><span class="uid">${m.id}</span></span>
-      <span class="pill ${m.status}">${statusLabel(m)}${disabled ? "・送信不可" : ""}</span>
-    </div>`;
-  }).join("");
-}
-function selectDeliverMember(id){
-  deliverSelectedMemberId = id;
-  const m = MEMBERS.find(x => x.id === id);
-  document.getElementById("deliverSelectedWrap").innerHTML = `
-    <div class="deliverselected">
-      <span><b>${m.name}</b> さんに送信します<span class="uid" style="margin-left:8px;color:var(--ink-soft);font-family:var(--f-mono);font-size:10.5px;">${m.id}</span></span>
-      <button class="change" onclick="clearDeliverSelection()">相手を変更</button>
-    </div>`;
-  updateDeliverSendButton();
-}
-function clearDeliverSelection(){
-  deliverSelectedMemberId = null;
-  document.getElementById("deliverSelectedWrap").innerHTML = "";
-  updateDeliverSendButton();
-}
-
-/* ---- メッセージ本文・送信ボタンの活性判定 ---- */
+/* ---- メッセージ本文・送信ボタンの活性判定（属性配信のみ。個別配信はチャット欄から直接送信） ---- */
 function onDeliverMessageInput(){
   const v = document.getElementById("deliverMessageInput2").value;
   document.getElementById("deliverCharCount2").textContent = `${v.length} / 500文字`;
@@ -997,36 +1041,28 @@ function deliverMessageValue(){
   return document.getElementById("deliverMessageInput2").value.trim();
 }
 function updateDeliverSendButton(){
-  const hasMessage = deliverMessageValue().length > 0;
-  const ready = state.deliverMode === "segment"
-    ? hasMessage && deliverSegmentTargets().length > 0
-    : hasMessage && deliverSelectedMemberId != null;
+  const ready = deliverMessageValue().length > 0 && deliverSegmentTargets().length > 0;
   document.getElementById("deliverSendBtn").disabled = !ready;
 }
 
-/* ---- 送信確認モーダル ---- */
+/* ---- 送信確認モーダル（属性配信のみ） ---- */
 function openDeliverConfirm(){
   const msg = deliverMessageValue();
   const warnBox = document.getElementById("deliverConfirmWarn");
   warnBox.style.display = "none";
-  if (state.deliverMode === "segment"){
-    const targets = deliverSegmentTargets();
-    const activeTotal = MEMBERS.filter(m => m.status === "active").length;
-    document.getElementById("deliverConfirmTargetText").textContent = `配信対象：属性で絞り込み ${targets.length}件`;
-    if (activeTotal > 0 && targets.length > activeTotal * 0.8){
-      warnBox.style.display = "block";
-      warnBox.innerHTML = `<b>注意：</b>配信対象（${targets.length}件）が有効会員（${activeTotal}件）の8割を超えています。本当に送信しますか？`;
-    }
-  } else {
-    const m = MEMBERS.find(x => x.id === deliverSelectedMemberId);
-    document.getElementById("deliverConfirmTargetText").textContent = `配信対象：${m ? m.name + " さん（個別）" : "—"}`;
+  const targets = deliverSegmentTargets();
+  const activeTotal = MEMBERS.filter(m => m.status === "active").length;
+  document.getElementById("deliverConfirmTargetText").textContent = `配信対象：属性で絞り込み ${targets.length}件`;
+  if (activeTotal > 0 && targets.length > activeTotal * 0.8){
+    warnBox.style.display = "block";
+    warnBox.innerHTML = `<b>注意：</b>配信対象（${targets.length}件）が有効会員（${activeTotal}件）の8割を超えています。本当に送信しますか？`;
   }
   document.getElementById("deliverConfirmPreview").textContent = msg;
   document.getElementById("deliverConfirmModal").classList.add("show");
 }
 function closeDeliverConfirm(){ document.getElementById("deliverConfirmModal").classList.remove("show"); }
 function confirmDeliverSend(){
-  const count = state.deliverMode === "segment" ? deliverSegmentTargets().length : 1;
+  const count = deliverSegmentTargets().length;
   closeDeliverConfirm();
   document.getElementById("deliverMessageInput2").value = "";
   document.getElementById("deliverCharCount2").textContent = "0 / 500文字";
@@ -1034,13 +1070,122 @@ function confirmDeliverSend(){
   showToast(`${count}件にLINE配信しました（サンプル・実際には送信されません）`);
 }
 
-/* ---------------- ページ切り替え（会員一覧 / 設定） ---------------- */
+/* ---- 個別配信（1人とのやり取り・チャット風UI） ---- */
+let currentChatMemberId = null;
+
+function escapeHtml(s){
+  const d = document.createElement("div");
+  d.textContent = s;
+  return d.innerHTML;
+}
+function nowLabel(){
+  const d = new Date();
+  return `${d.getMonth()+1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function renderChatSidebar(){
+  const q = (document.getElementById("chatSearchInput")?.value || "").trim().toLowerCase();
+  const wrap = document.getElementById("chatSidebarList");
+  if (!wrap) return;
+  const list = q ? MEMBERS.filter(m => m.name.toLowerCase().includes(q)) : MEMBERS;
+  if (!list.length){
+    wrap.innerHTML = `<div class="deliverempty">該当する会員がいません</div>`;
+    return;
+  }
+  wrap.innerHTML = list.map(m => {
+    const disabled = m.status !== "active";
+    const last = m.chatHistory.filter(h => !h.system).slice(-1)[0];
+    const preview = disabled ? "送信不可（退会・ブロック済み）" : (last ? last.text : "まだやり取りはありません");
+    return `<div class="chatsidebar-row ${disabled ? "disabled" : ""} ${m.id === currentChatMemberId ? "active" : ""}"
+        ${disabled ? "" : `onclick="selectChatMember('${m.id}')"`}>
+      <div class="avatar">${m.name.slice(0,1)}</div>
+      <div class="meta">
+        <div class="row1"><b>${m.name}</b>${m.botPaused ? '<span class="pausepill">自動応答停止中</span>' : ""}</div>
+        <span class="preview">${escapeHtml(preview)}</span>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function selectChatMember(id){
+  currentChatMemberId = id;
+  renderChatSidebar();
+  renderChatMain();
+}
+
+function renderChatMain(){
+  const main = document.getElementById("chatMain");
+  const m = MEMBERS.find(x => x.id === currentChatMemberId);
+  if (!m){
+    main.innerHTML = `<div class="chatmain-empty">左の一覧から会員を選ぶと、やり取りが表示されます</div>`;
+    return;
+  }
+  main.innerHTML = `
+    <div class="chathead">
+      <div class="who"><b>${m.name}</b><span class="uid">${m.id}</span></div>
+      <label class="pausetoggle">
+        自動応答（あいさつラリー・FAQ）を一時停止
+        <span class="switch"><input type="checkbox" id="chatPauseToggle" ${m.botPaused ? "checked" : ""} onchange="toggleBotPause()"><span class="slider"></span></span>
+      </label>
+    </div>
+    <div class="chatthread" id="chatThread"></div>
+    <div class="chatinputbar">
+      <textarea id="chatInput" rows="1" placeholder="メッセージを入力…" oninput="onChatInputResize(this); updateChatSendBtn()"></textarea>
+      <button id="chatSendBtn" disabled onclick="sendChatMessage()">送信</button>
+    </div>`;
+  renderChatThread();
+}
+
+function renderChatThread(){
+  const m = MEMBERS.find(x => x.id === currentChatMemberId);
+  const thread = document.getElementById("chatThread");
+  if (!m || !thread) return;
+  if (!m.chatHistory.length){
+    thread.innerHTML = `<div class="chatsystemnote">まだやり取りはありません</div>`;
+  } else {
+    thread.innerHTML = m.chatHistory.map(msg => msg.system
+      ? `<div class="chatsystemnote">${escapeHtml(msg.text)}</div>`
+      : `<div class="bubblewrap ${msg.dir}"><div class="bubble">${escapeHtml(msg.text)}</div><div class="bubbletime">${msg.at}</div></div>`
+    ).join("");
+  }
+  thread.scrollTop = thread.scrollHeight;
+}
+
+function onChatInputResize(el){
+  el.style.height = "auto";
+  el.style.height = Math.min(el.scrollHeight, 100) + "px";
+}
+function updateChatSendBtn(){
+  const btn = document.getElementById("chatSendBtn");
+  if (btn) btn.disabled = document.getElementById("chatInput").value.trim().length === 0;
+}
+function sendChatMessage(){
+  const input = document.getElementById("chatInput");
+  const text = input.value.trim();
+  if (!text) return;
+  const m = MEMBERS.find(x => x.id === currentChatMemberId);
+  m.chatHistory.push({ dir: "out", text, at: nowLabel() });
+  input.value = "";
+  input.style.height = "auto";
+  updateChatSendBtn();
+  renderChatThread();
+  renderChatSidebar();
+}
+function toggleBotPause(){
+  const m = MEMBERS.find(x => x.id === currentChatMemberId);
+  m.botPaused = document.getElementById("chatPauseToggle").checked;
+  m.chatHistory.push({ system: true, text: m.botPaused ? "自動応答を一時停止しました（管理者操作）" : "自動応答を再開しました（管理者操作）" });
+  renderChatThread();
+  renderChatSidebar();
+}
+
+/* ---------------- ページ切り替え（会員一覧 / 配信 / 設定） ---------------- */
 function showPage(name){
   document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.id === "page-" + name));
   document.querySelectorAll(".topbar nav a[data-page]").forEach(a => a.classList.toggle("active", a.dataset.page === name));
   if (name === "deliver"){
     updateDeliverSegmentCount();
-    renderDeliverSearchResults();
+    renderChatSidebar();
   }
   return false;
 }
