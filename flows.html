@@ -62,6 +62,19 @@
   .lcard { background:var(--surface); border:1.5px solid var(--ink); border-radius:6px; padding:12px 14px; box-shadow:3px 3px 0 var(--hair); }
   .lcard b { font-size:13.5px; display:block; margin-bottom:3px; }
   .lcard span { font-family:var(--f-mono); font-size:11px; color:var(--moss); }
+
+  .tag.scan { background:var(--clay-soft); color:var(--clay); }
+  .tag.admin { background:var(--sunken); color:var(--ink-soft); }
+  .statusnote { display:inline-block; font-family:var(--f-mono); font-size:10.5px; font-weight:700; border-radius:5px; padding:3px 8px; margin-left:8px; }
+  .statusnote.ready { background:var(--moss-soft); color:var(--moss); }
+  .statusnote.pending { background:var(--clay-soft); color:var(--clay); }
+  .qrplaceholder { width:74px; height:74px; margin:8px 0; background:
+      linear-gradient(90deg, var(--ink) 0 8px, transparent 8px 16px, var(--ink) 16px 24px, transparent 24px 32px, var(--ink) 32px 44px, transparent 44px 52px, var(--ink) 52px 60px, transparent 60px 68px, var(--ink) 68px 74px),
+      linear-gradient(var(--ink) 0 8px, transparent 8px 16px, var(--ink) 16px 24px, transparent 24px 40px, var(--ink) 40px 48px, transparent 48px 56px, var(--ink) 56px 68px, transparent 68px 74px);
+    background-blend-mode:multiply; border:1.5px solid var(--ink); border-radius:4px; }
+  .flowsplit { display:flex; gap:18px; flex-wrap:wrap; align-items:flex-start; }
+  .flowsplit > div { flex:1; min-width:230px; }
+  .splitlabel { font-size:11px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em; margin-bottom:8px; }
 </style>
 </head>
 <body>
@@ -76,6 +89,7 @@
     <button data-tab="kakawaru">まちに関わるタブ</button>
     <button data-tab="member">会員情報について</button>
     <button data-tab="other">その他</button>
+    <button data-tab="event-checkin">イベント参加チェックイン</button>
   </nav>
 </header>
 
@@ -408,6 +422,61 @@ https://ozu-vision.com/</div>
 すぐ見られるもの：「関わりたい」「数字」「きょう」と送ると、それぞれの案内が返ります。</div>
         <div class="subnote">事務局へ内部通知（利用者には見えない）</div>
       </div>
+    </div>
+  </div>
+
+  <!-- ============ イベント参加チェックイン ============ -->
+  <div class="panel" id="panel-event-checkin">
+    <p style="font-size:13px; color:var(--ink-soft); max-width:60ch; line-height:1.7; margin-bottom:18px;">
+      分科会・参加申請の廃止に代わる新しいステージ制度（イベント参加3回で「関係人口2」に昇格・構想中）の土台となる機能です。
+      「QRコードを読んでの自動記録」を基本にしつつ、読み忘れた人のための「管理画面からの手動記録」も用意しています。
+      どちらの経路で記録しても、同じ参加回数として1つに集計されます。
+    </p>
+
+    <div class="flow">
+
+      <div class="node">
+        <span class="tag admin">管理画面（スタッフ操作）</span>
+        <div class="msgbox">イベント名（例：秋祭り2026）と開催日を入力して「作成する」を押す。
+
+イベントIDは自動で発行される（人が考えなくてよい）。作成すると、そのイベント専用のQRコードがその場で表示される。</div>
+        <div class="subnote">実装済み・ステージングで動作確認済み<span class="statusnote ready">動作OK</span></div>
+      </div>
+
+      <div class="node">
+        <span class="tag admin">会場に掲示</span>
+        <div class="msgbox">発行されたQRコードを印刷するなどして、イベント会場の受付・入口に掲示する。</div>
+      </div>
+
+      <div class="node branch">
+        <span class="tag scan">参加者がQRコードを読み取る</span>
+        <div class="qrplaceholder"></div>
+        <div class="msgbox">LINEアプリのカメラ／QRリーダーで読み取ると、LINEアプリの中に小さなページ（LIFF）が自動で開く。
+別のアプリやブラウザには切り替わらない＝LINEを開いたまま完結する。</div>
+
+        <div class="flowsplit" style="margin-top:14px">
+          <div>
+            <div class="splitlabel">読み取れた場合（自動経路）</div>
+            <div class="msgbox">ページが開いた瞬間に、裏側で「これは誰のLINEアカウントか」をLINEの仕組みで自動確認。
+確認できた本人のニックネームで、その場でチェックインを記録する。
+
+画面には「チェックイン完了！ようこそ、〇〇さん」のように一瞬表示され、特別な操作は不要。</div>
+            <div class="subnote">未実装・LINE Developersコンソールへの登録待ち<span class="statusnote pending">未着手</span></div>
+          </div>
+          <div class="sidebranch" style="margin-top:0; border-left-color:var(--clay)">
+            <div class="branchlabel">QRコードを読み忘れた・スマホの調子が悪かった場合</div>
+            <div class="msgbox">管理画面の「イベント」タブ→対象のイベントを開き、ニックネームで検索して選択→「記録する」を押すだけで、同じ扱いとしてチェックインを記録できる。</div>
+            <div class="subnote">実装済み・ステージングで動作確認済み<span class="statusnote ready">動作OK</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="node end">
+        <span class="tag auto">管理画面に反映</span>
+        <div class="msgbox">イベント詳細画面の「チェックイン済み」一覧に、その人のニックネームと時刻が追加される。
+会員ごとの参加回数も加算され、将来「3回以上で関係人口2」の判定に使う想定（この判定ロジック自体はまだ構想中で未実装）。</div>
+      </div>
+
     </div>
   </div>
 
